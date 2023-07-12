@@ -4,9 +4,9 @@ title: About
 permalink: /about/
 ---
 
-Hello, my name is Kyle Cox. Currently I am a master's computer science student at UT Austin. Previously I was an undergraduate at Williams College, before transferring to UT Austin, where I completed my bachelor's in mathematics, with a certificate in statistics. I was previously a [Forty Acres Scholarship](https://www.texasexes.org/scholarships/forty-acres-scholars-program) and National Merit Scholar. Currently, I work at the [IC2 Institute](https://ic2.utexas.edu) under Dr. Craig Watkins doing behavioral disorder risk assessment and the [AI Health Lab](https://aihealth.ischool.utexas.edu) researching language models for inference on quantitative data.
+Hello, my name is Kyle Cox. Currently I am a master's computer science student at UT Austin. Previously I was an undergraduate at Williams College before transferring to UT Austin where I completed my bachelor's in mathematics. I was previously a [Forty Acres Scholarship](https://www.texasexes.org/scholarships/forty-acres-scholars-program) and National Merit Scholar. Currently, I work at the [IC2 Institute](https://ic2.utexas.edu) under Dr. Craig Watkins doing behavioral disorder risk assessment and the [AI Health Lab](https://aihealth.ischool.utexas.edu) researching language models for inference on quantitative data.
 
-# Projects
+### Work and Other Projects
 At the IC2 Institute, I am beginning collaboration with [Dr. Leo Anthony Celi](https://www.hsph.harvard.edu/ecpe/faculty/leo-anthony-celi/) at MIT using language models to extract social determinants of health from clinical notes. Dr. Celi's team manages the MIMIC database, a publicly available database for health-related data from ICU patients at the Beth Israel Deaconess Medical Center. 
 
 Also at the IC2 Institute, I work with the [All of Us Research Program](https://www.researchallofus.org/about/) researching risk assessment for health outcomes, with particular attention to differential risks for marginalized populations. I am working alongside [Dr. Matt Kammer-Kerwick](https://liberalarts.utexas.edu/prc/faculty/mattkk) on a project investigating the moderation effects of gender, sexual identity, and race/ethnicity on social determinants of health toward diagnosis of major depressive disorder. Manuscript in progress.
