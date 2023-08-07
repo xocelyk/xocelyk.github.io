@@ -7,7 +7,7 @@ In 2020, OpenAI reported that [language models are few-shot learners](https://ar
 
 ![](files/few-shot.png)
 
-I was working with a medium-size dataset testing GPT-3.5 on a binary classification task with different numbers of in-context examples. I was working with a California housing dataset, trying to classify median housing price as greater than or less than some threshold. All features were quantitative, so I serialize them as into a simple list of the form \[feature\]: \[value\] for each feature, which seems to be best practice (see (TabLLM)[https://arxiv.org/pdf/2210.10723.pdf]). At first I was randomly selecting the set of in-context examples each time, but later I wanted to optimize for accuracy. A natural question is, How does one choose the best n examples for in-context learning? I experiment with three approaches.
+I was working with a medium-size dataset testing GPT-3.5 on a binary classification task with different numbers of in-context examples. I was working with a California housing dataset, trying to classify median housing price as greater than or less than some threshold. All features were quantitative, so I serialize them as into a simple list of the form \[feature\]: \[value\] for each feature, which seems to be best practice (see [TabLLM](https://arxiv.org/pdf/2210.10723.pdf)). At first I was randomly selecting the set of in-context examples each time, but later I wanted to optimize for accuracy. A natural question is, How does one choose the best n examples for in-context learning? I experiment with three approaches.
 
 **1. Max Entropy Selection**
 We train a model (in this case, a logistic regression on a standard-scaled feature set) on the entire training dataset. Then, we choose the n examples that had the highest classification uncertainty. In other words, the points whose predicted classification probabilities were nearest 0.5. The idea is to choose the points nearest the decision boundary, so that the language model can better learn the decision boundary from few points. Note that the assumption that predicted probabilities closest to 0.5 are those that lie nearest to the decision boundary does not necessarily hold for other (non-linear) classifiers.
@@ -23,12 +23,12 @@ This model suffers the same issues as the previous method because of its emphasi
 Here we attempt to mitigate the downsides of the max entropy approach by selecting a diverse set of points. We again scale the data, then run KMeans with # clusters = n. Then choose the point nearest each centroid, and add it to the sample.
 
 **Results**
-**Results**
 | Max Entropy Selection | Active Learning | Cluster Selection |
 |---|---|---|
 | Correct | 338 | 356 | 365 |
 | Total | 498 | 500 | 499 |
 | Accuracy | 0.68 | 0.71 | 0.73 |
+
 
 
 The difference in accuracies between max entropy and cluster selection are nearly significant at 95% confidence level (two-tailed p=0.07), and the trend seems to suggest the more diverse the examples, the better for classification (max entropy selection should select the least diverse sample, cluster selection the most, with active learning somewhere in the middle). All approaches promote class balance, so we cannot suggest the results can be attributed to difference in class imbalance, though [Zhang et al.](https://arxiv.org/pdf/2211.04486.pdf) found that class imbalance did not negatively impact model performance, and in some case selecting all examples of the same class performed better than balanced samples.
