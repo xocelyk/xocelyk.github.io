@@ -23,11 +23,37 @@ This model suffers the same issues as the previous method because of its emphasi
 Here we attempt to mitigate the downsides of the max entropy approach by selecting a diverse set of points. We again scale the data, then run KMeans with # clusters = n. Then choose the point nearest each centroid, and add it to the sample.
 
 **Results**
-| Max Entropy Selection | Active Learning | Cluster Selection |
-|---|---|---|
-| Correct | 338 | 356 | 365 |
-| Total | 498 | 500 | 499 |
-| Accuracy | 0.68 | 0.71 | 0.73 |
+<table>
+    <thead>
+        <tr>
+            <th></th> <!-- Blank header for the row names -->
+            <th>Entropy Selection</th>
+            <th>Active Learning</th>
+            <th>Cluster Selection</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Correct</td>
+            <td>338</td>
+            <td>356</td>
+            <td>365</td>
+        </tr>
+        <tr>
+            <td>Total</td>
+            <td>498</td>
+            <td>500</td>
+            <td>499</td>
+        </tr>
+        <tr>
+            <td>Accuracy</td>
+            <td>0.68</td>
+            <td>0.71</td>
+            <td>0.73</td>
+        </tr>
+    </tbody>
+</table>
+
 
 
 
