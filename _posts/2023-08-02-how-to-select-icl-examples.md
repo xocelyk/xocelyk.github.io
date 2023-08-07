@@ -5,7 +5,7 @@ title: Three approaches to selecting examples for in-context learning
 
 In 2020, OpenAI reported that [language models are few-shot learners](https://arxiv.org/pdf/2005.14165.pdf). This effect increases with the size of the model.
 
-!(files/few-shot.png)
+![](files/few-shot.png)
 
 I was working with a medium-size dataset testing GPT-3.5 on a binary classification task with different numbers of in-context examples. I was working with a California housing dataset, trying to classify median housing price as greater than or less than some threshold. All features were quantitative, so I serialize them as into a simple list of the form \[feature\]: \[value\] for each feature, which seems to be best practice (see (TabLLM)[https://arxiv.org/pdf/2210.10723.pdf]). At first I was randomly selecting the set of in-context examples each time, but later I wanted to optimize for accuracy. A natural question is, How does one choose the best n examples for in-context learning? I experiment with three approaches.
 
@@ -23,17 +23,19 @@ This model suffers the same issues as the previous method because of its emphasi
 Here we attempt to mitigate the downsides of the max entropy approach by selecting a diverse set of points. We again scale the data, then run KMeans with # clusters = n. Then choose the point nearest each centroid, and add it to the sample.
 
 **Results**
-|Max Entropy Selection|Active Learning|Cluster Selection
----|---|---|---
-Correct|338|356|365
-Total|498|500|499
-Accuracy|0.68|0.71|0.73
+**Results**
+| Max Entropy Selection | Active Learning | Cluster Selection |
+|---|---|---|
+| Correct | 338 | 356 | 365 |
+| Total | 498 | 500 | 499 |
+| Accuracy | 0.68 | 0.71 | 0.73 |
+
 
 The difference in accuracies between max entropy and cluster selection are nearly significant at 95% confidence level (two-tailed p=0.07), and the trend seems to suggest the more diverse the examples, the better for classification (max entropy selection should select the least diverse sample, cluster selection the most, with active learning somewhere in the middle). All approaches promote class balance, so we cannot suggest the results can be attributed to difference in class imbalance, though [Zhang et al.](https://arxiv.org/pdf/2211.04486.pdf) found that class imbalance did not negatively impact model performance, and in some case selecting all examples of the same class performed better than balanced samples.
 
 It is also hard to attribute the difference in accuracies, regardless of significance, to selection approach. Active learning and cluster selection are in particular very sensitive to intialization and may produce very different samples on each iteration. Running the active learning process about a dozen times, I saw the accuracy of the result classifier range from 0.45 to 0.7. The accuracy of a particular selection process may be an artifact of fortunately drawn sample, rather than evidence of a reliable selection procedure. Still, if I had an infinite budget and had to choose one of these approaches to perform the best over a truly thorough experiment, I would select cluster selection.
 
-Accuracy varies unpredictably across in-context samples. Even different permutations can yield dramatically different performance. There are approaches that can reliably predict better in-context samples, but they seem to mostly depend upon letting the language model tell you what works best for it, rather than using statistical intuition about what a good training set looks like. If you have the compute, one thing that seems to work consistently well is randomly selecting several different samples, testing all of them, then choosing the sample that performs the best for validation (see Zhang et al.).[Li and Qiu](https://arxiv.org/pdf/2302.13539.pdf) find that diversity-guided sampling and entropy-guided sampling perform better than random sampling, so you are probably better off trying one of the above approaches than random sampling, but your mileage may vary depending on domain.
+Accuracy varies unpredictably across in-context samples. Even different permutations can yield dramatically different performance. There are approaches that can reliably predict better in-context samples, but they seem to mostly depend upon letting the language model tell you what works best for it, rather than using statistical intuition about what a good training set looks like. If you have the compute, one thing that seems to work consistently well is randomly selecting several different samples, testing all of them, then choosing the sample that performs the best for validation (see Zhang et al.). [Li and Qiu](https://arxiv.org/pdf/2302.13539.pdf) find that diversity-guided sampling and entropy-guided sampling perform better than random sampling, so you are probably better off trying one of the above approaches than random sampling, but your mileage may vary depending on domain.
 
 I should lastly reinforce that my dataset was quantitative, so results may not generalize well. I've been experiment with language models quantitative tabular data for some time now. It appears that there is a strong upper-bound on performance accuracy, though a high lower-bound as well, for tasks where the features are easy to interpret. As a consequence, alterations to prompting schemes may have muted effects in tabular classification tasks compared to other benchmark NLP tasks.
 
