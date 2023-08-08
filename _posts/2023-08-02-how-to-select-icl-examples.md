@@ -5,7 +5,7 @@ title: Three approaches to selecting examples for in-context learning
 
 In 2020, OpenAI reported that [language models are few-shot learners](https://arxiv.org/pdf/2005.14165.pdf). This effect increases with the size of the model.
 
-![](files/few-shot.png)
+![](assets/few-shot.png)
 
 I was working with a medium-size dataset testing GPT-3.5 on a binary classification task with different numbers of in-context examples. I was working with a California housing dataset, trying to classify median housing price as greater than or less than some threshold. All features were quantitative, so I serialize them as into a simple list of the form \[feature\]: \[value\] for each feature, which seems to be best practice (see [TabLLM](https://arxiv.org/pdf/2210.10723.pdf)). At first I was randomly selecting the set of in-context examples each time, but later I wanted to optimize for accuracy. A natural question is, How does one choose the best n examples for in-context learning? I experiment with three approaches.
 
