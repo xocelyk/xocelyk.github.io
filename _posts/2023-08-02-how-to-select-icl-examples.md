@@ -23,7 +23,7 @@ This method suffers from the same issues as the previous one due to its emphasis
 
 **3. Cluster Selection**
 
-Here we attempt to mitigate the downsides of the max entropy approach by selecting a diverse set of points. We again scale the data, then run KMeans with # clusters = n. Then choose the point nearest each centroid, and add it to the sample.
+Here we attempt to mitigate the downsides of the max entropy approach by selecting a diverse set of points. We again scale the data, then run KMeans with n clusters. Then choose the point nearest each centroid, and add it to the sample.
 
 **Results**
 <table>
