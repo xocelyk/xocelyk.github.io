@@ -41,7 +41,7 @@ When we have sparse data, sometimes pretty unhelpful splits are chosen and the t
 
 ![](/assets/dtree-lm-prompt-1.png)
 
-I try this approach using the California housing dataset, classifying whether median house price exceeds $200,000. I first train a decision tree on the entire dataset to benchmark model performance. I hold out a test set of size 1,000, and use the remaining ~20,000 points to choose subsamples. I consider sample sizes 4, 8, 16. For each sample size, I generate 10 unique samples. For each of these samples, I train two decision trees: one using the language model feature selector, one using the standard algorithmic approach. Then I take the accuracy of the trees over the test set. Max depth is set to 3 for all decision trees.
+I try this approach using the California housing dataset, classifying whether median house price exceeds $200,000. I first train a decision tree on the entire dataset to benchmark model performance. I hold out a test set of size 1,000, and use the remaining ~20,000 points to choose subsamples. I consider sample sizes 4, 8, 16, 32, 64. For each sample size, I generate 10 unique samples. For each of these samples, I train two decision trees: one using the language model feature selector, one using the standard algorithmic approach. Then I take the accuracy of the trees over the test set. Max depth is set to 3 for all decision trees.
 
 ![](/assets/dtree-lm-acc-2.png)
 
