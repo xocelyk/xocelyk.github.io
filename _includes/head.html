@@ -1,5 +1,5 @@
 <head>
-  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <link href="https://gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -25,6 +25,24 @@
 
   <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ '/public/apple-touch-icon-precomposed2.png' | absolute_url }}">
   <link rel="shortcut icon" href="{{ '/public/favicon2.ico' | absolute_url }}">
+  <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS_HTML">
+  </script>
+  <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+          TeX: {
+              equationNumbers: {autoNumber: "AMS"},
+              extensions: ["AMSmath.js", "AMSsymbols.js"]
+          },
+          tex2jax: {
+              inlineMath: [['$','$'], ['\\(','\\)']],
+              displayMath: [['$$','$$'], ['\\[','\\]']],
+              processEscapes: true
+          }
+      });
+  </script>
+  
+
 
 
   {% if site.google_analytics_id %}

@@ -22,26 +22,30 @@ $$r_k - r_l = S.$$
 
 Let $\mathbf{r} = \begin{pmatrix} r_1 & \dots & r_n \end{pmatrix}$ be the rankings vector.
 
-Now let our dataset of games be $D = \{(\mathbf{x}_i, y_i) \mid i = 1, \dots, n\}$ where each $\mathbf{x}_i$ represents a game and each $y_u$ marks the margin of that game.
-Let $ \mathbf{x}_{ij} $ be the jth element of the game vector $\mathbf{x}_i.$
- $ \mathbf{x}_{ij} $ is
+Now let our dataset of games be 
+$$D = \{(\mathbf{x_i}, y_i) \mid i = 1, \dots, n\},$$
+where each 
+$\mathbf{x_i}$
+ represents a game and each $y_u$ marks the margin of that game.
+Let $ \mathbf{x_{ij}} $ be the jth element of the game vector $\mathbf{x_i}.$
+ $ \mathbf{x_{ij}} $ is
 - $1$ if team $j$ is home,
 - $-1$ if team $j$ is away,
 - $0$ otherwise.
 
-For example, the pair $(\begin{pmatrix} 1 & -1 & 0 \end{pmatrix}^T, 10)$ represents a game in a three-team leage where team 1 played at home against team 2 and won by 10.
+For example, the pair $((1, -1, 0)^T, 10)$ represents a game in a three-team leage where team 1 played at home against team 2 and won by 10.
 
-Then our predictive model for margin is $$\hat(y_i) = r x_i.$$
+Then our predictive model for margin is $$\hat{y_i} = r x_i.$$
 
 Let's assign a squared error loss function:
 
-$$L(y_i, \hat{y_i)}) = \frac{1}{2}(y_i - \hat{y_i})^2 = \frac{1}{2}(y_i - r x_i)^2.$$
+$$L(y_i, \hat{y}_i) = \frac{1}{2}(y_i - \hat{y}_i)^2 = \frac{1}{2}(y_i - r x_i)^2.$$
 
 Notice that the gradient of the loss with respect to the ratings vector is $\frac{\partial L}{\partial r} = (\hat{y} - y)x_i.$ This is perfectly intuitive! In stochastic gradient descent, our update step will be:
 
-$$r = r + \nu (y - \hat{y}) x_i.$$
+$$r = r + \eta (y - \hat{y}) x_i.$$
 
-Consider what this means for each team in game $\mathbf{x}_i.$ If team 1 is at home and rated 3 higher than team 2, but they only win by 1, then team 1's rating is decreased by (some constant times) 2, and team 2's rating is increased by (some constant times) 2. Individual team ratings get updated in proportion to how much they exceeded expecations.
+Consider what this means for each team in game $\mathbf{x_i}.$ If team 1 is at home and rated 3 higher than team 2, but they only win by 1, then team 1's rating is decreased by (some constant times) 2, and team 2's rating is increased by (some constant times) 2. Individual team ratings get updated in proportion to how much they exceeded expecations.
 
 So, here's how the algorithm works:  
 ```plaintext
