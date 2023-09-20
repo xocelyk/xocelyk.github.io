@@ -5,7 +5,7 @@ title: Basketball Power Ratings as Stochastic Gradient Descent
 
 *NB: This generalizes to any sport or game with head-to-head matchups and scorekeeping: football, pickleball, Yahtzee, type racing. But I care more about basketball, so that's what the title is going to be.*
 
-A natural impulse in sports is to rank teams, and in order to do that, you may be inclined to assign teams a number, or a power rating. This can be any number, but if you want your power rating to be useful, that number should mean something. ELO fans may disagree.
+A natural impulse in sports is to rank teams, and in order to do that you may be inclined to assign teams a number, or a power rating. This can be any number, but if you want your power rating to be useful, that number should mean something. ELO fans may disagree.
 
 There are two main ways success is measured in sports. These are also the two things people like to bet on:
 1. How often a team wins (or, how likely a team is to win)
