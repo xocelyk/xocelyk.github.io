@@ -1,11 +1,11 @@
 ---
 layout: post
-title: Notes on Risks from Learned Optimization in Machine Learning Systems
+title: Notes on Risks from Learned Optimization in Advanced Machine Learning Systems
 ---
 
 ### Notes
 
-[Risks from Learned Optimization in Machine Learning Systems, 2021](https://arxiv.org/pdf/1906.01820.pdf)
+[Risks from Learned Optimization in Advanced Machine Learning Systems, 2021](https://arxiv.org/pdf/1906.01820.pdf)
 
 - a system is an optimizer if it internally searches through a search space (e.g. parameters) looking for elements that score high according to some objective function
 	- learning algorithms are optimizers
