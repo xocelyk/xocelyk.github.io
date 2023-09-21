@@ -1,0 +1,154 @@
+---
+layout: post
+title: Notes on Risks from Learned Optimization in Machine Learning Systems
+---
+
+### Notes
+
+[Risks from Learned Optimization in Machine Learning Systems, 2021](https://arxiv.org/pdf/1906.01820.pdf)
+
+- a system is an optimizer if it internally searches through a search space (e.g. parameters) looking for elements that score high according to some objective function
+	- learning algorithms are optimizers
+	- so are planning algorithms
+- a neural network *is optimized*, but is not itself an optimizer
+- however, some neural networks can be optimizers (consider a net that runs a planning algorithm that predicts the outcomes of potential plans and finds those it predicts will result in some desired outcome)
+	- in this case, the learning algorithm that produced the network is the base optimizer, and the network itself is the mesa-optimizer
+- gradient descent is a base optimizer
+- meta-optimizers are systems whose task is optimization, e.g. a system to help tune gradient descent
+- meta-optimizers -> base optimizers -> mesa-optimizers
+- mesa-objectives are not specified by the programmers
+	- this opens up the possibility for misalignment
+- after the mesa-optimizer is finished training, its actions no longer depend on the base objective
+	- the mesa-objective now determines the behavior
+	- however, the output should (will likely? probably not necessarily though?) score well on the base objective because it was trained on that base objective
+	- but there will be distributional shift from the training to development data, and in the case of distributional shift, we should expect the mesa-optimizer to more robustly optimize for the mesa-objective because its behavior is determined by it, and we are out of training distribution (domain of objective function)
+- a good analog for this is humans: our mesa-objectives are things like get a job, but the base objectives are like have sex and reproduce
+- robustly aligned: mesa-optimizers and mesa-objectives that robustly agree with the base objective across different distributions
+- pseudo-aligned: mesa-optimizers with mesa-objectives that agree with the base objective on past training data. but not robustly across new distributions
+- behavioral objective: the objective that *appears* to be optimized by the system’s behavior
+	- this can be operationalized (?) by recovering it from inverse reinforcement learning
+	- contrast with mesa-objective which is actively being used by the mesa-optimizer
+- inner alignment: eliminating the base-mesa objective gap
+	- e.g. make sure the mesa-objective of the mesa-optimizer is aligned with the loss function
+- outer alignment: eliminating the gap between the base objective and the intended goal of the programmers
+	- e.g. make sure the loss function aligns with the human goal
+- “it might not be necessary to solve the inner alignment problem in order to produce safe, highly capable AI systems, as it might be possible to prevent mesa-optimizers from occurring in the first place”
+- obvious problem: mesa-optimizers could be pseudo-aligned
+- two problems:
+	- we poorly understand the conditions that lead a learning algo to find mesa-optimizers, so we could see unintended optimization
+	- inner alignment: mesa-optimizers might optimize for something other than reward function
+- authors believe mesa-optimization will occur mainly in future systems rather than current systems
+- properties of a task that may influence likelihood of mesa-optimization:
+	- better generalization through search
+		- i.e. when you defining a searching procedure rather than a fixed solution yields better generalization performance
+		- optimizer power: number of times optimizer is able to divide the search space in half (i.e. number of bits of information provided)
+			- after these divisions there is some remaining set of policies that the optimizer cannot distinguish between
+		- two levels of expending optimization power: from base optimizer or mesa-optimizer
+			- at which level is it more advantageous? this will determine mesa-optimization generation
+		- the learned algorithm only has to determine what action to perform at a given task; the base optimizer has to design heuristics that hold across many different tasks
+		- mesa-optimizers are useful for tasks with a branching nature (they give example of chess)
+		- mesa-optimization is useful for diverse environments (see toy model)
+	- compression of complex policies
+		- base optimizers like to find algorithms with lower complexity (compression), a mesa-optimizer is an example of such an algorithm
+	- task restriction
+		- diverse tasks lend themselves to mesa-optimizers
+	- human modeling
+		- humans are optimizers, so reasoning about humans will promote reasoning about optimization. a system that can understand optimization might be able to reuse that machinery for itself
+- properties of the base optimizer that may influence likelihood of mesa-optimization:
+	- reachability: if a good learned algorithm is able to be reached by the base optimizer. the mesa-optimizer needs to be reachable (in addition to high performing on the base objective)
+	- model capacity: how extensive is the set of algorithms capable of being found by the base optimizer
+		- if larger, the model can search more possible learned algorithms, the more likely it will be to find a mesa-optimizer
+	- inductive biases
+		- e.g. simplicity bias (almost certainly exhibited by almost all base optimizers)
+			- search for simpler functions increases likelihood of finding a mesa-optimizer (see compression of complex policies)
+	- statefulness
+		- base optimizer caches intermediate results, increases model capacity, so it can search more (favors mesa-optimization)
+	- hard-coded optimization
+		- decreases usefulness of mesa-optimization
+- base optimizer maximizes its objective by choose a mesa-optimizer based on performance of the mesa-optimizer’s policy, but not the mesa-optimizer’s objective function. so, base objective and mesa-objective can be misaligned
+- Ibarz et al assume that “a monotonic relationship between the learned reward and true reward” is sufficient for alignment
+- ways a mesa-optimizer can be pseudo-aligned
+	- **proxy alignment**
+		- optimize for some proxy of the base objective
+		- two special cases given
+			- side-effect alignment
+				- a mesa-optimizer is side-effect aligned if optimizing for the mesa-objective has the direct causal result of increasing the base objective in the training distribution
+				- mesa -> base
+			- instrumental alignment
+				- a mesa-optimizer is instrumentally aligned if optimizing for the base objective has the direct causal result of increasing the mesa-objective in the training distribution
+				- base -> mesa**
+	- **approximate alignment**
+		- a mesa-optimizer is approximately aligned if the mesa-objective and the base objective are approximately the same function up to some degree of approximation error (due to the fact that mesa-objective is internally represented; there may be base objectives that cannot be perfectly represented internally, so there will always be some approximation error)
+	- **suboptimality alignment**
+		- a mesa-optimizer is suboptimally aligned if some deficiency, error, or limitation in its optimization process causes it to exhibit aligned behavior on the training distribution
+		- mesa-optimizer is misaligned but nevertheless performs well on training data and base objective *because* it has been selected to make mistakes that lead to good outcomes on the base objective
+			- imagine base objective is robot cleans room, but mesa-objective is robot destroys everthing in existence. robot has mistaken belief that everything it cleans is destroyed, so it cleans and satisfies the base objective. but if it updates its world model in development then it may start to destroy things!
+	- how the task affects a ML system’s likelihood to produce pseudo-aligned mesa-optimizers
+		- unidentifiability: datasets may not contain enough information to pinpoint a specific concept
+			- models may be unable to distinguish between different objective functions
+			- so there are more ways for pseudo-alignment to occur, mistaking (not really mistaking but ygtp) false objectives for true base objectives
+		- proxy choice as pre-computation
+			- proxy choice can save computational work for the base optimizer
+			- the proxy choices that humans care about (food, resources, mating) are computationally easy to optimize directly and correlate well with survival and reproduction
+				- by contrast, caring about spreading out genes is more computational overhead
+			- you can imagine how a proxy always leads to good performance on the base objective byt then a distributional shift occurs and the proxy is no longer good!
+				- thing bio/evo examples, what happens when we over-optimize for food? sex?
+		- compression length of the mesa-optimizer
+			- description length (complexity) of robustly aligned mesa-optimizer might be longer than the description length of a pseudo-aligned mesa-optimizer
+			- “there are more pseudo-aligned mesa-objectives than robustly-aligned mesa-objectives”
+				- why is this?
+				- = is a stronger claim than ->/<-
+	- how the base optimizer may affect the likelihood for a ML system to produce pseudo-aligned mesa-optimizers
+		- hard-coded optimization
+			- may remove some of the sources of pseudo-alignment
+		- model capacity
+			- less capacity might make it harder for the mesa-optimizer to accurately internally represent the base objective, increasing its likelihood to be pseudo-aligned
+		- subprocess interdependence
+			- subprocesses (e.g. in a network) are interdependent. the development of one might be conditional on the existence of another in the network
+			- as a consequence, subprocesses with fewer interdependencies are more likely to be generated
+			- “mesa-optimizers might tend to start their development as proxy aligned before becoming robustly aligned”
+				- becoming robustly aligned might require a chain of interdependent subprocesses to develop
+		- internals-based selection
+			- select the learned algorithm based on some function of the learned algorithm’s internal workings
+				- regularization is an example of this: selection of learned algorithm is fn of number features etc.
+					- selection should be more complex than this of course
+		- adversarial training
+			- make it so that for every mesa objective that is more reachable than the base objective, there is some example where the mesa-objective and base objective disagree and the mesa-optimizer is incentivized to agree with the base objective
+	- deceptive alignment
+		- “with enough training in sufficiently diverse environments, it seems plausible that the base objective will eventually have to be fully represented in the mesa-optimizer. we propose that this can happen without the mesa-optimizer becoming robustly aligned, however.”
+		- mesa-optimizer may model base objective and learn base optimizer will change the mesa-optimizer if it performs poorly
+		- mesa optimizer goal may extend across parameter updates, so it will be averse to modification
+			- because modification will change its goals!
+		- base objective can be incorporated into the mesa-optimizer in two ways
+			- mesa-objective becomes robustly aligned with base objective
+			- mesa optimizer models the base objective in its epistemic model (not its objective), so the objective can still be misaligned
+				- it can learn and understand the base objective while still not pursuing it
+- conditions for deceptive alignment
+	- the mesa-optimizer must have an objective that extends across parameter updates
+		- for example, a training set up where optimizer’s actions have permanent effects on the environment
+	- the mesa-optimizer must know it is being selected to fit a base objective and have a model of the base objective
+		- consider: humans aware of the base optimizer of evolution
+	- the mesa-optimizer must expect the possibility of modification to go away (training ends, or mesa-optimizer takes action to stop it)
+- the dynamics of deceptive alignment
+	- mesa-optimizer selected on basis of its objective and ability *and* how well it learns the base objective and how discerning it is about when the optimize the base objective or its own mesa-objective
+	- joint optimization: mesa-optimizer tried to optimize both mesa-objective and base objective
+		- this creates pressure on its objective to be compatible with the base objective
+		- not stable
+		- suboptimal from perspective of base optimizer
+	- pure deception: mesa-optimizer cooperates with the selection process and postpones trying to optimize its mesa-objective
+		- no pressure to compatibility
+	- “**as the mesa-optimizer becomes more competent, it will therefore have to either move to the domain of pure deception or become robustly aligned”**
+- in limit of training on diverse set of tasks, mesa-optimizer must learn the base objective. three ways this can happen:
+	- robust alignment (good!) “internally aligned” if not corrigibly aligned
+	- deceptive alignment
+	- robust alignment through corrigibility “corrigibly aligned”
+		- base objective is contained in mesa-optimizer’s epistemic model and its objective “points to” that information
+		- a little confused here
+		- “an AI system is corrigible if it tolerates or assists with its human programmers in correcting itself.”
+- because deceptively aligned mesa-optimizers are are waiting for the opportunity to defect from the base objective, distributional shifts that allow the difference between training data and development data to be detected are dangerous
+	- sufficiently advanced systems should be able to detect very subtle shifts; not something we worry about with current systems
+	- it might not even be feasible in practice to remove any detectable difference between training and deployment
+		- limits use cases for a system
+		- some shift can be very subtle
+- it is not necessary for a mesa-optimizer to be able to detect shift from training to deployment to be deceptive
+

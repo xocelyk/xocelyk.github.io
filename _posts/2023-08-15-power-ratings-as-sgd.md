@@ -43,7 +43,7 @@ $$L(y_i, \hat{y}_i) = \frac{1}{2}(y_i - \hat{y}_i)^2 = \frac{1}{2}(y_i - r x_i)^
 
 Notice that the gradient of the loss with respect to the ratings vector is $\frac{\partial L}{\partial r} = (\hat{y} - y)x_i.$ This is perfectly intuitive! In stochastic gradient descent, our update step will be:
 
-$$r = r + \eta (y - \hat{y}) x_i.$$
+$$r = r + \eta (y - \hat{y}) \mathbf{x_i}.$$
 
 Consider what this means for each team in game $\mathbf{x_i}.$ If team 1 is at home and rated 3 higher than team 2, but they only win by 1, then team 1's rating is decreased by (some constant times) 2, and team 2's rating is increased by (some constant times) 2. Individual team ratings get updated in proportion to how much they exceeded expecations.
 
