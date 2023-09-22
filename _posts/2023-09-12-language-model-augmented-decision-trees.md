@@ -19,7 +19,7 @@ Cons: No transfer learning, perform poorly with sparse data
 Pros: Perform well with sparse or zero data  
 Cons: Blackbox, expensive by comparison
 
-Of course, language models are not necessarily blackboxes. If you have access, you can try to do interpretation of the network itself, or you can ask the language model to explain its reasoning before arriving at its conclusion using, for example, chain of thought. But the former is difficult and the latter fallible: language models struggle with reasoning steps, may be inconsistent with reasoning stepos, and asking for reasoning steps costs more tokens, too.
+Of course, language models are not necessarily blackboxes. If you have access, you can try to do interpretation of the network itself, or you can ask the language model to explain its reasoning before arriving at its conclusion using, for example, chain of thought. But the former is difficult and the latter fallible: language models struggle with reasoning steps, may be inconsistent with reasoning steps, and asking for reasoning steps is costly.
 
 If we can learn to build a decision tree from sparse data, we can combine the pros and mitigate the downsides of each of these approaches. Robust decision trees from sparse data are
 
@@ -47,7 +47,7 @@ I try this approach using the California housing dataset, classifying whether me
 
 As expected, the language-model-augmented decision tree outperforms the standard decision tree for small sample sizes, but the gap closes as sample size increases.
 
-I also compare the similarity (proportion of points classified the same) of each the LM-augmented tree and standard tree to the "true" decision tree trained on the entire dataset. The similarity analysis follows the same pattern.
+I also compare the similarity (proportion of points classified the same) of each the LM-augmented tree and standard tree to the "true" decision tree trained on the entire dataset.
 
 ![](/assets/dtree-lm-sim-2.png)
 
