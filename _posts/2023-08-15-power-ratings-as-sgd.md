@@ -26,7 +26,7 @@ Now let our dataset of games be
 $$D = \{(x_i, y_i) \mid i = 1, \dots, n\},$$
 where each 
 $x_i$
- represents a game and each $y_u$ marks the margin of that game.
+ represents a game and each $y_i$ marks the margin of that game.
 Let $ x_{ij} $ be the jth element of the game vector $x_i.$
  $ x_{ij} $ is
 - $1$ if team $j$ is home,
@@ -41,7 +41,7 @@ Let's assign a squared error loss function:
 
 $$L(y_i, \hat{y}_i) = \frac{1}{2}(y_i - \hat{y}_i)^2 = \frac{1}{2}(y_i - r x_i)^2.$$
 
-Notice that the gradient of the loss with respect to the ratings vector is $\frac{\partial L}{\partial r} = (\hat{y} - y)x_i.$ This is perfectly intuitive! In stochastic gradient descent, our update step will be:
+Notice that the gradient of the loss with respect to the ratings vector is $\frac{\partial L}{\partial r} = (y - \hat{y})x_i.$ This is perfectly intuitive! In stochastic gradient descent, our update step will be:
 
 $$r = r + \eta (y - \hat{y}) x_i.$$
 
