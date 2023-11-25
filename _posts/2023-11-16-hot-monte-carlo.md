@@ -50,7 +50,7 @@ Here's a short experiment to illustrate the point. Consider a 4-team league, wit
         </tr>
         <tr>
             <td>Team 4</td>
-            <td>99.2</td>
+            <td>95.2</td>
             <td>2.3</td>
         </tr>
     </tbody>
