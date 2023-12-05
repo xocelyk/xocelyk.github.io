@@ -35,7 +35,7 @@ Let $ x_{ij} $ be the jth element of the game vector $x_i.$
 
 For example, the pair $((1, -1, 0)^T, 10)$ represents a game in a three-team leage where team 1 played at home against team 2 and won by 10.
 
-Then our predictive model for margin is $$\hat{y_i} = r x_i.$$
+Then our predictive model for margin is $$\hat{y}_i = r x_i.$$
 
 Let's assign a squared error loss function:
 
