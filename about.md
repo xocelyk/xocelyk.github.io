@@ -4,29 +4,50 @@ title: About
 permalink: /about/
 ---
 
-Hello, my name is Kyle Cox. Currently I am a Master's student in computer science at the University of Texas at Austin. Previously I was an undergraduate at Williams College before transferring to UT Austin where I completed my bachelor's in mathematics. I was previously a [Forty Acres Scholarship](https://www.texasexes.org/scholarships/forty-acres-scholars-program) Finalist and National Merit Scholar. Currently, I work at the [IC2 Institute](https://ic2.utexas.edu) under Dr. Craig Watkins doing behavioral disorder risk assessment and the [AI Health Lab](https://aihealth.ischool.utexas.edu) researching language models for inference on quantitative data.
+Hello, my name is Kyle Cox. Currently I am a master's student in computer science at the University of Texas at Austin. While pursuing my master's, I am a research associate at the [IC2 Institute](https://ic2.utexas.edu), where I also collaborate with the [AI Health Lab](https://aihealth.ischool.utexas.edu). Previously I was an undergraduate at UT Austin where I completed my bachelor's in mathematics. I was also a [Forty Acres Scholarship](https://www.texasexes.org/scholarships/forty-acres-scholars-program) Finalist and National Merit Scholar. I'm interested in machine learning, language models, AI safety, and basketball analytics.
 
-### Work and Other Projects
-At the IC2 Institute, I am beginning collaboration with [Dr. Leo Anthony Celi](https://www.hsph.harvard.edu/ecpe/faculty/leo-anthony-celi/) at MIT using language models to extract social determinants of health from clinical notes. Dr. Celi's team manages the MIMIC database, a publicly available database for health-related data from ICU patients at the Beth Israel Deaconess Medical Center. 
+### Work, Projects, Experience
+Some things I have worked on:
+- IC2 Institute
+    - Collaborated with MIT Lab for computational physiology to build a classifier for poor health literacy from patient clinical notes
+    - Using [All of Us](https://www.researchallofus.org/about/) research program/dataset for risk assessment for health outcomes, in particular analyzing the relationship between social determinatns of health and clinical outcomes
+    - With Craig Watkins, pitched an app protocol to do behavioral health coaching with ecological momentary assessment [Texas Health Catalyst](https://dellmed.utexas.edu/healthscape/collaborative-opportunities/colab/texas-health-catalyst) at Dell Medical School. Our pitch was selected as a Phase 2 Finalist with about an 8% acceptance rate.
 
-Also at the IC2 Institute, I work with the [All of Us Research Program](https://www.researchallofus.org/about/) researching risk assessment for health outcomes, with particular attention to differential risks for marginalized populations. I am working alongside [Dr. Matt Kammer-Kerwick](https://liberalarts.utexas.edu/prc/faculty/mattkk) on a project investigating the moderation effects of gender, sexual identity, and race/ethnicity on social determinants of health toward diagnosis of major depressive disorder. Manuscript in progress.
+- AI Health Lab
+    - Experimenting with serialization approaches for language models to do inference on health time series data
+    - Showed language models are [few-shot decision tree builders] (https://xocelyk.github.io/2023/09/12/language-model-augmented-decision-trees/)
+    - Testing tree of thoughts prompting approach for gene set summarization with large language models
 
-At the AI Health Lab, I am working under [Dr. Ying Ding](https://yingding.ischool.utexas.edu), using LLMs to do inference and explanation on tabular data with applications to healthcare decision making, also using the MIMIC database.
+- Melange
+    - Interned for Melange in Spring 2022, leading strategy initiatives for a real-money prediction markets platform
 
-While an undergrad at UT, I worked under [Dr. Kirk Goldsberry](https://www.kirkgoldsberry.com) at McComb's School of Business doing NBA analytics. My work under Kirk leveraged computer vision ball- and player-tracking data to study shot mechanics and better quantify shooting accuracy. As part of this work, we collaborated with the Toronto Raptors and UT Men's Basketball.
+- [Directed Reading Program](https://web.ma.utexas.edu/users/drp/)
+    - DRP is a research training group for undergraduates in mathematics
+    - I participated for three sessions--Spring 2021, Summer 2021, and Fall 2021--under the mentorship of [Hunter Vallejos](https://web.ma.utexas.edu/users/vallejos/)
+    - Spring 2021: studied Markov chains and the mixing times of [random card shuffles](https://www.quantamagazine.org/persi-diaconis-mixes-math-and-magic-20150414/)
+    - Summer 2021 (funded): studied ergodic dynamics, with an application to [Benford's Law](https://en.wikipedia.org/wiki/Benford's_law)
+        - Built a simple [web dashboard](https://test-benford.streamlit.app) where you can upload a dataset and evaluate if your data is Benford
+        - Also did a Benford analysis on Detroit precinct voting data amid claims of voter fraud. See [here](https://github.com/xocelyk/benford-election-2021/blob/8636ac3448ba4b15bffb6bd4eebf5ad6181f558d/benford.png)
+    - Fall 2021: did a survey of topics in machine learning, following Kevin Murphy's [Machine Learning, a Probabilistic Perspective](http://noiselab.ucsd.edu/ECE228/Murphy_Machine_Learning.pdf)
 
-As an undergrad, I also took part in the [Directed Reading Program](https://web.ma.utexas.edu/users/drp/) through the mathematics department at UT Austin. DRP offers undergraduates the opportunity to independently study topics in mathematics under a graduate mentor, with presentations at the end of the semester. I highly recommend DRP to UT math undegrads. As of 2021, they offer living stipends to participate in the summer session and will reimburse the purchase of a textbook. I participated for three sessions--Spring 2021, Summer 2021, and Fall 2021--under the mentorship of [Hunter Vallejos](https://web.ma.utexas.edu/users/vallejos/) studying Markov chains and the mixing times of [random card shuffles](https://www.quantamagazine.org/persi-diaconis-mixes-math-and-magic-20150414/); ergodic dynamics, with an application to [Benford's Law](https://en.wikipedia.org/wiki/Benford's_law); and selected topics in machine learning, with a final presentation given on principal components analysis & singular value decomposition for data compression. I also built a [web dashboard](https://test-benford.streamlit.app) where you can upload a dataset and evaluate if your data is Benford.
+- UT/Goldsberry Basketball Analytics
+    - Worked on computer vision and basketball analytics problems with Kirk Goldsberry, one of which turned into the [capstone paper](https://github.com/xocelyk/beyondbinary/blob/main/beyondbinary-final.pdf) for my applied statistics certificate
+    - Did lots of cleaning and modeling of ball-tracking computer vision data, working with data from the UT men's basketball program, Toronto Raptors, and University of Toronto biomechanics & sports medicine lab
 
-I do NBA and college basketball analytics and forecasting in my sparetime. My NBA/CBB rankings and predictions can be found [here](http://www.kyle-cox.com). During the season, you can track my men's college basketball rankings and their performance compared to others' at Ken Massey's [site](https://masseyratings.com/cb/compare.htm). Since I started updating last year they performed [pretty well](https://www.markmoog.com/ranking_analysis), edging out Jeff Sagarin and right behind Ken Pomeroy. The code behind my NBA predictions and simulations is hosted [here](https://github.com/xocelyk/nba) on GitHub. I tracked my predictions on [Twitter](https://www.twitter.com/eigenball/) as well, before they changed free API acccess.
+- Dalton Pathology
+    - Did independent research with Dr. Leslie Dalton over summer 2021, doing deep learning for breast cancer tissue classification
 
-I also do [live in-game win probabilities](https://nba-live-probability.streamlit.app) for NBA. The live dashboard is broken because one of my free data sources moved, but check out the archive in the side menu.
+- [Alegion](https://www.alegion.com)
+    - Interned for Alegion over summer 2020, where I expanded annotation tools for the data labeling platform
 
-A bottleneck to NBA analytics hobbyists is good play-by-play data. Though there are many play-by-play data sources, it is harder to find play-by-play data with on-court lineups. This is important, because to do individual player evaluation, you have to know who was on the court at every moment. However, for about 90% of games, you can remedy this by iterating through each play and back-filling lineups where there is a mention of a player in action. I did this for games from 1999-2022 and host the dataset on [Kaggle](https://www.kaggle.com/datasets/xocelyk/nba-pbp) so that hobbyists can try at building their own player evaluation metrics.
+- Tutoring/Teaching
+    - Tutored students in math through all of undegrad, everything from middle school to college level, but most often pre-calculus and calculus. 100+ clients
+    - Also taught a biweekly summer math course at my old high school for advanced middle school students, and spoke to the math club a couple of times. This was a ton of fun.
 
-In summer 2020, I worked as a data science intern at [Alegion](https://www.alegion.com), where I built out bounding box tools for cuboidal and elliptical object annotations and wrote a locality-sensitive hashing framework for identifying similar images.
-
-In summer 2021, I worked as a middle school math teacher, teaching algebra to students trying to jump to high school math. That summer, I also participated in the Directed Reading Program with funding from the UT math department, and worked with [Dr. Leslie Dalton](https://www.researchgate.net/profile/Leslie-Dalton-5) using convolutional neural nets to classify stroma content in breast cancer patients. This was my first foray into deep learning.
-
-In spring 2022, I interned for [Melange](https://www.melange.com), building a [prediction markets](https://en.wikipedia.org/wiki/Prediction_market.) exchange.
-
-In January 2023, as a part of my appointment at the IC2 Institute, I pitched a mobile platform for AI-powered behavioral health coaching alongside Craig Watkins and Matt Kammer-Kerwick to [Texas Health Catalyst](https://dellmed.utexas.edu/healthscape/collaborative-opportunities/colab/texas-health-catalyst) at Dell Medical School. Our pitch was selected as a Phase 2 Finalist with about an 8% acceptance rate.
+- NBA/College Basketball Projects
+    - My NBA/CBB rankings and predictions can be found [here](http://www.kyle-cox.com). NBA updates daily automatically; college I update every once in a while manually.
+        - Initially was just an application of [PageRank](https://www2.math.upenn.edu/~kazdan/312S14/Notes/Perron-Frobenius-football-SIAM1993.pdf) to college basketball rankings
+        - Now I focus on the NBA side, which uses a more involved efficiency-based algorithm and Monte Carlo simulations to build season projections
+    - I also do [live in-game win probabilities](https://nba-live-probability.streamlit.app) for NBA. Sometimes when there are a bunch of games on, I put the win-probability dashboard up on my monitor while I'm working.
+    - PBP data
+        - A bottleneck to NBA analytics hobbyists is good play-by-play data. Though there are many play-by-play data sources, it is harder to find play-by-play data with on-court lineups. This is important, because to do individual player evaluation, you have to know who was on the court at every moment. However, for about 90% of games, you can remedy this by iterating through each play and back-filling lineups where there is a mention of a player in action. I did this for games from 1999-2022 and host the dataset on [Kaggle](https://www.kaggle.com/datasets/xocelyk/nba-pbp) so that hobbyists can try at building their own player evaluation metrics.
