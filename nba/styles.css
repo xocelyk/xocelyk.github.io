@@ -1,7 +1,6 @@
 table {
     margin-bottom: none;
-    max-width: 100%;
-    width: 80%;
+    max-width: 200%;
     border: none;
     border-collapse: none;
   }
@@ -22,7 +21,6 @@ th {
 
 .table {
     max-width: 200%;
-    width: 150%;
     overflow-x: auto;
     overflow-y: auto;
     margin: 0 auto;
@@ -79,12 +77,4 @@ th {
     max-width: 200%;
     overflow-x: auto; /* Enable horizontal scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-}
-
-
-
-@media screen and (min-width: 768px) { /* Adjust breakpoint as needed */
-    .table {
-        max-width: 100%; /* Ensure the table fits within the viewport */
-    }
 }

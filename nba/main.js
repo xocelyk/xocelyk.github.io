@@ -79,19 +79,19 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
             }
         })
         .style("width", d => {
-            if (d.column === "Team") return "150px";
-            if (d.column === "Record") return "60px";
-            if (d.column === "Season Rating") return "50px";
-            if (d.column === "Predictive Rating") return "50px";
-            if (d.column === "Projected Record") return "80px";
-            if (d.column === "AdjO") return "50px";
-            if (d.column === "AdjD") return "50px";
-            if (d.column === "Pace") return "50px"
-            if (d.column === "RSOS") return "50px";
-            if (d.column === "Playoffs") return "50px";
-            if (d.column === "Conference Finals") return "50px";
-            if (d.column === "Finals") return "50px";
-            if (d.column === "Champion") return "50px";
+            if (d.column === "Team") return "20%";
+            if (d.column === "Record") return "10%";
+            if (d.column === "Season Rating") return "6%";
+            if (d.column === "Predictive Rating") return "6%";
+            if (d.column === "Projected Record") return "10%";
+            if (d.column === "AdjO") return "6%";
+            if (d.column === "AdjD") return "6%";
+            if (d.column === "Pace") return "6%"
+            if (d.column === "RSOS") return "6%";
+            if (d.column === "Playoffs") return "6%";
+            if (d.column === "Conference Finals") return "6%";
+            if (d.column === "Finals") return "6%";
+            if (d.column === "Champion") return "6%";
 
             return "auto";
         })
