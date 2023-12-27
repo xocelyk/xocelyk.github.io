@@ -80,7 +80,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         })
         .style("width", d => {
             if (d.column === "Team") return "150px";
-            if (d.column === "Record") return "50px";
+            if (d.column === "Record") return "60px";
             if (d.column === "Season Rating") return "50px";
             if (d.column === "Predictive Rating") return "50px";
             if (d.column === "Projected Record") return "80px";

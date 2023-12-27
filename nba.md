@@ -6,6 +6,9 @@ permalink: /nba/
 
 Updated daily. Projections from 1000 Monte Carlo simulations.
 
-
-{% include nba_table.html %}
+<div class="table-scroll-container">
+<div id="table-container">
+    {% include nba_table.html %}
+</div>
+</div>
 

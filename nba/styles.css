@@ -1,6 +1,7 @@
 table {
     margin-bottom: none;
-    width: 100%;
+    max-width: 100%;
+    width: 80%;
     border: none;
     border-collapse: none;
   }
@@ -20,8 +21,8 @@ th {
 }
 
 .table {
-    max-width: 100%;
-    width: 80%;
+    max-width: 200%;
+    width: 150%;
     overflow-x: auto;
     overflow-y: auto;
     margin: 0 auto;
@@ -69,7 +70,21 @@ th {
 
 .container {
     max-width: 100%;
-    width: 100%;
+    width: 80%;
     margin: 0 auto; /* Center table on page */
     border-collapse: collapse;
+}
+
+.table-scroll-container {
+    max-width: 200%;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+
+
+@media screen and (min-width: 768px) { /* Adjust breakpoint as needed */
+    .table {
+        max-width: 100%; /* Ensure the table fits within the viewport */
+    }
 }
