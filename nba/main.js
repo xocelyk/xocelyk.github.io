@@ -1,9 +1,10 @@
+/* TODO: fix sort by Season Rating */
 d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").then(data => {
     const colorScale = d3.scaleLinear()
         .domain([0, 1])
         .range(["#ffffff", "#33CEFF"]);
 
-    const container = d3.select("#table-container");
+    const container = d3.select("#table-container-1");
     const table = container.append("table").attr("class", "table").attr("id", "1");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
@@ -188,3 +189,4 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         sortByColumn(d);
     });
 });
+

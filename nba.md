@@ -11,4 +11,13 @@ Updated daily. Projections from 1000 Monte Carlo simulations.
     {% include nba_table.html %}
 </div>
 </div>
+<br/><br/>
+
+Game predictions for the next week.
+
+<div class="table-scroll-container">
+<div id="table-container">
+    {% include nba_predictions_table.html %}
+</div>
+</div>
 
