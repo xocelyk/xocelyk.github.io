@@ -12,27 +12,27 @@ th {
 }
 
 .table td.right-border {
-    border-right: 3px solid #333; /* Adjust the color and width as needed */
+    border-right: 3px solid #333;
 }
 
 .table td.left-border {
-    border-left: 3px solid #333; /* Adjust the color and width as needed */
+    border-left: 3px solid #333;
 }
 
 .table {
     max-width: 100%;
-    width: 100%;
-    margin: 0 auto; /* Center table on page */
+    width: 80%;
+    overflow-x: auto;
+    overflow-y: auto;
+    margin: 0 auto;
     border-collapse: collapse;
-    font-family: 'Cabin', sans-serif; /* Or your chosen font */
+    font-family: 'Cabin', sans-serif;
 
 }
 .table th {
-    font-size: 11px; /* Smaller font size for column headers */
-    /* Make sure they're not bold */
+    font-size: 11px;
     font-weight: 500;
-    /* Other styles like padding, text-align, etc. */
-    border-bottom: 2px solid #333; /* Example bottom border */
+    border-bottom: 2px solid #333;
 }
 
 .table th, .table td {
@@ -69,7 +69,7 @@ th {
 
 .container {
     max-width: 100%;
-    width: 80%;
+    width: 100%;
     margin: 0 auto; /* Center table on page */
     border-collapse: collapse;
 }
