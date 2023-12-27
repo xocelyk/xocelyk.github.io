@@ -28,8 +28,8 @@ Here's a short experiment to illustrate the point. Consider a 4-team league, wit
     <thead>
         <tr>
             <th></th> <!-- Blank header for the row names -->
-            <th>Average Wins</th>
-            <th>StDev Wins</th>
+            <th>Avg. Wins</th>
+            <th>SD Wins</th>
         </tr>
     </thead>
     <tbody>
@@ -62,8 +62,8 @@ Here's a short experiment to illustrate the point. Consider a 4-team league, wit
     <thead>
         <tr>
             <th></th> <!-- Blank header for the row names -->
-            <th>Average Wins</th>
-            <th>StDev Wins</th>
+            <th>Avg. Wins</th>
+            <th>SD Wins</th>
         </tr>
     </thead>
     <tbody>

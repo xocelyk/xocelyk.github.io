@@ -1,3 +1,16 @@
+table {
+    margin-bottom: none;
+    width: 100%;
+    border: none;
+    border-collapse: none;
+  }
+
+td,
+th {
+  padding: none;
+  border: none;
+}
+
 .table td.right-border {
     border-right: 3px solid #333; /* Adjust the color and width as needed */
 }

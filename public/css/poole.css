@@ -261,7 +261,7 @@ img {
   background-color: #f9f9f9;
 }
 
-/* Tables
+/* Tables  */
 table {
   margin-bottom: 1rem;
   width: 100%;
@@ -271,8 +271,8 @@ table {
 td,
 th {
   padding: .25rem .5rem;
-  border: 1px solid #e5e5e5; */
-/* } */
+  border: 1px solid #e5e5e5;
+}
 
 
 /*
