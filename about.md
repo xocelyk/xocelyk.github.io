@@ -15,7 +15,7 @@ Some things I have worked on:
 
 - AI Health Lab
     - Experimenting with serialization approaches for language models to do inference on health time series data
-    - Showed language models are [few-shot decision tree builders] (https://xocelyk.github.io/2023/09/12/language-model-augmented-decision-trees/)
+    - Showed language models are [few-shot decision tree generators](https://xocelyk.github.io/2023/09/12/language-model-augmented-decision-trees/)
     - Testing tree of thoughts prompting approach for gene set summarization with large language models
 
 - Melange

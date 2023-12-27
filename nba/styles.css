@@ -1,0 +1,62 @@
+.table td.right-border {
+    border-right: 3px solid #333; /* Adjust the color and width as needed */
+}
+
+.table td.left-border {
+    border-left: 3px solid #333; /* Adjust the color and width as needed */
+}
+
+.table {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto; /* Center table on page */
+    border-collapse: collapse;
+    font-family: 'Cabin', sans-serif; /* Or your chosen font */
+
+}
+.table th {
+    font-size: 11px; /* Smaller font size for column headers */
+    /* Make sure they're not bold */
+    font-weight: 500;
+    /* Other styles like padding, text-align, etc. */
+    border-bottom: 2px solid #333; /* Example bottom border */
+}
+
+.table th, .table td {
+    padding: 10px;
+    text-align: center;
+}
+
+.table td {
+    font-size: 16px;
+    border-bottom: 1px solid #cccccc;
+    /* Make all cells white */
+    background-color: #fff;
+
+}
+
+.table th {
+    padding: 2px;
+}
+
+.table th {
+    /* Optional: Add bottom border to header if desired */
+    border-bottom: 3px solid #333;
+}
+
+.table .team-cell {
+    text-align: left;
+}
+
+/* Optional: Add hover to header */
+.table th:hover {
+    background-color: #e9e6e6;
+    color: #333;
+}
+
+.container {
+    max-width: 100%;
+    width: 80%;
+    margin: 0 auto; /* Center table on page */
+    border-collapse: collapse;
+}
