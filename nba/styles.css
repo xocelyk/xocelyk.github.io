@@ -45,6 +45,23 @@ th {
 
 }
 
+/* Add a media query for small screens */
+@media (max-width: 600px) {
+  .table td {
+      font-size: 11px; /* Smaller font size for small screens */
+      padding: 10px;
+  }
+  .table th {
+      font-size: 9px;
+      padding: 10px;}
+      /* Prevent line breaks at hyphens */
+  .table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;}
+
+}
+
 .table th {
     padding: 2px;
 }
@@ -67,6 +84,7 @@ th {
 .container {
     max-width: 28rem;
   }
+
   @media (min-width: 38em) {
     .container {
       max-width: 60rem;
@@ -79,7 +97,7 @@ th {
   }
 
 .table-scroll-container {
-    max-width: 200%;
+    max-width: 400%;
     overflow-x: auto; /* Enable horizontal scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
