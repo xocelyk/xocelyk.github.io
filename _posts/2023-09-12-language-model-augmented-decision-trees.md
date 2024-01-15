@@ -1,13 +1,14 @@
 ---
 layout: post
-title: Augmenting Decision Trees with LLMs
+title: Augmenting decision trees with LLMs
 ---
 
 Machine learning models perform well when there is an abundance of data. They handle high dimensionality well, perform calculations rapidly, and do not rely on lazy approximations for their guesses. The inference abilities of humans and language models, however, do not scale well with data. We are, however, expert transfer learners, with strong priors about the behaviors of different classes of things.
 
-Suppose you're hiking in a foreign land cataloging the animals you've seen: a couple of birds, a salamander, and a baby deer. For each animal you enter a description into your database and mark whether it was dangerous or safe. Suddenly you come across an animal you have never seen before. Four-legged and the size of a large dog, salivating, it bares its fangs and lets out a gurgling hiss in your direction. Having seen your fair share of nature documentaries, you may classify this as a dangerous situation, despite having no training data specific to this particular animal. Double-checking yourself, you build a decision tree from your database to classify animals as dangerous or safe. Having only seen safe animals, the tree consists of just a single leaf that points to the label "safe." Until you've collected a large amount of data, you're probably better off trusting your intuition, or giving the animal description to GPT-4 and zero-shotting it.
+Suppose you're hiking in a foreign land cataloging the animals you've seen: a couple of birds, a salamander, and a baby deer. For each animal you enter a description into your database and mark whether it was dangerous or safe. Suddenly you come across an animal you have never seen before. Four-legged and the size of a large dog, salivating, it bares its fangs and lets out a gurgling hiss in your direction. Having seen your fair share of nature documentaries, you may classify this as a dangerous situation, despite having no training data specific to this particular animal. Double-checking yourself, you build a decision tree from your database to classify animals as dangerous or safe. But you've only seen a few animals, and your decision tree algorithm finds that it gains more information splitting on the "dog-like" attribute than the "size of fangs" one. All the dog-like animals you have seen are safe, so the decision tree marks this encounter also "safe." Until you've collected a large amount of data, you're probably better off trusting your intuition, or giving the animal description to GPT-4 and zero-shotting it.
 
 ![](/assets/tab-llm-1.png)
+*[TabLLM](https://arxiv.org/abs/2210.10723): LLMs do well with little tabular data.*
 
 Let's compare the pros/cons of decision trees and language models:
 
@@ -41,17 +42,15 @@ When we have sparse data, sometimes pretty unhelpful splits are chosen and the t
 
 ![](/assets/dtree-lm-prompt-1.png)
 
-I try this approach using the California housing dataset, classifying whether median house price exceeds $200,000. I first train a decision tree on the entire dataset to benchmark model performance. I hold out a test set of size 1,000, and use the remaining ~20,000 points to choose subsamples. I consider sample sizes 4, 8, 16, 32, 64. For each sample size, I generate 10 unique samples. For each of these samples, I train two decision trees: one using the language model feature selector, one using the standard algorithmic approach. Then I take the accuracy of the trees over the test set. Max depth is set to 3 for all decision trees.
+I try this approach on a few different Kaggle datasets: classifying whether median housing price exceeds $200,000, classifying mushroom edibiility, and classifying diabetes diagnosis. For each dataset, I hold out a test set of size 1,000, and use the remaining data to choose subsamples. I consider sample sizes 4, 8, 16, 32, 64, and 128. For each sample size, I generate 20 unique samples. For each of these samples, I train two decision trees: one using the language model feature selector, one using the standard algorithmic approach. Then I take the accuracy of the trees over the test set. Max depth is set to 3 for all decision trees.
 
-![](/assets/dtree-lm-acc-2.png)
+![](/assets/llm-dtree-housing.png)
+![](/assets/llm-dtree-mushroom.png)
+![](/assets/llm-dtree-diabetes.png)
 
 As expected, the language-model-augmented decision tree outperforms the standard decision tree for small sample sizes, but the gap closes as sample size increases.
 
-I also compare the similarity (proportion of points classified the same) of each the LM-augmented tree and standard tree to the "true" decision tree trained on the entire dataset.
-
-![](/assets/dtree-lm-sim-2.png)
-
-The primary advantage of the language model is that it consitently chooses median income for the root node split, which is by far the most important feature, while the algorithm often chooses other features for the root node split for small sample sizes.
+The primary advantage of the language model is that it consistently chooses the most important feature for root node split (income in the housing example, odor in the mushroom example), while the algorithm often chooses other features for the root node split for small sample sizes.
 
 **Some other questions/ideas**
 
