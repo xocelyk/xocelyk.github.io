@@ -8,6 +8,9 @@ Hello, my name is Kyle Cox. Currently I am a master's student in computer scienc
 
 ### Work, Projects, Experience
 Some things I have worked on:
+- [ARENA](https://www.arena.education)
+    - From January to February 2024, I am participating in ARENA (alignment research engineer accelerator). ML fundamentals, Mechanistic Interpretability, and Reinforcement Learning.
+
 - IC2 Institute
     - Collaborated with MIT Lab for computational physiology to build a classifier for poor health literacy from patient clinical notes
     - Using [All of Us](https://www.researchallofus.org/about/) research program/dataset for risk assessment for health outcomes, in particular analyzing the relationship between social determinatns of health and clinical outcomes
