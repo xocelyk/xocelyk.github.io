@@ -13,8 +13,8 @@ Some things I have worked on:
 
 - IC2 Institute
     - Collaborated with MIT Lab for computational physiology to build a classifier for poor health literacy from patient clinical notes
-    - Using [All of Us](https://www.researchallofus.org/about/) research program/dataset for risk assessment for health outcomes, in particular analyzing the relationship between social determinatns of health and clinical outcomes
-    - With Craig Watkins, pitched an app protocol to do behavioral health coaching with ecological momentary assessment [Texas Health Catalyst](https://dellmed.utexas.edu/healthscape/collaborative-opportunities/colab/texas-health-catalyst) at Dell Medical School. Our pitch was selected as a Phase 2 Finalist with about an 8% acceptance rate.
+    - Using [All of Us](https://www.researchallofus.org/about/) research program/dataset for risk assessment for health outcomes, in particular analyzing the relationship between social determinants of health and clinical outcomes
+    - With Craig Watkins, pitched an app protocol to do behavioral health coaching with ecological momentary assessment to [Texas Health Catalyst](https://dellmed.utexas.edu/healthscape/collaborative-opportunities/colab/texas-health-catalyst) at Dell Medical School. Our pitch was selected as a Phase 2 Finalist with about an 8% acceptance rate.
 
 - AI Health Lab
     - Experimenting with serialization approaches for language models to do inference on health time series data
@@ -48,9 +48,9 @@ Some things I have worked on:
     - Also taught a biweekly summer math course at my old high school for advanced middle school students, and spoke to the math club a couple of times. This was a ton of fun.
 
 - NBA/College Basketball Projects
-    - My NBA/CBB rankings and predictions can be found [here](http://www.kyle-cox.com). NBA updates daily automatically; college I update every once in a while manually.
-        - Initially was just an application of [PageRank](https://www2.math.upenn.edu/~kazdan/312S14/Notes/Perron-Frobenius-football-SIAM1993.pdf) to college basketball rankings
-        - Now I focus on the NBA side, which uses a more involved efficiency-based algorithm and Monte Carlo simulations to build season projections
+    - My NBA rankings and predictions can be found [here](https://xocelyk.github.io/nba/). College ratings I update every couple of weeks [here](http://www.kyle-cox.com/2022-college-basketball-ratings/).
+        - Initially was just an application of [PageRank](https://www2.math.upenn.edu/~kazdan/312S14/Notes/Perron-Frobenius-football-SIAM1993.pdf) to college basketball rankings.
+        - Now I focus on the NBA side, which uses a more involved efficiency-based algorithm and Monte Carlo simulations to build season projections.
     - I also do [live in-game win probabilities](https://nba-live-probability.streamlit.app) for NBA. Sometimes when there are a bunch of games on, I put the win-probability dashboard up on my monitor while I'm working.
     - PBP data
         - A bottleneck to NBA analytics hobbyists is good play-by-play data. Though there are many play-by-play data sources, it is harder to find play-by-play data with on-court lineups. This is important, because to do individual player evaluation, you have to know who was on the court at every moment. However, for about 90% of games, you can remedy this by iterating through each play and back-filling lineups where there is a mention of a player in action. I did this for games from 1999-2022 and host the dataset on [Kaggle](https://www.kaggle.com/datasets/xocelyk/nba-pbp) so that hobbyists can try at building their own player evaluation metrics.
