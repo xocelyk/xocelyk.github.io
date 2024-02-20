@@ -28,7 +28,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         }
 
         if (column === "Playoffs" || column === "Conference Finals" || column === "Finals" || column === "Champion") {
-            const formattedNumber = (num * 100).toFixed(1);
+            const formattedNumber = (num * 100).toFixed(0);
             return formattedNumber + "%";
         }
     }
@@ -71,14 +71,49 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         .attr("class", d => d.column === "Team" ? "team-cell" : (d.addBorder ? "right-border" : ""))
         .text(d => {
             if (['Playoffs', 'Conference Finals', 'Finals', 'Champion'].includes(d.column)) {
-                const percentage = Math.round(parseFloat(d.value) * 100);
-                return `${percentage}%`;
-            } else if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
-                return formatValue(d.value, d.column); // Use the formatting function
-            } else {
-                return d.value;
+                const value = parseFloat(d.value);
+                // Check for value greater than 0.999
+                if (value > 0.999) {
+                    return ">99.9%";
+                }
+                // Check for value less than 0.001
+                else if (value < 0.001) {
+                    return "<0.1%";
+                }
+                // For values >= 0.990 or <= 0.010, show one decimal place
+                else if (value > 0.990 || value < 0.010) {
+                    const percentage = (value * 100).toFixed(1);
+                    return `${percentage}%`;
+                }
+                // For all other cases, round to the nearest whole number
+                else {
+                    const percentage = Math.round(value * 100);
+                    return `${percentage}%`;
+                }
             }
-        })
+            return d.value;
+        }
+        )
+        
+
+        //         if (parseFloat(d.value) > 0.999) {
+        //             return ">99.9%";
+        //         }
+        //         // Check for value less than 0.001 (0.1% of a percentage)
+        //         else if (parseFloat(d.value) < 0.001) {
+        //             return "<0.1%";
+        //         }
+        //         // Convert to percentage and format to one decimal place for all other cases
+        //         else {
+        //             const percentage = (parseFloat(d.value) * 100).toFixed(1);
+        //             return `${percentage}%`;
+        //         }
+        //     } else if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
+        //         return formatValue(d.value, d.column); // Use the formatting function
+        //     } else {
+        //         return d.value;
+        //     }
+        // })
         .style("width", d => {
             if (d.column === "Team") return "20%";
             if (d.column === "Record") return "10%";

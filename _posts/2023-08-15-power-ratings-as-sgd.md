@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Basketball Power Ratings as Stochastic Gradient Descent
+title: Basketball power ratings as stochastic gradient descent
 ---
 
 *NB: This generalizes to any sport or game with head-to-head matchups and scorekeeping: football, pickleball, Yahtzee, type racing. But I care more about basketball, so that's what the title is going to be.*
