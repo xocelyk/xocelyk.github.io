@@ -91,29 +91,12 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
                     return `${percentage}%`;
                 }
             }
-            return d.value;
-        }
-        )
+            if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
+                return formatValue(d.value, d.column);
+            }
+            return d.value
         
-
-        //         if (parseFloat(d.value) > 0.999) {
-        //             return ">99.9%";
-        //         }
-        //         // Check for value less than 0.001 (0.1% of a percentage)
-        //         else if (parseFloat(d.value) < 0.001) {
-        //             return "<0.1%";
-        //         }
-        //         // Convert to percentage and format to one decimal place for all other cases
-        //         else {
-        //             const percentage = (parseFloat(d.value) * 100).toFixed(1);
-        //             return `${percentage}%`;
-        //         }
-        //     } else if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
-        //         return formatValue(d.value, d.column); // Use the formatting function
-        //     } else {
-        //         return d.value;
-        //     }
-        // })
+        })
         .style("width", d => {
             if (d.column === "Team") return "20%";
             if (d.column === "Record") return "10%";
