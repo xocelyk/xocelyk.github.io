@@ -28,7 +28,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         }
 
         if (column === "Playoffs" || column === "Conference Finals" || column === "Finals" || column === "Champion") {
-            const formattedNumber = (num * 100).toFixed(0);
+            const formattedNumber = (num * 100).toFixed(1);
             return formattedNumber + "%";
         }
     }
