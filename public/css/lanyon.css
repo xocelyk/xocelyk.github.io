@@ -41,23 +41,23 @@ body {
 }
 
 html {
-  /* font-family: "Lato", Georgia, "Times New Roman", serif; */
-  font-family: "Computer Modern Sans", sans-serif;
+  font-family: "Lato", Georgia, "Times New Roman", serif;
+  /* font-family: "Computer Modern Sans", sans-serif; */
   letter-spacing: -.005rem;
   color: #ff0000;
 }
 
-h1, h2, h3, h4, h5, h6 {
+/* h1, h2, h3, h4, h5, h6 {
   font-family: "Computer Modern Sans", sans-serif;
   color: #000000;
-}
+} */
 
-/* h1, h2, h3, h4, h5, h6 { */
-  /* font-family: "Lato", Helvetica, Arial, sans-serif;
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Lato", Helvetica, Arial, sans-serif;
   font-weight: 400;
   color: #313131;
-  letter-spacing: -.025rem; */
-/* } */
+  letter-spacing: -.025rem;
+}
 
 
 /*
