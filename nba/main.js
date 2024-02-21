@@ -28,8 +28,19 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         }
 
         if (column === "Playoffs" || column === "Conference Finals" || column === "Finals" || column === "Champion") {
-            const formattedNumber = (num * 100).toFixed(0);
-            return formattedNumber + "%";
+            const value = parseFloat(num);
+            if (value > 0.999) {
+                return ">99.9%";
+            }
+            if (value < 0.001) {
+                return "<0.1%";
+            }
+            if (value > 0.990 || value < 0.010) {
+                const percentage = (value * 100).toFixed(1);
+                return `${percentage}%`;
+            }
+            const percentage = Math.round(value * 100);
+            return `${percentage}%`;
         }
     }
     
