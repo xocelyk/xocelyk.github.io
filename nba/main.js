@@ -27,8 +27,14 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
             return (num > 0 ? "+" : "") + formattedNumber;
         }
 
-        if (column === "Playoffs" || column === "Conference Finals" || column === "Finals" || column === "Champion") {
+        if (column === "Playoffs" || column == "Conference Semis" || column === "Conference Finals" || column === "Finals" || column === "Champion") {
             const value = parseFloat(num);
+            if (value == 1) {
+                return "100%";
+            }
+            if (value == 0) {
+                return "0%";
+            }
             if (value > 0.999) {
                 return ">99.9%";
             }
@@ -81,8 +87,14 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         .append("td")
         .attr("class", d => d.column === "Team" ? "team-cell" : (d.addBorder ? "right-border" : ""))
         .text(d => {
-            if (['Playoffs', 'Conference Finals', 'Finals', 'Champion'].includes(d.column)) {
+            if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
                 const value = parseFloat(d.value);
+                if (value == 1) {
+                    return "100%";
+                }
+                if (value == 0) {
+                    return "0%";
+                }
                 // Check for value greater than 0.999
                 if (value > 0.999) {
                     return ">99.9%";
@@ -117,16 +129,17 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
             if (d.column === "AdjO") return "6%";
             if (d.column === "AdjD") return "6%";
             if (d.column === "Pace") return "6%"
-            if (d.column === "RSOS") return "6%";
+            // if (d.column === "RSOS") return "6%";
             if (d.column === "Playoffs") return "6%";
             if (d.column === "Conference Finals") return "6%";
+            if (d.column === "Conference Semis") return "6%";
             if (d.column === "Finals") return "6%";
             if (d.column === "Champion") return "6%";
 
             return "auto";
         })
         .style("background-color", function(d) {
-            if (['Playoffs', 'Conference Finals', 'Finals', 'Champion'].includes(d.column)) {
+            if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
                 return colorScale(+d.value);
             } else {
                 return null;
@@ -135,7 +148,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
 
         function applyConditionalShading(selection, column) {
             selection.style("background-color", function(d) {
-                if (['Playoffs', 'Conference Finals', 'Finals', 'Champion'].includes(column)) {
+                if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(column)) {
                     return colorScale(+d.value);
                 } else {
                     return null;
@@ -218,4 +231,3 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2024.csv").
         sortByColumn(d);
     });
 });
-
