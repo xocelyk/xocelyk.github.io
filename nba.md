@@ -4,6 +4,9 @@ title: NBA Ratings & Projections
 permalink: /nba/
 ---
 
+<!-- Include page-specific styles -->
+<link rel="stylesheet" href="{{ '/public/css/nba/styles.css' | relative_url }}">
+
 Updated daily. Projections from 1000 Monte Carlo simulations.
 
 <div class="table-scroll-container">
@@ -20,4 +23,3 @@ Game predictions for the next week.
     {% include nba_predictions_table.html %}
 </div>
 </div>
-
