@@ -42,7 +42,7 @@ body {
 
 html {
   font-family: "Lato", Georgia, "Times New Roman", serif;
-  /* font-family: "Computer Modern Sans", sans-serif; */
+  font-size: 16px;
   letter-spacing: -.005rem;
   color: #ff0000;
 }
@@ -324,6 +324,10 @@ a.sidebar-nav-item:focus {
 .page-title,
 .post-title {
   margin-top: 0;
+}
+
+.post {
+  color: #2d2c2c; /* Replace with any color you want */
 }
 
 /* Meta data line below post title */
