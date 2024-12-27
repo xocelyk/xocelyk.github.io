@@ -84,4 +84,3 @@ Part of my note-taking philosophy is that a lot (>50%?) of the benefit of taking
 		- finding and training on adversarial examples designed to penalize misaligned behavior
 		- mechanistic interpretability
 		- conceptual interpretability: developing automatic techniques for probing and modifying human-interpretable concepts in networks
-		- agent 

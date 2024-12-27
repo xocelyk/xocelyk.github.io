@@ -15,7 +15,7 @@ title: Notes on Risks from Learned Optimization in Advanced Machine Learning Sys
 	- in this case, the learning algorithm that produced the network is the base optimizer, and the network itself is the mesa-optimizer
 - gradient descent is a base optimizer
 - meta-optimizers are systems whose task is optimization, e.g. a system to help tune gradient descent
-- meta-optimizers -> base optimizers -> mesa-optimizers
+- meta-optimizers --> base optimizers --> mesa-optimizers
 - mesa-objectives are not specified by the programmers
 	- this opens up the possibility for misalignment
 - after the mesa-optimizer is finished training, its actions no longer depend on the base objective
@@ -65,7 +65,7 @@ title: Notes on Risks from Learned Optimization in Advanced Machine Learning Sys
 		- base optimizer caches intermediate results, increases model capacity, so it can search more (favors mesa-optimization)
 	- hard-coded optimization
 		- decreases usefulness of mesa-optimization
-- base optimizer maximizes its objective by choose a mesa-optimizer based on performance of the mesa-optimizer’s policy, but not the mesa-optimizer’s objective function. so, base objective and mesa-objective can be misaligned
+- base optimizer maximizes its objective choosing a mesa-optimizer based on performance of the mesa-optimizer’s policy, but not the mesa-optimizer’s objective function. so, base objective and mesa-objective can be misaligned
 - Ibarz et al assume that “a monotonic relationship between the learned reward and true reward” is sufficient for alignment
 - ways a mesa-optimizer can be pseudo-aligned
 	- **proxy alignment**
@@ -82,7 +82,7 @@ title: Notes on Risks from Learned Optimization in Advanced Machine Learning Sys
 	- **suboptimality alignment**
 		- a mesa-optimizer is suboptimally aligned if some deficiency, error, or limitation in its optimization process causes it to exhibit aligned behavior on the training distribution
 		- mesa-optimizer is misaligned but nevertheless performs well on training data and base objective *because* it has been selected to make mistakes that lead to good outcomes on the base objective
-			- imagine base objective is robot cleans room, but mesa-objective is robot destroys everthing in existence. robot has mistaken belief that everything it cleans is destroyed, so it cleans and satisfies the base objective. but if it updates its world model in development then it may start to destroy things!
+			- imagine base objective is robot cleans room, but mesa-objective is robot destroys everything in existence. robot has mistaken belief that everything it cleans is destroyed, so it cleans and satisfies the base objective. but if it updates its world model in development then it may start to destroy things!
 	- how the task affects a ML system’s likelihood to produce pseudo-aligned mesa-optimizers
 		- unidentifiability: datasets may not contain enough information to pinpoint a specific concept
 			- models may be unable to distinguish between different objective functions
@@ -91,8 +91,8 @@ title: Notes on Risks from Learned Optimization in Advanced Machine Learning Sys
 			- proxy choice can save computational work for the base optimizer
 			- the proxy choices that humans care about (food, resources, mating) are computationally easy to optimize directly and correlate well with survival and reproduction
 				- by contrast, caring about spreading out genes is more computational overhead
-			- you can imagine how a proxy always leads to good performance on the base objective byt then a distributional shift occurs and the proxy is no longer good!
-				- thing bio/evo examples, what happens when we over-optimize for food? sex?
+			- you can imagine how a proxy always leads to good performance on the base objective but then a distributional shift occurs and the proxy is no longer good!
+				- think bio/evo examples, what happens when we over-optimize for food? sex?
 		- compression length of the mesa-optimizer
 			- description length (complexity) of robustly aligned mesa-optimizer might be longer than the description length of a pseudo-aligned mesa-optimizer
 			- “there are more pseudo-aligned mesa-objectives than robustly-aligned mesa-objectives”
@@ -130,7 +130,7 @@ title: Notes on Risks from Learned Optimization in Advanced Machine Learning Sys
 		- consider: humans aware of the base optimizer of evolution
 	- the mesa-optimizer must expect the possibility of modification to go away (training ends, or mesa-optimizer takes action to stop it)
 - the dynamics of deceptive alignment
-	- mesa-optimizer selected on basis of its objective and ability *and* how well it learns the base objective and how discerning it is about when the optimize the base objective or its own mesa-objective
+	- mesa-optimizer selected on basis of its objective and ability *and* how well it learns the base objective and how discerning it is about when to optimize the base objective or its own mesa-objective
 	- joint optimization: mesa-optimizer tried to optimize both mesa-objective and base objective
 		- this creates pressure on its objective to be compatible with the base objective
 		- not stable
@@ -145,7 +145,7 @@ title: Notes on Risks from Learned Optimization in Advanced Machine Learning Sys
 		- base objective is contained in mesa-optimizer’s epistemic model and its objective “points to” that information
 		- a little confused here
 		- “an AI system is corrigible if it tolerates or assists with its human programmers in correcting itself.”
-- because deceptively aligned mesa-optimizers are are waiting for the opportunity to defect from the base objective, distributional shifts that allow the difference between training data and development data to be detected are dangerous
+- because deceptively aligned mesa-optimizers are waiting for the opportunity to defect from the base objective, distributional shifts that allow the difference between training data and development data to be detected are dangerous
 	- sufficiently advanced systems should be able to detect very subtle shifts; not something we worry about with current systems
 	- it might not even be feasible in practice to remove any detectable difference between training and deployment
 		- limits use cases for a system
