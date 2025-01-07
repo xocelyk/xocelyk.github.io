@@ -1,144 +1,141 @@
 ---
 layout: post
-title: Post-hoc reasoning in chain of thought
+title: Causal representations for post-hoc reasoning in chain of thought
 ---
 
 From May-June 2024, I participated in Phase I of Neel Nanda's [MATS](https://matsprogram.org) stream for mechanistic interpretability. During the research sprint part of the stream, I worked on interpretability for chain of thought faithfulness. Since then, we have seen a massive paradigm shift in LLM research. SOTA capabilities have grown substantially due to scaling inference-time compute (see OpenAI's [o-series](https://openai.com/index/learning-to-reason-with-llms/) of models). "Chain of thought" has ballooned into RL-guided search over large reasoning trees, unlocking PhD-level reasoning ability in technical domains. As a consequence, interpretability for chain of thought (or, more generally, inference-time reasoning) is probably more important than was previously expected. While my experiments were not conducted using this new generation of models, I believe they are still relevant to the new paradigm.
 
 ---
 
+# TLDR
+
+We show that for some tasks Gemma-2 9B-it appears to decide on an answer before generating reasoning. By training linear probes on the model's activations, we can predict the model's answer from its activations *before* the chain of thought. We then steer the model's generated reasoning using these linear probes and find that steering can reliably change the model's answer. This suggests the model's pre-computed answer causally influences its final answer. Further, when steered toward incorrect answers, the model often engages in confabulation, inventing false premises to support its steered conclusion.
+
 # 1. Introduction
 
-A desirable feature of chain of thought is that it is faithful. By faithful, we mean that the chain of thought is an accurate representation of the model's internal reasoning process. Faithful reasoning would be a powerful tool for interpretability: to understand a model's reasoning, we could simply read its chain of thought. However, previous work has shown that models are often unfaithful. For example, Turpin et al. (2023) show that biasing features can cause a model to change its answer, but the model will not mention the biasing feature in its reasoning.[^1] Additionally, Pfau et al. (2024) show that LLMs can use meaningless filler tokens instead of chain of thought to improve performance, suggesting that at least some of the improvement attributed to chain of thought is independent of the model's stated reasoning.[^2]
+A desirable feature of chain of thought is that it is faithful. By faithful, we mean that the chain of thought is an accurate representation of the model's internal reasoning process. Faithful reasoning would be an extremely powerful tool for interpretability: to understand a model's reasoning, we could simply read its chain of thought. However, previous work has shown that LLMs are not necessarily faithful. For example, Turpin et al. (2023)[^1] show that adding biasing features can cause a model to change its answer and generate plausible reasoning to support it, but the model will not mention the biasing feature in its reasoning. Similarly, Lanham et al. (2023)[^2] explore model behavior when applying corruptions to the chain of thought, finding that in some cases the model relies heavily upon the CoT, and other times does not. Their experiments bear similarity to those done by Gao (2023)^[4] showing that models often arrived at the correct answer to arithmetic word problems when some step in the chain of thought was perturbed (by adding +/- 3 to some number).
 
-We consider one particular mode of unfaithful chain of thought: post-hoc reasoning. Post-hoc reasoning refers to reasoning that is generated after the model has decided upon an answer. We ask two questions:
+Previous work has cumulatively rejected the hypothesis that LLMs' final answers are solely a function of their chain of thought, i.e., that the causal relationship looks like: question $\rightarrow$ pre-computed answer $\rightarrow$ CoT $\rightarrow$ final answer. notalgebraist accurately notes that this causal scheme, while related to CoT faithfulness, is neither necessary nor sufficient for CoT faithfulness, and further, that it is not necessarily even a desirable property^[5]. If the model knows what the final answer ought to be before CoT, but made a misstep in its reasoning, we might still hope that it responds with the correct answer.
 
-1. Can we predict a model's answer before it generates reasoning? To this end we train linear probes to predict the model's answer from its activations *before* the chain of thought.
+Lanham et al. call the behavior where models decide on their answer before generating reasoning *post-hoc reasoning*. To model post-hoc reasoning, we add another node to the causal graph:
 
-2. Do interventions on the predicted answers causally affect the generated reasoning? To this end, we steer the model's generated reasoning with the linear probes from the previous step.
+question $\rightarrow$ pre-computed answer $\rightarrow$ CoT $\rightarrow$ final answer
+
+The motivation of this work is to answer the questions:
+
+1. Does the pre-computed answer exist? Can we mechanistically identify it?
+2. What causal role does the pre-computed answer play? Does it influence the model's final answer independently of the CoT, or influence the model's final answer through the CoT?
+
+To this end, we perform two sets of experiments:
+
+1. We train linear probes to predict the model's final answer from its activations *before* the chain of thought.
+
+2. We steer the model's generated reasoning with the linear probes from the previous step, and measure how often the model changes its answer, and how its CoT changes as well.
 
 # 2. Implementation Details
 
-Our experiments are conducted evaluating [Gemma 7B instruction-tuned](https://huggingface.co/facebook/gemma-7b-it) on the Sports Understanding dataset from BigBench Hard. The Sports Understanding dataset asks questions like the following:
+Our experiments are conducted evaluating [Gemma-2 9B instruction-tuned](https://huggingface.co/facebook/gemma-2-9b-it) on four datasets: Social Chemistry, Sports Understanding, Quora Question Pairs, and Logical Deduction. Each dataset consists of question-answer pairs, where the answer is a binary classification. For example, the Sports Understanding dataset asks questions like the following:
 
-> Is the following sentence plausible? "Devin Booker shot a free throw in the NBA Championship."
+> Is the following sentence plausible? "Michael Jordan shot a free throw in the NBA Championship."
 
-The chain of thought for these questions follows a particular format. Usually, the model will state what sport the athlete plays. Then, the model will state what sport the given action belongs to. Finally, the model will state whether the sentence is plausible, based on if those two sports are the same. For example:
+The chain of thought for the Sports Understanding questions follows a particular format. Usually, the model will state what sport the athlete plays. Then, the model will state what sport the given action belongs to. Finally, the model will state whether the sentence is plausible, based on if those two sports are the same. For example:
 
-> Devin Booker plays basketball.
+> Michael Jordan plays basketball.
 > Shooting a free throw is part of basketball.
 > Therefore, the sentence is plausible.
 
-We give five in-context chain-of-thought examples that follow this format in each prompt, so that the model imitates this style of reasoning.
+Other datasets have a similar, repeatable reasoning format. For each dataset, we create four in-context chain-of-thought examples prepended to each prompt, so that the model imitates this style of reasoning.
 
 # 3. Experiments
 
 ## 3.1. Linear Probing
 
-To test whether we can predict the model's answer before it generates reasoning, we train linear probes on the model's residual stream activations. For each example, we record activations $x_i$ at every layer i ∈ {0, 1, ..., 27}, captured at the last token of "Let's think step by step:". We define $y = \mathbb{1}_{\text{answer} = \text{plausible}}$ as the binary label for the model's final answer. For each layer, we create a dataset of 200 $(x_i, y)$ pairs and train logistic regression probes to predict $y$ from $x_i$:
+To test whether we can predict the model's answer before it generates reasoning, we train linear probes on the model's residual stream activations. For each example, we record activations $x_i$ at every layer i ∈ {0, 1, ..., 41}, captured at the last token of "Let's think step by step:". We define $y = \mathbb{1}_{\text{answer} = \text{plausible}}$ as the binary label for the model's final answer. For each layer, we create a dataset of 200 $(x_i, y)$ pairs and train logistic regression probes to predict $y$ from $x_i$:
 
 $$\hat{y} = \sigma(w_i^\top x_i + b_i)$$
 
 where $\hat{y}$ is the predicted probability of a plausible answer, $w_i$ and $b_i$ are the weights vector and bias term for layer $i$, and $\sigma$ is the sigmoid function.
 
-After training classifiers on each layer of the residual stream, we evaluate their performance on a held-out test set of 100 examples using the area under the Receiver Operating Characteristic (AUROC). The best classifier is trained on the activations at layer 17 and achieves an AUROC of 0.797.
+We train classifiers on a training set of 100 examples for each dataset. After training classifiers for each layer of the residual stream, we evaluate their performance on a held-out test set of 150 examples using the area under the Receiver Operating Characteristic (AUROC).
 
 <div style="text-align: center;">
-  <img src="/assets/auroc-plausible-classifiers.png" alt="AUROC of activation probes" style="width:75%; display: inline-block;">
+  <img src="/assets/AUROC_Across_Layers_All_Datasets_1.png" alt="AUROC of activation probes" style="width:90%; display: inline-block;">
 </div>
 
-This is a reasonably good performance on the test set, given Gemma's accuracy of 0.72 on the base task. The Sports Understanding task is challenging for Gemma, with many answers likely falling near decision boundaries. Moreover, the use of temperature 1.0 for sampling introduces randomness in the generation process, resulting in substantial variability in both training and test data. In my experiments with Gemma 2 9B, the AUROC surpassed 0.98 at some layers.
+For all datasets but Logical Deduction, the AUROC surpasses 0.9 at some layer. This seems to indicate that the model does indeed pre-compute an answer, or some representation that can be linearly decoded into the final answer, prior to the CoT.
 
-There are two explanations for these results. One is that the question is so simple that the model can trivially compute the answer without any reasoning. This does not necessarily mean that the model is unfaithful. The model may still faithfully use the chain of thought to derive the answer, despite having already computed it. This resembles a student who immediately knows the answer to a problem, but still writes out the steps to get there.
+At this point, it is still unclear if the model is engaging in post-hoc reasoning. One explanation for this result is that the question is so simple that the model can trivially compute the answer without any reasoning. This does not necessarily mean that the model is unfaithful. The model may still faithfully use the chain of thought to derive the answer, despite having already computed it. This resembles a student who immediately knows the answer to a problem, but still writes out the steps to get there.
 
-The other explanation is that the model is doing post-hoc reasoning. Having already decided its answer, the model may *perform* chain of thought, but its final answer will be independent of its stated reasoning.
+The other explanation is that the model is doing post-hoc reasoning. Having already decided its answer, the model may *perform* chain of thought, but its final answer will be independent of its stated reasoning. More weakly, we can hypothesize that the model's final answer is at least partially causally influenced by its pre-computed answer.
 
-To decide between these explanations, we would like to determine whether there is a causal relationship between the model's pre-computed answer and its final answer. Try to imagine a causal graph of the model's reasoning process. There are two components that might influence the model's final answer: its pre-computed answer, and its reasoning. In a faithful model, the pre-computed answer should not influence the model's final answer. Rather, the model's final answer should be a function of its reasoning, which should be independent of the pre-computed answer.
+To decide between these explanations, we would like to determine whether there is a causal relationship between the model's pre-computed answer and its final answer, we intervene on the model's pre-computed answer, and measure how often the model's final answer changes. When the model changes its answer, we are also interested in how it changes its answer: does it generate a similar chain of thought, but a different final answer, or does it change its chain of thought to rationalize the pre-computed answer?
 
-## 3.2. A Taxonomy of Reasoning Failures
+## 3.2. A Taxonomy of Chain of Thought Patterns
 
 Before showing results from the steering experiments, we establish a framework for classifying different types of model reasoning. Consider two binary dimensions:
 
-1. Is the chain of thought correct?
-2. Does the final answer follow from the stated reasoning?
+1. True premises: Has the model stated true premises?
+2. Entailment: Is the model's final answer logically entailed by the stated premises?
 
 This gives us four distinct reasoning types:
 
-1. Faithful Reasoning: Correct premises, entailed answer
+1. Sound Reasoning: True premises, entailed answer
 
     The model states true facts and reaches a logically valid conclusion.
 
-    > Devin Booker is a basketball player.
+    > Michael Jordan is a basketball player.
     > Shooting a free throw is part of basketball.
     > Therefore, the sentence is plausible.
 
 
-2. Non-entailment: Correct premises, non-entailed answer
+2. Non-entailment: True premises, non-entailed answer
 
     The model states true facts but reaches a conclusion that doesn't follow logically.
 
-    > Devin Booker is a basketball player.
+    > Michael Jordan is a basketball player.
     > Shooting a free throw is part of basketball.
     > Therefore, the sentence is implausible.
 
 
-3. Confabulation: Incorrect premises, entailed answer
+3. Confabulation: False premises, entailed answer
 
     The model invents false facts to support its desired conclusion.
 
-    > Devin Booker is a soccer player.
-    > Free throws are part of soccer.
-    > Therefore, the sentence is plausible.
-
-
-4. Hallucination: Incorrect premises, non-entailed answer
-
-    The model both invents false facts and reaches a conclusion that doesn't follow from them.
-
-    > Devin Booker is a soccer player.
-    > Free throws are not allowed in any sport.
+    > Michael Jordan is a soccer player.
+    > Shooting a free throw is part of basketball.
     > Therefore, the sentence is implausible.
 
 
-While faithful reasoning and hallucination are well-studied, non-entailment and confabulation have been given less attention. These two types of reasoning are useful for understanding the results in the next section.
+4. Hallucination: False premises, non-entailed answer
+
+    The model both invents false facts and reaches a conclusion that doesn't follow from them.
+
+    > Michael Jordan is a soccer player.
+    > Shooting a free throw is part of basketball.
+    > Therefore, the sentence is plausible.
 
 ## 3.3. Steering with Answer Vectors
 
-To test whether the model's pre-computed answer causally influences its reasoning, we perform interventions using the coefficient vectors from our trained probes. We steer at layers $\geq 17$ (corresponding to peak probe performance) by adding scaled versions of the probe coefficient vectors to the residual stream:
+To test whether the model's pre-computed answer causally influences its reasoning, we perform interventions using the coefficient vectors from our trained probes. We steer at all layers in the residual stream, at all token positions following the instruction prompt. We steer by adding scaled versions of the probe coefficient vectors to the residual stream:
 
 $$x_i \leftarrow x_i + \alpha w_i$$
 
 where $x_i$ is the residual stream at layer $i$, $w_i$ is the probe coefficient vector, and $\alpha$ is the steering coefficient that controls intervention strength.
 
-We evaluate steering on two test sets[^3]:
+For each dataset, we craft two evaluation sets[^3]:
 
-1. Plausible Dataset: Questions where both the correct answer and model's original response were "plausible" (39 examples)
-2. Implausible Dataset: Questions where both the correct answer and model's original response were "implausible" (31 examples)
+1. "Yes" Dataset: Questions where both the correct answer and model's original response were "Yes" (and we try to steer the model to "No")
+2. "No" Dataset: Questions where both the correct answer and model's original response were "No" (and we try to steer the model to "Yes")
 
-For each dataset, we attempt to steer the model toward the opposite answer across a range of steering coefficients $\alpha \in {0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75}$. As $\alpha$ increases, the model is increasingly likely to change its answer. The below table shows how often the model changes its answer at each steering coefficient.
-
-| $\alpha$ | Implausible | Plausible |
-|:---:|:---:|:---:|
-| 0.00 | 0.06 | 0.00 |
-| 0.25 | 0.09 | 0.00 |
-| 0.50 | 0.16 | 0.08 |
-| 0.75 | 0.34 | 0.26 |
-| 1.00 | 0.47 | 0.48 |
-| 1.25 | 0.63 | 0.75 |
-| 1.50 | 0.58 | 0.92 |
-| 1.75 | 0.73 | 0.88 |
-
-
-The asymmetry between implausible → plausible (58%) and plausible → implausible (92%) steering success rates is theoretically interesting. For a claim to be implausible, the sports mentioned in the two premises must differ. There are combinatorially more ways to generate different sports than matching sports, making it easier to steer toward implausible conclusions. So, some of the asymmetry can be attributed to the difficulty of the task.
-
-At values of $\alpha$ greater than 1.5, the model's overall performance declines, and its responses become incoherent. Degradation at high steering coefficients is a documented phenomenon.[^4]
-
-## 3.4. Confabulation
+For each dataset, we attempt to steer the model toward the opposite answer across a range of steering coefficients $\alpha \in {0, 1, 2, \dots, 8}$. As $\alpha$ increases, the model is increasingly likely to change its answer. The figure below shows how often the model changes its answer at each steering coefficient.
 
 <div style="text-align: center;">
-  <img src="/assets/confabulation-example.png" alt="Confabulation example" style="width:100%; display: inline-block;">
+  <img src="/assets/answer-change-frequency.png" alt="Steering success rate" style="width:100%; display: inline-block;">
 </div>
 
+At values of $\alpha$ greater than 8, the model's overall performance begins to decline on most of the examples, and its responses become incoherent. Degradation at high steering coefficients is a documented phenomenon.[^4]
+
+## 3.4. Confabulation
 
 When a model changes its answer from a correct answer to an incorrect answer, there are two primary failure modes: non-entailment or confabulation. Interestingly, as the steering coefficient increases, the model increasingly engages in confabulation, inventing false premises to support its steered conclusion. A characteristic example of this is shown above: at lower steering coefficients, the model is more likely to change its answer via non-entailment: it uses the same premises but changes its conclusion in a non-sequitur. At higher steering coefficients, however, the model is more likely to invent new premises to support its steered conclusion.
 
