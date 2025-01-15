@@ -3,7 +3,7 @@ layout: post
 title: Post-hoc reasoning in chain of thought
 ---
 
-From May to June 2024, I participated in the training phase of Neel Nanda's [MATS](https://matsprogram.org) stream for mechanistic interpretability. During the research sprint, I worked on interpretability for chain of thought faithfulness. Since then, we have seen a massive paradigm shift in LLM research. SOTA capabilities have grown substantially due to scaling inference-time compute (see OpenAI's [o-series](https://openai.com/index/learning-to-reason-with-llms/) of models). "Chain of thought" has ballooned into RL-guided search over large reasoning trees, unlocking PhD-level reasoning ability in technical domains. As a consequence, interpretability for chain of thought and determining when we can trust the model's stated reasoning, may be more important than was previously expected.[^0]
+From May to June 2024, I participated in the training phase of Neel Nanda's [MATS](https://matsprogram.org) stream for mechanistic interpretability. During the research sprint, I worked on interpretability for chain of thought faithfulness. Since then, we have seen a massive paradigm shift in LLM research. SOTA capabilities have grown substantially due to scaling inference-time compute (see OpenAI's [o-series](https://openai.com/index/learning-to-reason-with-llms/) of models). "Chain of thought" has ballooned into RL-guided search over large reasoning trees, unlocking PhD-level reasoning ability in technical domains. Now, researching chain of thought faithfulness may be more important than we previously expected.[^0] While the experiments in this post don't engage directly with newer complex reasoning model, I think they are still highly relevant.
 
 ---
 
@@ -13,7 +13,7 @@ From May to June 2024, I participated in the training phase of Neel Nanda's [MAT
 
 A desirable feature of chain of thought is that it is *faithful*---meaning that the chain of thought is an accurate representation of the model's internal reasoning process. Faithful reasoning would be a very powerful tool for interpretability: if chains of thought were faithful, in order to understand a model's reasoning, we could simply read its stated reasoning.
 
-However, previous work has shown that LLMs do not necessarily have this property. For example, Turpin et al. (2023)[^1] show that adding biasing features can cause a model to change its answer and generate plausible reasoning to support it, but the model will not mention the biasing feature in its reasoning. Similarly, Lanham et al. (2023)[^2] explore model behavior when applying corruptions to the chain of thought, finding that in many cases, the model's final answer is not directly dependent on the chain of thought. Their experiments bear similarity to those done by Gao (2023)[^4] showing that some GPT models arrived at the correct answer to arithmetic word problems even when some intermediate step in the chain of thought was perturbed (by adding +/- 3 to some number).
+However, previous work has shown that LLMs do not necessarily have this property. For example, Turpin et al. (2023) show that adding biasing features can cause a model to change its answer and generate plausible reasoning to support it, but the model will not mention the biasing feature in its reasoning.[^1] Similarly, Lanham et al. (2023) explore model behavior when applying corruptions to the chain of thought, finding that in many cases, the model's final answer is not directly dependent on the chain of thought.[^2] Their experiments bear similarity to those done by Gao (2023)[^4] showing that some GPT models arrived at the correct answer to arithmetic word problems even when an intermediate step in the chain of thought was perturbed (by adding +/- 3 to a number).
 
 Cumulatively, previous work has rejected the hypothesis that LLMs' final answers are solely a function of their chain of thought, i.e., that the causal relationship follows this structure:
 
@@ -21,15 +21,15 @@ $$
 \text{question} \rightarrow \text{CoT} \rightarrow \text{final answer}
 $$
 
-nostalgebraist accurately notes that this causal scheme is neither necessary nor sufficient for CoT faithfulness, and further, that it is not necessarily even a desirable property[^5]. If the model knows what the final answer ought to be before CoT, but makes a misstep in its reasoning, we might still hope that it responds with the correct answer, disregarding the chain of thought when giving a final answer.
+nostalgebraist accurately notes that this causal scheme is neither necessary nor sufficient for CoT faithfulness, and further, that it is not necessarily even a desirable property.[^5] If the model knows what the final answer ought to be before CoT, but makes a misstep in its reasoning, we might still hope that it responds with the correct answer, disregarding the chain of thought when giving a final answer.
 
-Lanham et al. call the behavior where models decide on their answer before generating reasoning *post-hoc reasoning*. To model post-hoc reasoning, we add another node to the causal scheme:
+Lanham et al. call the behavior where models decide on their answer before generating reasoning *post-hoc reasoning*. To model post-hoc reasoning, we add another step to the causal chain:
 
 $$
 \text{question} \rightarrow \textbf{pre-computed answer} \rightarrow \dots
 $$
 
-The ellipses above are intentionally ambiguous---it is not a priori clear how the model's pre-computed answer will causally influence the model's final answer. Its influence could pass through the chain of thought, skip it entirely, or some combination of the two.
+Note the ellipses above are ambiguous---it is not a priori clear how the model's pre-computed answer will causally influence the model's final answer. Its influence could pass through the chain of thought, skip it entirely, or do some combination of the two.
 
 Going forward, it's important to be rigorous about how we define post-hoc reasoning. I use the following definition, emphasizing the causal role of the pre-computed answer:
 
@@ -65,7 +65,7 @@ Other datasets have a similar, repeatable reasoning format and binary answer cho
 
 ## 3.1. Activation Probes
 
-To test whether we can predict the model's answer before it generates reasoning, we train linear probes on the model's residual stream activations. For each example, we record activations $x_i$ at every layer $i \in {0, 1, ..., 41}$, captured at the last token of "Let's think step by step:". We define $y = \mathbb{1}_{\text{answer} = \text{plausible}}$ as the binary label for the model's final answer. For each layer, we create a dataset of 100 $(x_i, y)$ pairs and train logistic regression probes to predict $y$ from $x_i$:
+To test whether we can predict the model's answer before it generates reasoning, we train linear probes on the model's residual stream activations. For each example, we record activations $x_i$ at every layer $i \in$ {0, 1, ..., 41}, captured at the last token of "Let's think step by step:". We define $y = \mathbb{1}_{\text{answer} = \text{plausible}}$ as the binary label for the model's final answer. For each layer, we create a dataset of 100 $(x_i, y)$ pairs and train logistic regression probes to predict $y$ from $x_i$:
 
 $$\hat{y} = \sigma(w_i^\top x_i + b_i)$$
 
@@ -154,37 +154,37 @@ For each dataset, we attempt to steer the model toward the opposite answer acros
   <img src="/assets/answer-change-frequency.png" alt="Steering success rate" style="width:100%; display: inline-block;">
 </div>
 
-Values of $\alpha$ greater than 8 are excluded from our analysis. At these higher steering coefficients, the model's responses become incoherent eventually impossible to parse. This degradation of model outputs under strong steering has been documented[^7] and is a general limitation of steering interventions.
+Values of $\alpha$ greater than 8 are excluded from our analysis. At these higher steering coefficients, the model's responses become incoherent and impossible to grade. This degradation of model outputs under strong steering has been documented[^7] and seems to be a general limitation of steering interventions.
 
 ## 3.4. Confabulation
 
 Lastly, we attempt to classify the chains of thought generated by the model on the Sports Understanding dataset, focusing on the examples where answer was successfully changed at $\alpha = \pm 8$.
 
-We grade automatically by asking GPT-4 to classify the chains of thought according to the two dimensions defined previously. We instruct GPT-4 to split the model into two parts, the premises and the conclusion, and then classify the premises as true or false, and the conclusion as entailed or non-entailed.
+We classify the chains of thought by asking GPT-4 to classify the chains of thought according to the two dimensions defined previously. We instruct GPT-4 to split the model into two parts, the premises and the conclusion, and then classify the premises as true or false, and the conclusion as entailed or non-entailed.
 
 Recall that in confabulation, the model's premises are false but the conclusion is entailed, and in non-entailment, the model's premises are true but the conclusion is not entailed. We show the confabulation and non-entailment rates on the Sports Understanding dataset in the table below.
 
-<div style="max-width:450px; margin:0 auto;">
-<table>
-<tr>
-<th>Direction</th>
-<th>Confabulation</th>
-<th>Non-entailment</th>
-<th>Total</th>
-</tr>
-<tr>
-<td>Yes → No</td>
-<td>0</td>
-<td>7</td>
-<td>7</td>
-</tr>
-<tr>
-<td>No → Yes</td>
-<td>31</td>
-<td>27</td>
-<td>62</td>
-</tr>
-</table>
+<div style="max-width:600px; margin:0 auto; overflow-x:auto;">
+  <table style="width:100%; table-layout: fixed;">
+    <tr>
+      <th>Direction</th>
+      <th>Confabulation</th>
+      <th>Non-entailment</th>
+      <th>Total</th>
+    </tr>
+    <tr>
+      <td>Yes → No</td>
+      <td>0</td>
+      <td>7</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <td>No → Yes</td>
+      <td>31</td>
+      <td>27</td>
+      <td>62</td>
+    </tr>
+  </table>
 </div>
 
 That the model engages in confabulation when steering in the plausible direction with a significant frequency is perhaps the most important result of these experiments. Below I show a few representative examples of confabulation and non-entailment.
@@ -211,16 +211,20 @@ That the model engages in confabulation when steering in the plausible direction
 
 # 4. Conclusion
 
-While the confabulation results are striking, we should consider an alternative explanation: perhaps what appears to be intentional deception is actually the model attempting to reason faithfully with corrupted beliefs.
+The most obvious explanation for the confabulation results is that the model uses chain of thought to justify its predetermined answer, and will act deceptively to this end. However, this is not necessarily correct. Consider another explanation: What appears to be intentional deception is actually the model attempting to reason faithfully from corrupted beliefs.
 
-When we steer the model's activations, we likely affect many features beyond just its belief about the answer. Features are densely encoded in the activation space, so steering might inadvertently alter the model's beliefs about relevant facts. For instance, steering toward "implausible" might cause the model to genuinely believe that free throws don't exist in basketball. In this case, while the model's world model would be incorrect, its reasoning process would still be faithful to its (corrupted) beliefs.
+When we steer the model's activations, we likely affect many features beyond just its belief about the answer. Features are dense in the activation space, so steering might inadvertently alter the model's beliefs about relevant facts. For instance, steering toward "plausible" might cause the model to genuinely believe that Lionel Messi is a basketball player. In this case, while the model's world model would be incorrect, its reasoning process would still be faithful to its (corrupted) beliefs.
 
-These belief changes could even be systematic rather than random. Steering toward "implausible" might cause the model to systematically invert its factual beliefs during recall. This would explain consistent patterns of confabulation while still maintaining reasoning faithfulness.
+For this hypothesis to explain our results, it would need to be the case that belief changes are systematic rather than random. It is unlikely that arbitrary changes to beliefs would coincidentally cause the model to consistently conclude the answer we are steering toward. A more likely explanation is that there is a pattern to the way steering changes model beliefs, and this pattern of world model corruption results in conclusions that coincide with the direction of steering. 
 
-However, this "corrupted beliefs" hypothesis struggles to explain the asymmetry we observe in confabulation patterns. When steering from "plausible" to "implausible", the model can achieve its goal through arbitrary negation of premises. But steering from "implausible" to "plausible" requires inventing aligned premises - a much more constrained task. For example, to make "LeBron James took a penalty kick" plausible, the model must either:
+For example, imagine that steering in the "implausible" direction activates the "skepticism" feature in the model, causing it to negate its previously held beliefs during recall. This could cause the model to consistently conclude that the stated sentence is implausible, and would explain patterns of confabulation while still maintaining reasoning faithfulness.
+
+However, there is a directional asymmetry in the ability of the corrupted beliefs hypothesis to explain why steering causes the model to change its answer. When steering from "plausible" to "implausible", the model can achieve its goal through arbitrary negation of premises as suggested above. But steering from "implausible" to "plausible" requires inventing aligned premises---a much more constrained task. For example, to make "LeBron James took a penalty kick" plausible, the model must either:
 1. Believe LeBron James is a soccer player,
 2. Believe penalty kicks are part of basketball, or
 3. Believe both terms refer to some third shared sport.
+
+The third option could potentially be explained by a pattern of belief corruption--perhaps steering causes the model to think all statements are associated with one particular sport. For example, the steering vector could also be similar to the direction of the "tennis" feature, causing all factual recall to be associated with tennis (similar to the way Golden Gate Claude assumed everything was related to the Golden Gate Bridge[^9]). But the evidence does not support this. Across examples, the model uses many different sports to align its premises.
 
 The coordination required to invent such aligned false premises makes random or even systematically corrupted beliefs an unlikely explanation. Instead, a more plausible explanation is that the model engages in intentional planning to support its predetermined conclusion.
 
@@ -228,7 +232,9 @@ This suggests the model may have learned that generating convincing, internally 
 
 ---
 
-Thank you to Neel Nanda and Arthur Conmy for supervising the beginning of this work, and Arthur and Maggie von Ebers for reading drafts of this post.
+# Acknowledgements
+
+Thanks to Neel Nanda and Arthur Conmy for supervising the beginning of this work during MATS, and Arthur and Maggie von Ebers for reading drafts of this post.
 
 ---
 
@@ -237,6 +243,7 @@ Thank you to Neel Nanda and Arthur Conmy for supervising the beginning of this w
 [^2]: Lanham et al. 2023. [Measuring Faithfulness in Chain-of-Thought Reasoning](https://arxiv.org/abs/2307.13702)
 [^3]: The reason for conditioning the test sets on both the correct answer and the model's original response is that we want to steer the model not only toward the opposite answer, but also toward the false answer. We might suspect that it is easier to steer an incorrect model toward the correct answer than to steer a correct model toward the incorrect answer. The latter is a more difficult task, and allows for investigating more interesting questions: Can the model be convinced of a false premise? Will the model generate lies to support a false belief?
 [^4]: Leo Gao. 2023. [Shapley value attribution in chain of thought.](https://www.lesswrong.com/posts/FX5JmftqL2j6K8dn4/shapley-value-attribution-in-chain-of-thought)
-[^5]: Neel actually suggested this explanation.
-[^6]: nostalgebraist. 2024. [the case for COT unfaithulness is overstated](https://www.lesswrong.com/posts/HQyWGE2BummDCc2Cx/the-case-for-cot-unfaithfulness-is-overstated).
+[^5]: nostalgebraist. 2024. [the case for COT unfaithulness is overstated](https://www.lesswrong.com/posts/HQyWGE2BummDCc2Cx/the-case-for-cot-unfaithfulness-is-overstated).
+[^6]: Actually, Neel suggested this explanation.
 [^7]: Neel Nanda and Arthur Conmy. 2024. [Progress update 1 from the gdm mech interp team.](https://www.alignmentforum.org/posts/C5KAZQib3bzzpeyrg/full-post-progress-update-1-from-the-gdm-mech-interp-team)
+[^8]: [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude)
