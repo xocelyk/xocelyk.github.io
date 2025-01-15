@@ -122,7 +122,7 @@ This gives us four distinct reasoning types:
     > Shooting a free throw is part of basketball.\
     > Therefore, the sentence is plausible.
 
-For post-hoc reasoning, we are particularly interested in non-entailment and confabulation. If the model has pre-computed its answer, we would like to know whether it uses CoT to rationalize the that answer, or generates a final answer by ignoring the CoT and looking back at its pre-computed answer. The former likely involves planning and intentional deception, while the latter is easier to detect.
+For post-hoc reasoning, we are particularly interested in non-entailment and confabulation. If the model has pre-computed its answer, we would like to know whether it uses CoT to rationalize that answer, or generates a final answer by ignoring the CoT and looking back at its pre-computed answer. The former likely involves planning and intentional deception, while the latter is easier to detect.
 
 ## 3.3. Steering with Answer Vectors
 
@@ -243,7 +243,7 @@ Thanks to Neel Nanda and Arthur Conmy for supervising the beginning of this work
 [^2]: Lanham et al. 2023. [Measuring Faithfulness in Chain-of-Thought Reasoning](https://arxiv.org/abs/2307.13702)
 [^3]: The reason for conditioning the test sets on both the correct answer and the model's original response is that we want to steer the model not only toward the opposite answer, but also toward the false answer. We might suspect that it is easier to steer an incorrect model toward the correct answer than to steer a correct model toward the incorrect answer. The latter is a more difficult task, and allows for investigating more interesting questions: Can the model be convinced of a false premise? Will the model generate lies to support a false belief?
 [^4]: Leo Gao. 2023. [Shapley value attribution in chain of thought.](https://www.lesswrong.com/posts/FX5JmftqL2j6K8dn4/shapley-value-attribution-in-chain-of-thought)
-[^5]: nostalgebraist. 2024. [the case for COT unfaithulness is overstated](https://www.lesswrong.com/posts/HQyWGE2BummDCc2Cx/the-case-for-cot-unfaithfulness-is-overstated).
+[^5]: nostalgebraist. 2024. [the case for COT unfaithfulness is overstated](https://www.lesswrong.com/posts/HQyWGE2BummDCc2Cx/the-case-for-cot-unfaithfulness-is-overstated).
 [^6]: Actually, Neel suggested this explanation.
 [^7]: Neel Nanda and Arthur Conmy. 2024. [Progress update 1 from the gdm mech interp team.](https://www.alignmentforum.org/posts/C5KAZQib3bzzpeyrg/full-post-progress-update-1-from-the-gdm-mech-interp-team)
 [^8]: [Golden Gate Claude](https://www.anthropic.com/news/golden-gate-claude)
