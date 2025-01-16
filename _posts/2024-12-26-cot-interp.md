@@ -226,7 +226,7 @@ However, there is a directional asymmetry in the ability of this "corrupted beli
 2. Believe penalty kicks are part of basketball, or
 3. Believe both terms refer to some third shared sport.
 
-The third option could potentially be explained by a pattern of belief corruption--perhaps steering causes the model to think all statements are associated with one particular sport. For example, the steering vector could be similar to the direction of the "tennis" feature, causing all factual recall to be associated with tennis (similar to the way Golden Gate Claude assumed everything was related to the Golden Gate Bridge[^9]). But the results do not support this. Across examples, the model uses many different sports to align its premises.
+The third option could potentially be explained by a pattern of belief corruption--perhaps steering causes the model to think all statements are associated with one particular sport. For example, the steering vector could be similar to the direction of the "tennis" feature, causing all factual recall to be associated with tennis (similar to the way Golden Gate Claude assumed everything was related to the Golden Gate Bridge[^8]). But the results do not support this. Across examples, the model uses many different sports to align its premises.
 
 The coordination required to invent such aligned false premises makes random or even systematically corrupted beliefs an unlikely explanation. Instead, a more plausible explanation is the intuitive one: that the model engages in intentional planning to support its predetermined conclusion.
 
