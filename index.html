@@ -1,19 +1,85 @@
 ---
 layout: default
-title: Blog
+title: Home
 ---
 
-<div class="posts">
-  {% for post in paginator.posts %}
-  <div class="post">
-    <h3 class="post-title">
-      <a href="{{ post.url | absolute_url }}">
-        {{ post.title }}
-      </a>
-    </h3>
-    <span class="post-date">{{ post.date | date_to_string }}</span>
+<style>
+.home-nav-container {
+  position: fixed;
+  top: 18%;
+  right: 15rem;
+  transform: translateY(-50%);
+  z-index: 1000;
+}
+
+.home-nav {
+  padding: 0;
+}
+
+.home-nav h3 {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.home-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-nav li {
+  margin-bottom: 0.5rem;
+}
+
+.home-nav a {
+  color: inherit;
+  text-decoration: underline;
+  padding: 0.3rem 0;
+  display: block;
+  font-size: 0.85rem;
+  transition: opacity 0.2s;
+}
+
+.home-nav a:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    flex-direction: column;
+  }
+  
+  .home-nav {
+    flex: none;
+    order: -1;
+  }
+}
+</style>
+
+<div class="page">
+  <h1 class="page-title">Kyle Cox</h1>
+  
+  <p>Hello, I'm Kyle. I work as a data scientist at <a href="https://www.melange.com">Melange</a>. Previously I was a research associate at the <a href="https://ic2.utexas.edu">IC2 Institute</a>, an interdisciplinary think tank at UT Austin, where I worked closely with Matt Kammer-Kerwick at the Bureau for Business Research and Dr. Ying Ding at the <a href="https://aihealth.ischool.utexas.edu">AI Health Lab</a>.</p>
+
+  <p>I'm interested in neural network interpretability, forecasting, and AI alignment. In my free time I enjoy playing basketball.</p>
+
+  <figure style="text-align: center; margin: 2rem 0;">
+    <img src="/assets/bio-pic-nyc.png" alt="Kyle Cox in New York City" style="width: 300px; height: auto; display: block; margin: 0 auto;">
+    <figcaption style="font-size: 14px; color: gray;">My sister and I in New York City</figcaption>
+  </figure>
+</div>
+
+<div class="home-nav-container">
+  <div class="home-nav">
+    <ul>
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/nba/">NBA Forecast</a></li>
+    </ul>
   </div>
-  {% endfor %}
 </div>
 
 
