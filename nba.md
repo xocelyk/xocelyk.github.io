@@ -40,6 +40,7 @@ html {
 .masthead {
   display: none !important;
 }
+
 </style>
 
 Updated daily. Projections from 1,000 simulations.

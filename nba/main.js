@@ -1,4 +1,3 @@
-/* TODO: fix sort by Season Rating */
 d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2025.csv").then(data => {
     const colorScale = d3.scaleLinear()
         .domain([0, 1])
@@ -204,9 +203,11 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2025.csv").
                     aValue = calculateWinPercentage(a.Record);
                     bValue = calculateWinPercentage(b.Record);
                 } else {
+                    // Map display column name back to data column name
+                    const dataColumn = clickedColumn === "Season Rating" ? "EM Rating" : clickedColumn;
                     // Default sorting logic for other columns
-                    aValue = isNaN(a[clickedColumn]) ? a[clickedColumn] : +a[clickedColumn];
-                    bValue = isNaN(b[clickedColumn]) ? b[clickedColumn] : +b[clickedColumn];
+                    aValue = isNaN(a[dataColumn]) ? a[dataColumn] : +a[dataColumn];
+                    bValue = isNaN(b[dataColumn]) ? b[dataColumn] : +b[dataColumn];
                 }
         
                 return sortAscending ? d3.ascending(aValue, bValue) : d3.descending(aValue, bValue);
