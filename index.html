@@ -6,7 +6,7 @@ title: Home
 <style>
 .home-nav-container {
   position: fixed;
-  top: 18%;
+  top: 20%;
   right: 15rem;
   transform: translateY(-50%);
   z-index: 1000;
@@ -62,22 +62,23 @@ title: Home
 <div class="page">
   <h1 class="page-title">Kyle Cox</h1>
   
-  <p>Hello, I'm Kyle. I work as a data scientist at <a href="https://www.melange.com">Melange</a>. Previously I was a research associate at the <a href="https://ic2.utexas.edu">IC2 Institute</a>, an interdisciplinary think tank at UT Austin, where I worked closely with Matt Kammer-Kerwick at the Bureau for Business Research and Dr. Ying Ding at the <a href="https://aihealth.ischool.utexas.edu">AI Health Lab</a>.</p>
+  {% include bio.html %}
 
-  <p>I'm interested in neural network interpretability, forecasting, and AI alignment. In my free time I enjoy playing basketball.</p>
+  {% include contact.html %}
 
-  <figure style="text-align: center; margin: 2rem 0;">
-    <img src="/assets/bio-pic-nyc.png" alt="Kyle Cox in New York City" style="width: 300px; height: auto; display: block; margin: 0 auto;">
-    <figcaption style="font-size: 14px; color: gray;">My sister and I in New York City</figcaption>
-  </figure>
+  {% include bio_photo.html %}
 </div>
 
 <div class="home-nav-container">
   <div class="home-nav">
     <ul>
       <li><a href="/blog/">Blog</a></li>
+      <li><a href="/notes/">Notes</a></li>
       <li><a href="/about/">About</a></li>
       <li><a href="/nba/">NBA Forecast</a></li>
+      <li><a href="https://linkedin.com/in/kyle-p-cox" target="_blank">LinkedIn</a></li>
+      <li><a href="https://github.com/xocelyk" target="_blank">GitHub</a></li>
+      <li><a href="https://scholar.google.com/citations?user=YOUR_USER_ID" target="_blank">Google Scholar</a></li>
     </ul>
   </div>
 </div>

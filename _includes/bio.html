@@ -1,0 +1,29 @@
+<div class="bio-content">
+{% capture bio_content %}{% include bio.md %}{% endcapture %}
+{{ bio_content | markdownify }}
+</div>
+
+<style>
+.bio-content {
+  line-height: 1.3;
+}
+
+.bio-content p {
+  margin-bottom: 0.5rem;
+}
+
+.bio-content ul {
+  margin-bottom: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+.bio-content li {
+  margin-bottom: 0.2rem;
+  line-height: 1.25;
+}
+
+.bio-content h3, .bio-content h4 {
+  margin-bottom: 0.3rem;
+  margin-top: 1rem;
+}
+</style>
