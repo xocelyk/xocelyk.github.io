@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Notes on The Alignment Problem from a Deep Learning Perspective
+categories: [notes]
 ---
 
 ### Introduction

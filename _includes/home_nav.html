@@ -1,0 +1,71 @@
+<div class="home-nav-container">
+  <div class="home-nav">
+    <ul>
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="/nba/">NBA Forecast</a></li>
+      <li><a href="https://linkedin.com/in/kyle-p-cox" target="_blank">LinkedIn</a></li>
+      <li><a href="https://github.com/xocelyk" target="_blank">GitHub</a></li>
+    </ul>
+  </div>
+</div>
+
+<style>
+.home-nav-container {
+  position: fixed;
+  top: 20%;
+  right: 15rem;
+  transform: translateY(-50%);
+  z-index: 1000;
+}
+
+.home-nav {
+  padding: 0;
+}
+
+.home-nav h3 {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.home-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.home-nav li {
+  margin-bottom: 0.5rem;
+}
+
+.home-nav a {
+  color: inherit;
+  text-decoration: underline;
+  padding: 0.3rem 0;
+  display: block;
+  font-size: 0.85rem;
+  transition: opacity 0.2s;
+}
+
+.home-nav a:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .home-nav-container {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
+    margin-top: 2rem;
+  }
+  
+  .home-nav {
+    flex: none;
+    order: -1;
+  }
+}
+</style>

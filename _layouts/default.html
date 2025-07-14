@@ -24,7 +24,10 @@
       </div>
     </div>
 
-    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+    {% unless page.url == '/nba/' or page.layout == 'post' %}
+      {% include home_nav.html %}
+    {% endunless %}
+
 
     <script src='{{ site.baseurl }}/public/js/script.js'></script>
   </body>
