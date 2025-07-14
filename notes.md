@@ -4,6 +4,12 @@ title: Notes
 permalink: /notes/
 ---
 
+<style>
+.page-title {
+  display: none;
+}
+</style>
+
 <div class="posts">
   {% for post in site.categories.notes %}
   <div class="post">
