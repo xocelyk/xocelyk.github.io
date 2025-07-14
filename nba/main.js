@@ -22,7 +22,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2025.csv").
         }
 
         if (column === "RSOS") {
-            const formattedNumber = num.toFixed(2);
+            const formattedNumber = num.toFixed(1);
             return (num > 0 ? "+" : "") + formattedNumber;
         }
 
