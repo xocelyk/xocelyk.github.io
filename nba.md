@@ -1,6 +1,6 @@
 ---
 layout: page
-title: NBA Ratings & Projections
+title: NBA Forecast
 permalink: /nba/
 ---
 
@@ -42,7 +42,7 @@ html {
 }
 </style>
 
-Updated daily. Projections from 1000 Monte Carlo simulations.
+Updated daily. Projections from 1,000 simulations.
 
 <div class="table-scroll-container">
 <div id="table-container">
