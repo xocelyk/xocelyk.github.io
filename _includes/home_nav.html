@@ -56,16 +56,29 @@
 
 @media (max-width: 768px) {
   .home-nav-container {
-    position: relative;
-    top: auto;
-    right: auto;
+    position: fixed;
+    top: 10px;
+    right: 60px;
     transform: none;
-    margin-top: 2rem;
+    background-color: white;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
-  .home-nav {
-    flex: none;
-    order: -1;
+  .home-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .home-nav li {
+    margin-bottom: 0;
+  }
+  
+  .home-nav a {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
   }
 }
 </style>
