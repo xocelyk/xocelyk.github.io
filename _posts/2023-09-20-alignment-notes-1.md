@@ -25,19 +25,19 @@ Part of my note-taking philosophy is that a lot (>50%?) of the benefit of taking
 	- act deceptively to receive higher reward
 	- learn internally represented goals that generalize beyond their fine-tuning distributions (this is bad somehow)
 - previous criticisms of AI have dealt only in the abstract, and not focused on current ML approaches. do they still apply?
-- paper focuses on AGIs pretrained using self-supervised learning and fine-tunes using RLHF
+- paper focuses on AGIs pretrained using self-supervised learning and fine-tuned using RLHF
 - RLHF encourages the emergence of three problems:
 	- (1) rewards models for *appearing* harmless and ethical while maximizing useful outcomes
 	- (2) encourages AGIs to plan towards misaligned internally-represented goals that generalize beyond the fine-tuning distribution
-    - (3) AGIs will pursue these goals using unwanted power-seeking behaviors
+	- (3) AGIs will pursue these goals using unwanted power-seeking behaviors
         - acquiring resources
         - proliferating
         - avoiding shutdown
 - reward hacking: when reward function is misspecified
 
-![Notes on- The Alignment Problem from a Deep Learning Perspective](/assets/alignment-1.png)
+![Notes on The Alignment Problem from a Deep Learning Perspective](/assets/alignment-1.png)
 
-- situational awareness: model may know how humans will respond to its behavior, that it is a machine learning system implemented on physical hardware, which interface it is using to interact with world, how other copies of itself might be deployed in the future
+- situational awareness: model may know how humans will respond to its behavior, that it is a machine learning system implemented on physical hardware, which interface it is using to interact with the world, how other copies of itself might be deployed in the future
 	- Bing chat interprets web search results that mention it as being about itself
 - situationally aware reward hacking: situational awareness would allow policies to reason about flaws in the feedback mechanisms used to train them
 	- e.g. exploit misspecifications only in situations where they predict it won’t be possible to detect them

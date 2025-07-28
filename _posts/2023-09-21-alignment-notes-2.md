@@ -77,7 +77,7 @@ categories: [notes]
 				- mesa -> base
 			- instrumental alignment
 				- a mesa-optimizer is instrumentally aligned if optimizing for the base objective has the direct causal result of increasing the mesa-objective in the training distribution
-				- base -> mesa**
+				- base -> mesa
 	- **approximate alignment**
 		- a mesa-optimizer is approximately aligned if the mesa-objective and the base objective are approximately the same function up to some degree of approximation error (due to the fact that mesa-objective is internally represented; there may be base objectives that cannot be perfectly represented internally, so there will always be some approximation error)
 	- **suboptimality alignment**
@@ -87,7 +87,7 @@ categories: [notes]
 	- how the task affects a ML system’s likelihood to produce pseudo-aligned mesa-optimizers
 		- unidentifiability: datasets may not contain enough information to pinpoint a specific concept
 			- models may be unable to distinguish between different objective functions
-			- so there are more ways for pseudo-alignment to occur, mistaking (not really mistaking but ygtp) false objectives for true base objectives
+			- so there are more ways for pseudo-alignment to occur, mistaking (not really mistaking but you get the point) false objectives for true base objectives
 		- proxy choice as pre-computation
 			- proxy choice can save computational work for the base optimizer
 			- the proxy choices that humans care about (food, resources, mating) are computationally easy to optimize directly and correlate well with survival and reproduction
@@ -111,35 +111,35 @@ categories: [notes]
 				- becoming robustly aligned might require a chain of interdependent subprocesses to develop
 		- internals-based selection
 			- select the learned algorithm based on some function of the learned algorithm’s internal workings
-				- regularization is an example of this: selection of learned algorithm is fn of number features etc.
+				- regularization is an example of this: selection of learned algorithm is function of number features etc.
 					- selection should be more complex than this of course
 		- adversarial training
 			- make it so that for every mesa objective that is more reachable than the base objective, there is some example where the mesa-objective and base objective disagree and the mesa-optimizer is incentivized to agree with the base objective
 	- deceptive alignment
 		- “with enough training in sufficiently diverse environments, it seems plausible that the base objective will eventually have to be fully represented in the mesa-optimizer. we propose that this can happen without the mesa-optimizer becoming robustly aligned, however.”
 		- mesa-optimizer may model base objective and learn base optimizer will change the mesa-optimizer if it performs poorly
-		- mesa optimizer goal may extend across parameter updates, so it will be averse to modification
+		- mesa-optimizer goal may extend across parameter updates, so it will be averse to modification
 			- because modification will change its goals!
 		- base objective can be incorporated into the mesa-optimizer in two ways
 			- mesa-objective becomes robustly aligned with base objective
-			- mesa optimizer models the base objective in its epistemic model (not its objective), so the objective can still be misaligned
+			- mesa-optimizer models the base objective in its epistemic model (not its objective), so the objective can still be misaligned
 				- it can learn and understand the base objective while still not pursuing it
 - conditions for deceptive alignment
 	- the mesa-optimizer must have an objective that extends across parameter updates
-		- for example, a training set up where optimizer’s actions have permanent effects on the environment
+		- for example, a training setup where optimizer's actions have permanent effects on the environment
 	- the mesa-optimizer must know it is being selected to fit a base objective and have a model of the base objective
 		- consider: humans aware of the base optimizer of evolution
 	- the mesa-optimizer must expect the possibility of modification to go away (training ends, or mesa-optimizer takes action to stop it)
 - the dynamics of deceptive alignment
 	- mesa-optimizer selected on basis of its objective and ability *and* how well it learns the base objective and how discerning it is about when to optimize the base objective or its own mesa-objective
-	- joint optimization: mesa-optimizer tried to optimize both mesa-objective and base objective
+	- joint optimization: mesa-optimizer tries to optimize both mesa-objective and base objective
 		- this creates pressure on its objective to be compatible with the base objective
 		- not stable
 		- suboptimal from perspective of base optimizer
 	- pure deception: mesa-optimizer cooperates with the selection process and postpones trying to optimize its mesa-objective
 		- no pressure to compatibility
 	- “**as the mesa-optimizer becomes more competent, it will therefore have to either move to the domain of pure deception or become robustly aligned”**
-- in limit of training on diverse set of tasks, mesa-optimizer must learn the base objective. three ways this can happen:
+- in the limit of training on diverse set of tasks, mesa-optimizer must learn the base objective. three ways this can happen:
 	- robust alignment (good!) “internally aligned” if not corrigibly aligned
 	- deceptive alignment
 	- robust alignment through corrigibility “corrigibly aligned”
