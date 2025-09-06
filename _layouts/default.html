@@ -24,9 +24,9 @@
       </div>
     </div>
 
-    {% unless page.url == '/nba/' or page.layout == 'post' %}
+    {% if page.url == '/' %}
       {% include home_nav.html %}
-    {% endunless %}
+    {% endif %}
 
 
     <script src='{{ site.baseurl }}/public/js/script.js'></script>
