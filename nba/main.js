@@ -1,4 +1,4 @@
-d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2025.csv").then(data => {
+d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").then(data => {
     const colorScale = d3.scaleLinear()
         .domain([0, 1])
         .range(["#ffffff", "#33CEFF"]);
