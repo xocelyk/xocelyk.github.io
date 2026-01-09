@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Augmenting decision trees with LLMs
+title: Few-shot decision trees with LLM feature selection
 ---
 
 Machine learning models perform well when there is an abundance of data. They handle high dimensionality well, perform calculations rapidly, and do not rely on lazy approximations for their guesses. The inference abilities of humans and language models, however, do not scale well with data. We are, however, expert transfer learners, with strong priors about the behaviors of different classes of things.
