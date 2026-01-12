@@ -12,6 +12,7 @@ permalink: /blog/
 
 <div class="posts">
   {% for post in site.posts %}
+  {% unless post.hidden %}
   <div class="post">
     <h3 class="post-title">
       <a href="{{ post.url | absolute_url }}">
@@ -23,5 +24,6 @@ permalink: /blog/
       <p>{{ post.description }}</p>
     {% endif %}
   </div>
+  {% endunless %}
   {% endfor %}
 </div>

@@ -2,6 +2,7 @@
 layout: post
 title: Notes on Risks from Learned Optimization in Advanced Machine Learning Systems
 categories: [notes]
+hidden: true
 ---
 
 ### Notes
