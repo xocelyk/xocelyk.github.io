@@ -338,7 +338,7 @@ a.sidebar-nav-item:focus {
 .post-date {
   display: block;
   margin-top: -.3rem;
-  margin-bottom: .3rem;
+  margin-bottom: 1.5rem;
   color: #9a9a9a;
   font-size: 0.8rem;
 }
