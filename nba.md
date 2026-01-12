@@ -41,6 +41,11 @@ html {
   display: none !important;
 }
 
+/* Add top spacing since masthead is hidden */
+.page-title {
+  margin-top: 2rem !important;
+}
+
 </style>
 
 Updated daily. Projections from 1,000 simulations.
