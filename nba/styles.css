@@ -1,12 +1,12 @@
 table {
-    margin-bottom: none;
+    margin-bottom: 0;
     border: none;
-    border-collapse: none;
+    border-collapse: separate;
   }
 
 td,
 th {
-  padding: none;
+  padding: 0;
   border: none;
 }
 
