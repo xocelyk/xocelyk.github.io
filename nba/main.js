@@ -85,39 +85,30 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         .enter()
         .append("td")
         .attr("class", d => d.column === "Team" ? "team-cell" : (d.addBorder ? "right-border" : ""))
-        .text(d => {
+        .attr("title", d => {
             if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
                 const value = parseFloat(d.value);
-                if (value == 1) {
-                    return "100%";
-                }
-                if (value == 0) {
-                    return "0%";
-                }
-                // Check for value greater than 0.999
-                if (value > 0.999) {
-                    return ">99.9%";
-                }
-                // Check for value less than 0.001
-                else if (value < 0.001) {
-                    return "<0.1%";
-                }
-                // For values >= 0.990 or <= 0.010, show one decimal place
-                else if (value > 0.990 || value < 0.010) {
-                    const percentage = (value * 100).toFixed(1);
-                    return `${percentage}%`;
-                }
-                // For all other cases, round to the nearest whole number
-                else {
-                    const percentage = Math.round(value * 100);
-                    return `${percentage}%`;
-                }
+                if (value == 1) return "100%";
+                if (value == 0) return "0%";
+                return (value * 100).toFixed(1) + "%";
+            }
+            return null;
+        })
+        .html(d => {
+            const pct = '<span class="pct">%</span>';
+            if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
+                const value = parseFloat(d.value);
+                if (value == 1) return `100${pct}`;
+                if (value == 0) return `0${pct}`;
+                if (value > 0.999) return `&gt;99.9${pct}`;
+                if (value < 0.001) return `&lt;0.1${pct}`;
+                if (value > 0.990 || value < 0.010) return `${(value * 100).toFixed(1)}${pct}`;
+                return `${Math.round(value * 100)}${pct}`;
             }
             if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
                 return formatValue(d.value, d.column);
             }
-            return d.value
-        
+            return d.value;
         })
         .style("width", d => {
             if (d.column === "Team") return "20%";
