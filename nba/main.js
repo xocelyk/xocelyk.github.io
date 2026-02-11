@@ -66,6 +66,15 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         .enter()
         .append("th")
         .attr("data-column", d => d)
+        .attr("title", d => {
+            const tooltips = {
+                "AdjO": "Adjusted Offensive Efficiency",
+                "AdjD": "Adjusted Defensive Efficiency",
+                "Pace": "Possessions Per Game",
+                "RSOS": "Remaining Strength of Schedule"
+            };
+            return tooltips[d] || null;
+        })
         .text(d => d)
         .on("click", function(event, d) { sortByColumn(d); })
 
