@@ -10,7 +10,7 @@ permalink: /nba/
 <style>
 /* Override sepia theme for NBA page only */
 body {
-  color: #515151 !important;
+  color: #333333 !important;
   background-color: #fff !important;
 }
 

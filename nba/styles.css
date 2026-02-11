@@ -24,6 +24,7 @@ th {
     margin: 0 auto;
     border-collapse: collapse;
     font-family: 'Cabin', sans-serif;
+    font-variant-numeric: tabular-nums;
 
 }
 .table th {
@@ -40,7 +41,7 @@ th {
 
 .table td {
     font-size: 16px;
-    border-bottom: 1px solid #cccccc;
+    border-bottom: 0.5px solid #cccccc;
     /* Make all cells white */
     background-color: #fff;
 
