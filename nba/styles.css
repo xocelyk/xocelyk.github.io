@@ -102,3 +102,12 @@ th {
     overflow-x: auto; /* Enable horizontal scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
+
+.predictions-table td {
+    padding: 4px 10px;
+    font-size: 14px;
+}
+
+.predictions-table th {
+    padding: 4px 10px;
+}

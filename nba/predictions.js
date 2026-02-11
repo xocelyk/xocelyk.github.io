@@ -1,8 +1,11 @@
 d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/predicted_margins_and_win_probs.csv").then(data => {
-    const columns = ["Date", "Home", "Away", "Predicted Home Margin", "Predicted Home Win Probability"];
+    const columns = ["Date", "Home", "Away", "Favorite", "Margin", "Win"];
     const colorScale = d3.scaleLinear()
-    .domain([0, 1])
-    .range(["#ffffff", "#33CEFF"]);
+        .domain([0, 1])
+        .range(["#ffffff", "#33CEFF"]);
+
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const today = new Date();
     const sevenDaysFromNow = new Date();
@@ -10,41 +13,62 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
 
     // Filter the data to include only the next 7 days
     const filteredData = data.filter(d => {
-        const dateOfEntry = new Date(d.Date); // Assuming 'Date' is the column name
+        const dateOfEntry = new Date(d.Date);
         return dateOfEntry <= sevenDaysFromNow;
+    }).map(d => {
+        const homeMargin = Number(d["Predicted Home Margin"]);
+        const homeWinProb = Number(d["Predicted Home Win Probability"]);
+        const homeFavored = homeMargin >= 0;
+        const parts = d.Date.split("-");
+        const formattedDate = months[parseInt(parts[1], 10) - 1] + " " + parseInt(parts[2], 10);
+        return {
+            Date: formattedDate,
+            Home: d.Home,
+            Away: d.Away,
+            Favorite: homeFavored ? d.Home : d.Away,
+            Margin: Math.abs(homeMargin).toFixed(1),
+            WinProb: homeFavored ? homeWinProb : 1 - homeWinProb,
+            _homeWinProb: homeWinProb
+        };
     });
 
     const container = d3.select("#table-container-2");
-    const table = container.append("table").attr("class", "table").attr("id", "2").style("width", "40%");
+    const table = container.append("table").attr("class", "table predictions-table").attr("id", "2").style("width", "38%").style("table-layout", "fixed");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 
     function formatValue(value, column) {
-        if (column === "Predicted Home Win Probability") {
-            const percentage = (Number(value) * 100).toFixed(0); // Convert to percentage and format
-            return percentage + "%";
+        if (column === "Win") {
+            return (Number(value) * 100).toFixed(0) + "%";
         }
-        // ... (other formatting conditions for different columns)
-        return value; // Default return for columns without specific formatting
+        return value;
     }
 
-    // Define column widths
-    const columnWidths = {
-        "Date": "30%",
-        "Home": "15%",
-        "Away": "15%",
-        "Predicted Home Margin": "15%",
-        "Predicted Home Win Probability": "15%"
+    function shadeColor(d) {
+        if ((d.column === "Home" || d.column === "Away") && d.value === d._favorite) {
+            const favWinProb = d._homeWinProb >= 0.5 ? d._homeWinProb : 1 - d._homeWinProb;
+            return colorScale(((favWinProb - 0.45) * 2) ** 1.4);
+        }
+        return null;
+    }
+
+    const columnPadding = {
+        "Date": "4px 8px",
+        "Home": "4px 8px",
+        "Away": "4px 8px",
+        "Favorite": "4px 8px 4px 25px",
+        "Margin": "4px 8px",
+        "Win": "4px 8px"
     };
 
-    // Add header row and set widths
+    // Add header row
     thead.append("tr")
         .selectAll("th")
         .data(columns)
         .enter()
         .append("th")
         .text(d => d)
-        .style("width", d => columnWidths[d])
+        .style("padding", d => columnPadding[d])
         .on("click", function(event, d) { sortByColumn(d); });
 
     // Add rows
@@ -53,22 +77,43 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
         .enter()
         .append("tr");
 
-    // Add cells to rows and set widths
+    // Add cells
     rows.selectAll("td")
-    .data(row => columns.map(column => ({ column: column, value: row[column], winProb: row["Predicted Home Win Probability"] })))
-    .enter()
-    .append("td")
-    .text(d => formatValue(d.value, d.column))
-    .style("background-color", d => {
-        if (d.column === "Home") {
-            return colorScale(Number(d.winProb) ** 1.5);  // Apply color scale for Home team
-        }
-        if (d.column === "Away") {
-            return colorScale((1 - Number(d.winProb)) ** 1.5);  // Inverse color scale for Away team
-        }
-        return null;  // Default color for other cells
-    })
-    .style("width", d => columnWidths[d.column]);
+        .data(row => columns.map(column => {
+            const key = column === "Win" ? "WinProb" : column;
+            return { column: column, value: row[key], _homeWinProb: row._homeWinProb, _favorite: row.Favorite };
+        }))
+        .enter()
+        .append("td")
+        .text(d => formatValue(d.value, d.column))
+        .style("background-color", shadeColor)
+        .style("padding", d => columnPadding[d.column]);
 
-    // ... (rest of your sorting logic)
+    let sortAscending = true;
+
+    function sortByColumn(clickedColumn) {
+        filteredData.sort((a, b) => {
+            let aValue, bValue;
+            const key = clickedColumn === "Win" ? "WinProb" : clickedColumn;
+            aValue = isNaN(a[key]) ? a[key] : +a[key];
+            bValue = isNaN(b[key]) ? b[key] : +b[key];
+            return sortAscending ? d3.ascending(aValue, bValue) : d3.descending(aValue, bValue);
+        });
+        sortAscending = !sortAscending;
+        updateTable();
+    }
+
+    function updateTable() {
+        const rows = tbody.selectAll("tr").data(filteredData);
+
+        rows.selectAll("td")
+            .data(row => columns.map(column => {
+                const key = column === "Win" ? "WinProb" : column;
+                return { column: column, value: row[key], _homeWinProb: row._homeWinProb, _favorite: row.Favorite };
+            }))
+            .text(d => formatValue(d.value, d.column))
+            .style("background-color", shadeColor);
+
+        rows.exit().remove();
+    }
 });
