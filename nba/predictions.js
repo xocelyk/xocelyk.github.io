@@ -33,7 +33,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
     });
 
     const container = d3.select("#table-container-2");
-    const table = container.append("table").attr("class", "table predictions-table").attr("id", "2").style("width", "38%").style("table-layout", "fixed");
+    const table = container.append("table").attr("class", "table predictions-table").attr("id", "2").style("width", "38%").style("min-width", "500px").style("table-layout", "fixed");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 
