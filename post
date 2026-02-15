@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+#
+# Post a note to your personal site.
+#
+# Usage:
+#   ./post "your note here"
+#   ./post              (opens $EDITOR)
+#   echo "note" | ./post -
+#
+
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+NOTES_DIR="$REPO_DIR/_notes"
+
+# Get the note content
+if [ $# -eq 0 ]; then
+  # No args: open editor
+  TMPFILE=$(mktemp /tmp/note.XXXXXX.md)
+  ${EDITOR:-vim} "$TMPFILE"
+  CONTENT=$(cat "$TMPFILE")
+  rm -f "$TMPFILE"
+elif [ "$1" = "-" ]; then
+  # Read from stdin
+  CONTENT=$(cat)
+else
+  # Inline argument
+  CONTENT="$*"
+fi
+
+# Bail if empty
+if [ -z "$(echo "$CONTENT" | tr -d '[:space:]')" ]; then
+  echo "Empty note, nothing posted."
+  exit 1
+fi
+
+# Generate filename from timestamp
+TIMESTAMP=$(date +"%Y-%m-%d-%H%M%S")
+DATE=$(date +"%Y-%m-%d %H:%M:%S %z")
+DATE_SHORT=$(date +"%Y-%m-%d")
+FILENAME="$NOTES_DIR/$TIMESTAMP.md"
+
+mkdir -p "$NOTES_DIR"
+
+cat > "$FILENAME" <<EOF
+---
+date: $DATE
+---
+
+$CONTENT
+EOF
+
+cd "$REPO_DIR"
+git add "$FILENAME"
+git commit -m "note: $DATE_SHORT"
+git push
+
+echo "Posted."

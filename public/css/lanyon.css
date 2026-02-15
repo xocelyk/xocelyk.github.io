@@ -574,3 +574,42 @@ a.pagination-item:hover {
     padding: 0.25rem 0.4rem;
   }
 }
+
+
+/*
+ * Notes feed
+ *
+ * Minimalist timeline for short-form notes.
+ */
+
+.notes-feed {
+  margin-top: 0.5rem;
+}
+
+.note {
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.note:first-child {
+  padding-top: 0;
+}
+
+.note:last-child {
+  border-bottom: none;
+}
+
+.note-content {
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.note-content p:last-child {
+  margin-bottom: 0;
+}
+
+.note-date {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: #9a9a9a;
+}
