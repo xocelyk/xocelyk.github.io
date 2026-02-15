@@ -41,7 +41,7 @@ th {
 
 .table td {
     font-size: 16px;
-    border-bottom: 0.5px solid #cccccc;
+    border-bottom: 1px solid #cccccc;
     /* Make all cells white */
     background-color: #fff;
 
@@ -50,18 +50,21 @@ th {
 /* Add a media query for small screens */
 @media (max-width: 600px) {
   .table td {
-      font-size: 11px; /* Smaller font size for small screens */
-      padding: 10px;
+      font-size: 11px;
+      padding: 4px;
+      white-space: nowrap;
   }
   .table th {
       font-size: 9px;
-      padding: 10px;}
-      /* Prevent line breaks at hyphens */
-  .table td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;}
-
+      padding: 4px;
+  }
+  .predictions-table td {
+      padding: 4px 6px;
+      font-size: 12px;
+  }
+  .predictions-table th {
+      padding: 4px 6px;
+  }
 }
 
 .table th {
@@ -84,7 +87,7 @@ th {
 }
 
 .container {
-    max-width: 28rem;
+    max-width: 100%;
   }
 
   @media (min-width: 38em) {
@@ -99,9 +102,9 @@ th {
   }
 
 .table-scroll-container {
-    max-width: 400%;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .predictions-table td {
@@ -111,4 +114,10 @@ th {
 
 .predictions-table th {
     padding: 4px 10px;
+}
+
+@media (max-width: 600px) {
+    .predictions-table {
+        width: 100% !important;
+    }
 }

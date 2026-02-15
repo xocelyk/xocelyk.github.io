@@ -4,7 +4,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         .range(["#ffffff", "#33CEFF"]);
 
     const container = d3.select("#table-container-1");
-    const table = container.append("table").attr("class", "table").attr("id", "1");
+    const table = container.append("table").attr("class", "table").attr("id", "1").style("min-width", "900px");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
     function formatValue(value, column) {
