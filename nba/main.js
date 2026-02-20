@@ -66,6 +66,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         .enter()
         .append("th")
         .attr("data-column", d => d)
+        .attr("class", d => ['Playoffs', 'Conference Semis', 'Conference Finals', 'Finals', 'Champion'].includes(d) ? "prob-cell" : "")
         .attr("title", d => {
             const tooltips = {
                 "AdjO": "Adjusted Offensive Efficiency",
@@ -93,7 +94,13 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         })
         .enter()
         .append("td")
-        .attr("class", d => d.column === "Team" ? "team-cell" : (d.addBorder ? "right-border" : ""))
+        .attr("class", d => {
+            const classes = [];
+            if (d.column === "Team") classes.push("team-cell");
+            if (d.addBorder) classes.push("right-border");
+            if (['Playoffs', 'Conference Semis', 'Conference Finals', 'Finals', 'Champion'].includes(d.column)) classes.push("prob-cell");
+            return classes.join(" ");
+        })
         .attr("title", d => {
             if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
                 const value = parseFloat(d.value);

@@ -65,6 +65,13 @@ th {
   .predictions-table th {
       padding: 4px 6px;
   }
+  /* Fixed width for playoff probability columns on mobile */
+  .table td.prob-cell,
+  .table th.prob-cell {
+      min-width: 48px;
+      width: 48px;
+      max-width: 48px;
+  }
 }
 
 .table th {
