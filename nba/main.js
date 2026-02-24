@@ -3,6 +3,47 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         .domain([0, 1])
         .range(["#ffffff", "#33CEFF"]);
 
+    const conferenceMap = {
+        "Boston Celtics": "east",
+        "Brooklyn Nets": "east",
+        "New York Knicks": "east",
+        "Philadelphia 76ers": "east",
+        "Toronto Raptors": "east",
+        "Chicago Bulls": "east",
+        "Cleveland Cavaliers": "east",
+        "Detroit Pistons": "east",
+        "Indiana Pacers": "east",
+        "Milwaukee Bucks": "east",
+        "Atlanta Hawks": "east",
+        "Charlotte Hornets": "east",
+        "Miami Heat": "east",
+        "Orlando Magic": "east",
+        "Washington Wizards": "east",
+        "Dallas Mavericks": "west",
+        "Denver Nuggets": "west",
+        "Golden State Warriors": "west",
+        "Houston Rockets": "west",
+        "Los Angeles Clippers": "west",
+        "Los Angeles Lakers": "west",
+        "Memphis Grizzlies": "west",
+        "Minnesota Timberwolves": "west",
+        "New Orleans Pelicans": "west",
+        "Oklahoma City Thunder": "west",
+        "Phoenix Suns": "west",
+        "Portland Trail Blazers": "west",
+        "Sacramento Kings": "west",
+        "San Antonio Spurs": "west",
+        "Utah Jazz": "west"
+    };
+
+    let currentConference = "all";
+    let allData = data;
+
+    function getFilteredData() {
+        if (currentConference === "all") return allData;
+        return allData.filter(d => conferenceMap[d.Team] === currentConference);
+    }
+
     const container = d3.select("#table-container-1");
     const table = container.append("table").attr("class", "table").attr("id", "1");
     const thead = table.append("thead");
@@ -81,7 +122,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
 
     // Create rows
     const rows = tbody.selectAll("tr")
-        .data(data)
+        .data(getFilteredData())
         .enter()
         .append("tr");
 
@@ -164,30 +205,77 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         }
         
         function updateTable() {
-            // Select all rows and bind them to the new, sorted data
-            const rows = tbody.selectAll("tr").data(data);
-        
-            // Update existing cells
+            const filtered = getFilteredData();
+            tbody.selectAll("tr").remove();
+
+            const rows = tbody.selectAll("tr")
+                .data(filtered)
+                .enter()
+                .append("tr");
+
             rows.selectAll("td")
-                .data(row => headers.map(column => {
-                    const key = column === "Season Rating" ? "EM Rating" : column;
-                    return { column: column, value: row[key] };
-                }))
-                .text(d => formatValue(d.value, d.column))
-                .each(function(d) { applyConditionalShading(d3.select(this), d.column); }); // Apply shading
-        
-            // Enter new cells
-            const newCells = rows.enter().append("tr").selectAll("td")
-                .data(row => headers.map(column => {
-                    const key = column === "Season Rating" ? "EM Rating" : column;
-                    return { column: column, value: row[key] };
-                }))
-                .enter().append("td")
-                .text(d => formatValue(d.value, d.column))
-                .each(function(d) { applyConditionalShading(d3.select(this), d.column); }); // Apply shading
-        
-            // Exit and remove old rows
-            rows.exit().remove();
+                .data(function(row) {
+                    return headers.map(column => {
+                        const key = column === "Season Rating" ? "EM Rating" : column;
+                        return { column: column, value: row[key], addBorder: ["Team", "Record", "Predictive Rating", "Projected Record", "RSOS"].includes(column) };
+                    });
+                })
+                .enter()
+                .append("td")
+                .attr("class", d => {
+                    const classes = [];
+                    if (d.column === "Team") classes.push("team-cell");
+                    if (d.addBorder) classes.push("right-border");
+                    if (['Playoffs', 'Conference Semis', 'Conference Finals', 'Finals', 'Champion'].includes(d.column)) classes.push("prob-cell");
+                    return classes.join(" ");
+                })
+                .attr("title", d => {
+                    if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
+                        const value = parseFloat(d.value);
+                        if (value == 1) return "100%";
+                        if (value == 0) return "0%";
+                        return (value * 100).toFixed(1) + "%";
+                    }
+                    return null;
+                })
+                .html(d => {
+                    const pct = '<span class="pct">%</span>';
+                    if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
+                        const value = parseFloat(d.value);
+                        if (value == 1) return `100${pct}`;
+                        if (value == 0) return `0${pct}`;
+                        if (value > 0.999) return `&gt;99.9${pct}`;
+                        if (value < 0.001) return `&lt;0.1${pct}`;
+                        if (value > 0.990 || value < 0.010) return `${(value * 100).toFixed(1)}${pct}`;
+                        return `${Math.round(value * 100)}${pct}`;
+                    }
+                    if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
+                        return formatValue(d.value, d.column);
+                    }
+                    return d.value;
+                })
+                .style("width", d => {
+                    if (d.column === "Team") return "20%";
+                    if (d.column === "Record") return "10%";
+                    if (d.column === "Season Rating") return "6%";
+                    if (d.column === "Predictive Rating") return "6%";
+                    if (d.column === "Projected Record") return "10%";
+                    if (d.column === "AdjO") return "6%";
+                    if (d.column === "AdjD") return "6%";
+                    if (d.column === "Pace") return "6%";
+                    if (d.column === "Playoffs") return "6%";
+                    if (d.column === "Conference Finals") return "6%";
+                    if (d.column === "Conference Semis") return "6%";
+                    if (d.column === "Finals") return "6%";
+                    if (d.column === "Champion") return "6%";
+                    return "auto";
+                })
+                .style("background-color", function(d) {
+                    if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
+                        return colorScale(+d.value);
+                    }
+                    return null;
+                });
         }
         
         function calculateWinPercentage(record) {
@@ -201,41 +289,30 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         let sortAscending = true;
         
         function sortByColumn(clickedColumn) {
-            // Sort data
-            data.sort((a, b) => {
+            allData.sort((a, b) => {
                 let aValue, bValue;
-        
+
                 if (clickedColumn === "Record") {
-                    // Special sorting logic for "Record" column
                     aValue = calculateWinPercentage(a.Record);
                     bValue = calculateWinPercentage(b.Record);
                 } else {
-                    // Map display column name back to data column name
                     const dataColumn = clickedColumn === "Season Rating" ? "EM Rating" : clickedColumn;
-                    // Default sorting logic for other columns
                     aValue = isNaN(a[dataColumn]) ? a[dataColumn] : +a[dataColumn];
                     bValue = isNaN(b[dataColumn]) ? b[dataColumn] : +b[dataColumn];
                 }
-        
+
                 return sortAscending ? d3.ascending(aValue, bValue) : d3.descending(aValue, bValue);
             });
-        
-            sortAscending = !sortAscending; // Toggle the sort order
-            updateTable(); // Update the table with sorted data
+
+            sortAscending = !sortAscending;
+            updateTable();
         }
-        
-        
 
-        
-
-    // Add click event listener to headers
-    thead.selectAll("th")
-    .data(headers)
-    .enter()
-    .append("th")
-    .attr("data-column", d => d) // Ensure this matches the column names
-    .text(d => d)
-    .on("click", function(event, d) {
-        sortByColumn(d);
+    // Conference toggle
+    d3.selectAll(".toggle-btn").on("click", function() {
+        d3.selectAll(".toggle-btn").classed("active", false);
+        d3.select(this).classed("active", true);
+        currentConference = d3.select(this).attr("data-conference");
+        updateTable();
     });
 });

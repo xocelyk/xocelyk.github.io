@@ -114,6 +114,31 @@ th {
     -webkit-overflow-scrolling: touch;
 }
 
+.conference-toggle {
+    margin: 8px 0;
+}
+
+.toggle-btn {
+    font-family: 'Cabin', sans-serif;
+    font-size: 13px;
+    padding: 4px 14px;
+    border: 1px solid #333;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    margin-right: 4px;
+    border-radius: 3px;
+}
+
+.toggle-btn.active {
+    background: #333;
+    color: #fff;
+}
+
+.toggle-btn:hover:not(.active) {
+    background: #e9e6e6;
+}
+
 .predictions-table td {
     padding: 4px 10px;
     font-size: 14px;

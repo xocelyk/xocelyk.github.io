@@ -50,6 +50,12 @@ html {
 
 Updated daily. Projections from 1,000 simulations.
 
+<div class="conference-toggle">
+    <button class="toggle-btn active" data-conference="all">All</button>
+    <button class="toggle-btn" data-conference="east">East</button>
+    <button class="toggle-btn" data-conference="west">West</button>
+</div>
+
 <div class="table-scroll-container">
 <div id="table-container">
     {% include nba_table.html %}
