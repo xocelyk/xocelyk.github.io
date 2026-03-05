@@ -1,21 +1,97 @@
+/* ============================================
+   NBA Forecast Page Styles
+   ============================================ */
+
+/* --- Header --- */
+.nba-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #fff;
+    padding: 2.5rem 1.5rem 2rem;
+    margin: -1.5rem -1rem 2rem;
+    border-radius: 0 0 12px 12px;
+    text-align: center;
+}
+
+.nba-header h1 {
+    color: #fff !important;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.5px;
+}
+
+.nba-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    margin: 0;
+    font-weight: 400;
+}
+
+/* --- Section headers --- */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 0 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1a1a2e !important;
+}
+
+.section-note {
+    color: #888;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+/* --- Conference tabs --- */
+.conference-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.conf-tab {
+    background: #e9ecef;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.2s ease;
+    font-family: 'Cabin', sans-serif;
+}
+
+.conf-tab:hover {
+    background: #dee2e6;
+}
+
+.conf-tab.active {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+/* --- Tables --- */
 table {
     margin-bottom: 0;
     border: none;
     border-collapse: separate;
-  }
+}
 
-td,
-th {
-  padding: 0;
-  border: none;
+td, th {
+    padding: 0;
+    border: none;
 }
 
 .table td.right-border {
-    border-right: 3px solid #333;
-}
-
-.table td.left-border {
-    border-left: 3px solid #333;
+    border-right: 2px solid #dee2e6;
 }
 
 .table {
@@ -25,101 +101,276 @@ th {
     border-collapse: collapse;
     font-family: 'Cabin', sans-serif;
     font-variant-numeric: tabular-nums;
-
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
 }
+
 .table th {
-    font-size: 11px;
-    font-weight: 500;
-    border-bottom: 2px solid #333;
-    background-color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #1a1a2e;
+    background-color: #f8f9fa;
+    color: #555;
+    padding: 8px 6px;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.table th:hover {
+    background-color: #e9ecef;
+    color: #1a1a2e;
 }
 
 .table th, .table td {
-    padding: 10px;
+    padding: 8px 6px;
     text-align: center;
 }
 
 .table td {
-    font-size: 16px;
-    border-bottom: 1px solid #cccccc;
-    /* Make all cells white */
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
     background-color: #fff;
-
+    transition: background-color 0.15s ease;
 }
 
-/* Add a media query for small screens */
-@media (max-width: 600px) {
-  .table td {
-      font-size: 11px;
-      padding: 4px;
-      white-space: nowrap;
-  }
-  .table th {
-      font-size: 9px;
-      padding: 4px;
-  }
-  .predictions-table td {
-      padding: 4px 6px;
-      font-size: 12px;
-  }
-  .predictions-table th {
-      padding: 4px 6px;
-  }
-  /* Fixed width for playoff probability columns on mobile */
-  .table td.prob-cell,
-  .table th.prob-cell {
-      min-width: 48px;
-      width: 48px;
-      max-width: 48px;
-  }
+.table tbody tr:hover td {
+    background-color: #f8f9fa !important;
 }
 
-.table th {
-    padding: 2px;
+.table tbody tr:hover td.prob-cell {
+    filter: brightness(0.95);
 }
 
-.table th {
-    /* Optional: Add bottom border to header if desired */
-    border-bottom: 3px solid #333;
-}
-
+/* Team cell with logo */
 .table .team-cell {
     text-align: left;
+    white-space: nowrap;
+    padding-left: 10px;
 }
 
-/* Optional: Add hover to header */
-.table th:hover {
-    background-color: #e9e6e6;
-    color: #333;
+.team-logo {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-right: 8px;
+    border-radius: 2px;
 }
 
-.container {
-    max-width: 100%;
-  }
+.team-name {
+    vertical-align: middle;
+}
 
-  @media (min-width: 38em) {
-    .container {
-      max-width: 60rem;
-    }
-  }
-  @media (min-width: 56em) {
-    .container {
-      max-width: 60rem;
-    }
-  }
+.team-abbr {
+    display: none;
+}
+
+/* Zero probability styling */
+.zero-prob {
+    color: #ccc;
+}
+
+/* Percentage sign styling */
+.pct {
+    font-size: 0.7em;
+    opacity: 0.6;
+}
 
 .table-scroll-container {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
 }
 
-.predictions-table td {
-    padding: 4px 10px;
-    font-size: 14px;
+.container {
+    max-width: 100%;
 }
 
-.predictions-table th {
-    padding: 4px 10px;
+@media (min-width: 38em) {
+    .container {
+        max-width: 60rem;
+    }
 }
 
+@media (min-width: 56em) {
+    .container {
+        max-width: 60rem;
+    }
+}
+
+/* ============================================
+   Predictions - Game Cards
+   ============================================ */
+
+.date-header {
+    font-family: 'Cabin', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    padding: 12px 4px 6px;
+    border-bottom: 2px solid #1a1a2e;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.game-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    font-family: 'Cabin', sans-serif;
+}
+
+.game-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+.game-team {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    gap: 8px;
+}
+
+.game-team.favored .game-team-name {
+    font-weight: 700;
+}
+
+.game-team.favored .game-win-pct {
+    font-weight: 700;
+    color: #1a73e8;
+}
+
+.game-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.game-team-name {
+    flex: 1;
+    font-size: 0.85rem;
+    color: #333;
+}
+
+.game-win-pct {
+    font-size: 0.85rem;
+    color: #666;
+    font-variant-numeric: tabular-nums;
+    min-width: 36px;
+    text-align: right;
+}
+
+/* Probability bar */
+.prob-bar-container {
+    display: flex;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 4px 0;
+    background: #f0f0f0;
+}
+
+.prob-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.away-bar {
+    background: #888;
+    border-radius: 2px 0 0 2px;
+}
+
+.home-bar {
+    background: #1a73e8;
+    border-radius: 0 2px 2px 0;
+}
+
+.game-spread {
+    font-size: 0.7rem;
+    color: #999;
+    text-align: center;
+    margin-top: 2px;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+@media (max-width: 600px) {
+    .nba-header {
+        padding: 1.5rem 1rem 1.2rem;
+        margin: -1rem -0.5rem 1.5rem;
+    }
+
+    .nba-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .table td {
+        font-size: 11px;
+        padding: 4px 3px;
+        white-space: nowrap;
+    }
+    .table th {
+        font-size: 8px;
+        padding: 4px 3px;
+    }
+
+    /* Show abbreviation, hide full name on mobile */
+    .team-name {
+        display: none;
+    }
+    .team-abbr {
+        display: inline;
+        vertical-align: middle;
+        font-weight: 600;
+    }
+    .team-logo {
+        width: 16px;
+        height: 16px;
+        margin-right: 4px;
+    }
+
+    .table td.prob-cell,
+    .table th.prob-cell {
+        min-width: 40px;
+        width: 40px;
+        max-width: 48px;
+    }
+
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .game-card {
+        padding: 10px 12px;
+    }
+
+    .game-team-name {
+        font-size: 0.8rem;
+    }
+}

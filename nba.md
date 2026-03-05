@@ -11,7 +11,7 @@ permalink: /nba/
 /* Override sepia theme for NBA page only */
 body {
   color: #333333 !important;
-  background-color: #fff !important;
+  background-color: #f5f5f5 !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -41,23 +41,37 @@ html {
   display: none !important;
 }
 
-/* Add top spacing since masthead is hidden */
+/* Hide default page title since we have custom header */
 .page-title {
-  margin-top: 2rem !important;
+  display: none !important;
 }
 
 </style>
 
-Updated daily. Projections from 1,000 simulations.
+<div class="nba-header">
+  <h1>NBA Forecast</h1>
+  <p class="nba-subtitle">2025-26 Season &middot; Updated daily &middot; 1,000 simulations</p>
+</div>
+
+<div class="section-header">
+  <h2>Standings & Projections</h2>
+  <div class="conference-tabs">
+    <button class="conf-tab active" data-conf="all">All</button>
+    <button class="conf-tab" data-conf="west">West</button>
+    <button class="conf-tab" data-conf="east">East</button>
+  </div>
+</div>
 
 <div class="table-scroll-container">
 <div id="table-container">
     {% include nba_table.html %}
 </div>
 </div>
-<br/><br/>
 
-Game predictions for the next week.
+<div class="section-header">
+  <h2>Upcoming Games</h2>
+  <p class="section-note">Predictions for the next 7 days</p>
+</div>
 
 <div class="table-scroll-container">
 <div id="table-container">

@@ -1,119 +1,129 @@
 d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/predicted_margins_and_win_probs.csv").then(data => {
-    const columns = ["Date", "Home", "Away", "Favorite", "Margin", "Win"];
-    const colorScale = d3.scaleLinear()
-        .domain([0, 1])
-        .range(["#ffffff", "#33CEFF"]);
-
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    const ABBR_TO_FULL = {
+        "ATL": "Atlanta Hawks", "BOS": "Boston Celtics", "BKN": "Brooklyn Nets",
+        "CHA": "Charlotte Hornets", "CHO": "Charlotte Hornets", "CHI": "Chicago Bulls",
+        "CLE": "Cleveland Cavaliers", "DAL": "Dallas Mavericks", "DEN": "Denver Nuggets",
+        "DET": "Detroit Pistons", "GSW": "Golden State Warriors", "HOU": "Houston Rockets",
+        "IND": "Indiana Pacers", "LAC": "Los Angeles Clippers", "LAL": "Los Angeles Lakers",
+        "MEM": "Memphis Grizzlies", "MIA": "Miami Heat", "MIL": "Milwaukee Bucks",
+        "MIN": "Minnesota Timberwolves", "NOP": "New Orleans Pelicans", "NYK": "New York Knicks",
+        "OKC": "Oklahoma City Thunder", "ORL": "Orlando Magic", "PHI": "Philadelphia 76ers",
+        "PHX": "Phoenix Suns", "POR": "Portland Trail Blazers", "SAC": "Sacramento Kings",
+        "SAS": "San Antonio Spurs", "TOR": "Toronto Raptors", "UTA": "Utah Jazz",
+        "WAS": "Washington Wizards"
+    };
+
+    function getLogoUrl(abbr) {
+        return `https://a.espncdn.com/i/teamlogos/nba/500/${abbr.toLowerCase()}.png`;
+    }
 
     const today = new Date();
     const sevenDaysFromNow = new Date();
     sevenDaysFromNow.setDate(today.getDate() + 7);
 
-    // Filter the data to include only the next 7 days
     const filteredData = data.filter(d => {
         const dateOfEntry = new Date(d.Date);
         return dateOfEntry <= sevenDaysFromNow;
     }).map(d => {
         const homeMargin = Number(d["Predicted Home Margin"]);
         const homeWinProb = Number(d["Predicted Home Win Probability"]);
-        const homeFavored = homeMargin >= 0;
+        const dateObj = new Date(d.Date + "T12:00:00");
+        const dayName = dayNames[dateObj.getDay()];
         const parts = d.Date.split("-");
-        const formattedDate = months[parseInt(parts[1], 10) - 1] + " " + parseInt(parts[2], 10);
+        const formattedDate = `${dayName}, ${months[parseInt(parts[1], 10) - 1]} ${parseInt(parts[2], 10)}`;
         return {
+            rawDate: d.Date,
             Date: formattedDate,
             Home: d.Home,
             Away: d.Away,
-            Favorite: homeFavored ? d.Home : d.Away,
-            Margin: Math.abs(homeMargin).toFixed(1),
-            WinProb: homeFavored ? homeWinProb : 1 - homeWinProb,
-            _homeWinProb: homeWinProb
+            homeMargin: homeMargin,
+            homeWinProb: homeWinProb,
+            awayWinProb: 1 - homeWinProb
         };
     });
 
+    // Group by date
+    const gamesByDate = d3.group(filteredData, d => d.Date);
+
     const container = d3.select("#table-container-2");
-    const table = container.append("table").attr("class", "table predictions-table").attr("id", "2").style("width", "38%").style("min-width", "500px").style("table-layout", "fixed");
-    const thead = table.append("thead");
-    const tbody = table.append("tbody");
 
-    function formatValue(value, column) {
-        if (column === "Win") {
-            return (Number(value) * 100).toFixed(0) + "%";
-        }
-        return value;
-    }
+    gamesByDate.forEach((games, date) => {
+        // Date header
+        container.append("div")
+            .attr("class", "date-header")
+            .text(date);
 
-    function shadeColor(d) {
-        if ((d.column === "Home" || d.column === "Away") && d.value === d._favorite) {
-            const favWinProb = d._homeWinProb >= 0.5 ? d._homeWinProb : 1 - d._homeWinProb;
-            return colorScale(((favWinProb - 0.45) * 2) ** 1.4);
-        }
-        return null;
-    }
+        const gamesGrid = container.append("div")
+            .attr("class", "games-grid");
 
-    const columnPadding = {
-        "Date": "4px 8px",
-        "Home": "4px 8px",
-        "Away": "4px 8px",
-        "Favorite": "4px 8px 4px 25px",
-        "Margin": "4px 8px",
-        "Win": "4px 8px"
-    };
+        games.forEach(game => {
+            const card = gamesGrid.append("div")
+                .attr("class", "game-card");
 
-    // Add header row
-    thead.append("tr")
-        .selectAll("th")
-        .data(columns)
-        .enter()
-        .append("th")
-        .text(d => d)
-        .style("padding", d => columnPadding[d])
-        .on("click", function(event, d) { sortByColumn(d); });
+            const homeWinProb = game.homeWinProb;
+            const awayWinProb = game.awayWinProb;
+            const homeFavored = homeWinProb >= 0.5;
 
-    // Add rows
-    const rows = tbody.selectAll("tr")
-        .data(filteredData)
-        .enter()
-        .append("tr");
+            // Away team row
+            const awayRow = card.append("div")
+                .attr("class", "game-team" + (!homeFavored ? " favored" : ""));
 
-    // Add cells
-    rows.selectAll("td")
-        .data(row => columns.map(column => {
-            const key = column === "Win" ? "WinProb" : column;
-            return { column: column, value: row[key], _homeWinProb: row._homeWinProb, _favorite: row.Favorite };
-        }))
-        .enter()
-        .append("td")
-        .text(d => formatValue(d.value, d.column))
-        .style("background-color", shadeColor)
-        .style("padding", d => columnPadding[d.column]);
+            awayRow.append("img")
+                .attr("class", "game-logo")
+                .attr("src", getLogoUrl(game.Away))
+                .attr("alt", game.Away)
+                .attr("width", 24)
+                .attr("height", 24);
 
-    let sortAscending = true;
+            awayRow.append("span")
+                .attr("class", "game-team-name")
+                .text(ABBR_TO_FULL[game.Away] || game.Away);
 
-    function sortByColumn(clickedColumn) {
-        filteredData.sort((a, b) => {
-            let aValue, bValue;
-            const key = clickedColumn === "Win" ? "WinProb" : clickedColumn;
-            aValue = isNaN(a[key]) ? a[key] : +a[key];
-            bValue = isNaN(b[key]) ? b[key] : +b[key];
-            return sortAscending ? d3.ascending(aValue, bValue) : d3.descending(aValue, bValue);
+            awayRow.append("span")
+                .attr("class", "game-win-pct")
+                .text(Math.round(awayWinProb * 100) + "%");
+
+            // Home team row
+            const homeRow = card.append("div")
+                .attr("class", "game-team" + (homeFavored ? " favored" : ""));
+
+            homeRow.append("img")
+                .attr("class", "game-logo")
+                .attr("src", getLogoUrl(game.Home))
+                .attr("alt", game.Home)
+                .attr("width", 24)
+                .attr("height", 24);
+
+            homeRow.append("span")
+                .attr("class", "game-team-name")
+                .text(ABBR_TO_FULL[game.Home] || game.Home);
+
+            homeRow.append("span")
+                .attr("class", "game-win-pct")
+                .text(Math.round(homeWinProb * 100) + "%");
+
+            // Probability bar
+            const barContainer = card.append("div")
+                .attr("class", "prob-bar-container");
+
+            barContainer.append("div")
+                .attr("class", "prob-bar away-bar")
+                .style("width", (awayWinProb * 100) + "%");
+
+            barContainer.append("div")
+                .attr("class", "prob-bar home-bar")
+                .style("width", (homeWinProb * 100) + "%");
+
+            // Spread line
+            const spread = Math.abs(game.homeMargin).toFixed(1);
+            const favoredTeam = homeFavored ? game.Home : game.Away;
+            card.append("div")
+                .attr("class", "game-spread")
+                .text(`${favoredTeam} -${spread}`);
         });
-        sortAscending = !sortAscending;
-        updateTable();
-    }
-
-    function updateTable() {
-        const rows = tbody.selectAll("tr").data(filteredData);
-
-        rows.selectAll("td")
-            .data(row => columns.map(column => {
-                const key = column === "Win" ? "WinProb" : column;
-                return { column: column, value: row[key], _homeWinProb: row._homeWinProb, _favorite: row.Favorite };
-            }))
-            .text(d => formatValue(d.value, d.column))
-            .style("background-color", shadeColor);
-
-        rows.exit().remove();
-    }
+    });
 });
