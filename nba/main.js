@@ -168,21 +168,20 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
             return d.value;
         })
         .style("width", d => {
-            if (d.column === "Team") return "20%";
-            if (d.column === "Record") return "10%";
+            if (d.column === "Team") return "18%";
+            if (d.column === "Record") return "8%";
             if (d.column === "Season Rating") return "6%";
             if (d.column === "Predictive Rating") return "6%";
             if (d.column === "Projected Record") return "10%";
             if (d.column === "AdjO") return "6%";
             if (d.column === "AdjD") return "6%";
-            if (d.column === "Pace") return "6%"
-            // if (d.column === "RSOS") return "6%";
+            if (d.column === "Pace") return "6%";
+            if (d.column === "RSOS") return "6%";
             if (d.column === "Playoffs") return "6%";
             if (d.column === "Conference Finals") return "6%";
             if (d.column === "Conference Semis") return "6%";
             if (d.column === "Finals") return "6%";
             if (d.column === "Champion") return "6%";
-
             return "auto";
         })
         .style("background-color", function(d) {
@@ -255,8 +254,8 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
                     return d.value;
                 })
                 .style("width", d => {
-                    if (d.column === "Team") return "20%";
-                    if (d.column === "Record") return "10%";
+                    if (d.column === "Team") return "18%";
+                    if (d.column === "Record") return "8%";
                     if (d.column === "Season Rating") return "6%";
                     if (d.column === "Predictive Rating") return "6%";
                     if (d.column === "Projected Record") return "10%";
