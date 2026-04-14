@@ -439,7 +439,7 @@ function seriesBanner(s) {
   const label = isComplete ? "Final" : "Series";
   return `<div class="series-score ${isComplete ? 'is-final' : ''}">
     <span class="series-label">${label}</span>
-    <span class="series-score-line">${a.abbr} ${aw} <span class="dash">–</span> ${b.abbr} ${bw}</span>
+    <span class="series-score-line">${a.abbr} ${aw} <span class="dash">–</span> ${bw} ${b.abbr}</span>
   </div>`;
 }
 
