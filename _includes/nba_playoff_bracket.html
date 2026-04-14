@@ -51,22 +51,26 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) 260px;
     gap: 28px;
-    align-items: start;
+    align-items: stretch;
   }
   .conf-stack { display: flex; flex-direction: column; gap: 0; }
   .conf-row {
     display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 24px; align-items: start;
+    gap: 24px; align-items: stretch;
     padding: 20px 0;
   }
   .conf-row + .conf-row { border-top: 1px solid var(--rule); }
 
-  .finals-col { position: sticky; top: 20px; }
+  .finals-col { align-self: center; }
 
-  .col { display: flex; flex-direction: column; gap: 16px; }
+  .col { display: flex; flex-direction: column; }
+  .col-cards {
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: space-around; gap: 16px;
+  }
   .col-title {
     font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--dim); font-weight: 600; margin-bottom: 4px;
+    color: var(--dim); font-weight: 600; margin-bottom: 12px;
   }
 
   .match, .finals-card {
@@ -132,10 +136,11 @@
 
   @media (max-width: 900px) {
     .bracket { grid-template-columns: 1fr; }
-    .finals-col { position: static; }
+    .finals-col { align-self: stretch; }
   }
   @media (max-width: 700px) {
     .conf-row { grid-template-columns: 1fr; gap: 14px; }
+    .col-cards { justify-content: flex-start; }
   }
 </style>
 <div class="bracket-scope" id="bracket-scope">
@@ -304,30 +309,30 @@ function render(slotList, { nSims, year }) {
       <div class="conf-row">
         <div class="col east">
           <div class="col-title">East · 1st Round</div>
-          ${e_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}
+          <div class="col-cards">${e_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}</div>
         </div>
         <div class="col east">
           <div class="col-title">East · Conf Semis</div>
-          ${e_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}
+          <div class="col-cards">${e_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}</div>
         </div>
         <div class="col east">
           <div class="col-title">East · Conf Finals</div>
-          ${e_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}
+          <div class="col-cards">${e_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}</div>
         </div>
       </div>
 
       <div class="conf-row">
         <div class="col west">
           <div class="col-title">West · 1st Round</div>
-          ${w_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}
+          <div class="col-cards">${w_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}</div>
         </div>
         <div class="col west">
           <div class="col-title">West · Conf Semis</div>
-          ${w_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}
+          <div class="col-cards">${w_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}</div>
         </div>
         <div class="col west">
           <div class="col-title">West · Conf Finals</div>
-          ${w_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}
+          <div class="col-cards">${w_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}</div>
         </div>
       </div>
     </div>
