@@ -8,6 +8,9 @@ permalink: /nba/playoffs/
 
 <style>
 /* Override sepia theme for NBA page only */
+html, body {
+  overflow-x: clip !important; /* allow position:sticky to work */
+}
 body {
   color: #515151 !important;
   background-color: #fff !important;
