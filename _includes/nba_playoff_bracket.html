@@ -159,10 +159,6 @@
   <div class="loading"><span class="spinner"></span>Fetching playoff simulation data…</div>
 </div>
 
-<footer class="foot">
-  <span id="foot-meta"></span>
-</footer>
-
 </div>
 </div>
 
@@ -272,7 +268,6 @@ function slotCard(s, opts = {}) {
 function render(slotList, { nSims, year }) {
   document.getElementById("year-label").textContent = `— ${year} Forecast`;
   document.getElementById("sim-meta").textContent = `${nSims.toLocaleString()} sims · updated ${new Date().toISOString().slice(0,10)}`;
-  document.getElementById("foot-meta").textContent = `${nSims.toLocaleString()} simulations`;
 
   const bySlot = key => slotList.find(s => `${s.round}|${s.conf}|${s.slot}` === key);
   const pickRound = (round, conf) =>
