@@ -101,6 +101,9 @@
     font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--dim); font-weight: 600; margin-bottom: 12px;
   }
+  /* Keep empty titles in the layout so alignment across columns/panels
+     stays consistent even when a round doesn't render a label. */
+  .col-title:empty::before { content: "\00a0"; }
 
   /* round-nav shows only on mobile */
   .round-nav { display: none; }
@@ -469,17 +472,17 @@ function render(slotList, { nSims, year }) {
     ${roundSection("r1",
       e_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join(""),
       w_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join(""),
-      "East · 1st Round", "West · 1st Round")}
+      "East", "West")}
     ${roundSection("semis",
       e_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join(""),
       w_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join(""),
-      "East · Conf Semis", "West · Conf Semis")}
+      "", "")}
     ${roundSection("cf",
       e_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join(""),
       w_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join(""),
-      "East · Conf Finals", "West · Conf Finals")}
+      "", "")}
     <div class="round finals" data-round="finals">
-      <div class="col-title">Finals</div>
+      <div class="col-title"></div>
       <div class="col-cards">${fin.map(s => slotCard(s, { maxShown: 10, label: "NBA Finals" })).join("")}</div>
     </div>
   </div>
