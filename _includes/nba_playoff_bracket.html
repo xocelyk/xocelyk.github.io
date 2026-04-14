@@ -197,34 +197,76 @@
     .bracket::-webkit-scrollbar { height: 6px; }
     .bracket::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
 
+    /* Every round uses the same 11-row grid so card centres line up
+       vertically across panels — swipe from R1 to Semis and the Semis
+       card sits exactly at the midpoint of the R1 pair that feeds it. */
     .round {
-      display: flex; flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows:
+        minmax(24px, auto)                  /*  1  east title     */
+        repeat(4, minmax(160px, auto))      /*  2–5  east slots   */
+        28px                                /*  6  east/west gap  */
+        minmax(24px, auto)                  /*  7  west title     */
+        repeat(4, minmax(160px, auto));     /*  8–11 west slots   */
+      row-gap: 12px;
       flex: 0 0 calc(100vw - 32px);
       scroll-snap-align: center;
       scroll-snap-stop: always;
-      gap: 20px;
+      align-content: start;
     }
     .round + .round { margin-left: 16px; }
-    .round.finals {
-      grid-column: auto; grid-row: auto;
-      padding: 0;
-      justify-content: flex-start;
-    }
     .conf-sep { display: none; }
-    .conf-group {
-      grid-column: auto !important; grid-row: auto !important;
-      padding: 0;
-    }
-    /* subtle conference heading instead of a hard divider line */
-    .conf-group .col-title {
+    .conf-group { display: contents; }
+    .col-cards { display: contents; }
+
+    /* conference titles */
+    .round .conf-group.east > .col-title { grid-row: 1; }
+    .round .conf-group.west > .col-title { grid-row: 7; }
+    .round.finals > .col-title { grid-row: 1; }
+    .round .col-title {
       color: var(--ink); font-weight: 600; font-size: 11px;
-      padding-bottom: 8px;
+      padding-bottom: 8px; margin-bottom: 0;
     }
-    .col-cards {
-      display: flex; flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start; gap: 12px;
+
+    /* R1: one card per slot */
+    .round.r1 .conf-group.east > .col-cards > :nth-child(1) { grid-row: 2; }
+    .round.r1 .conf-group.east > .col-cards > :nth-child(2) { grid-row: 3; }
+    .round.r1 .conf-group.east > .col-cards > :nth-child(3) { grid-row: 4; }
+    .round.r1 .conf-group.east > .col-cards > :nth-child(4) { grid-row: 5; }
+    .round.r1 .conf-group.west > .col-cards > :nth-child(1) { grid-row: 8; }
+    .round.r1 .conf-group.west > .col-cards > :nth-child(2) { grid-row: 9; }
+    .round.r1 .conf-group.west > .col-cards > :nth-child(3) { grid-row: 10; }
+    .round.r1 .conf-group.west > .col-cards > :nth-child(4) { grid-row: 11; }
+
+    /* Semis: each card spans 2 R1 slots, centred vertically */
+    .round.semis .conf-group.east > .col-cards > :nth-child(1) { grid-row: 2 / 4; align-self: center; }
+    .round.semis .conf-group.east > .col-cards > :nth-child(2) { grid-row: 4 / 6; align-self: center; }
+    .round.semis .conf-group.west > .col-cards > :nth-child(1) { grid-row: 8 / 10; align-self: center; }
+    .round.semis .conf-group.west > .col-cards > :nth-child(2) { grid-row: 10 / 12; align-self: center; }
+
+    /* Conf Finals: single card spans all 4 slots */
+    .round.cf .conf-group.east > .col-cards > * { grid-row: 2 / 6; align-self: center; }
+    .round.cf .conf-group.west > .col-cards > * { grid-row: 8 / 12; align-self: center; }
+
+    /* Override desktop .round.finals so it joins the mobile grid system */
+    .round.finals {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows:
+        minmax(24px, auto)
+        repeat(4, minmax(160px, auto))
+        28px
+        minmax(24px, auto)
+        repeat(4, minmax(160px, auto));
+      row-gap: 12px;
+      grid-column: auto;
+      grid-row: auto;
+      padding: 0;
+      align-content: start;
     }
+    /* NBA Finals: single card spans entire grid, lands at East/West midpoint */
+    .round.finals > .col-cards > * { grid-row: 2 / 12; align-self: center; }
 
     /* round indicator bar above the scroll area */
     .round-nav {
