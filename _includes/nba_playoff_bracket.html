@@ -435,9 +435,14 @@ function seriesBanner(s) {
   const [a, b] = pair;
   const gw = s.series.games_won || {};
   const aw = gw[a.abbr] ?? 0, bw = gw[b.abbr] ?? 0;
-  const isComplete = s.series.status === "complete";
-  const label = isComplete ? "Final" : "Series";
-  return `<div class="series-score ${isComplete ? 'is-final' : ''}">
+  const status = s.series.status;
+  const labelMap = {
+    not_started: "Matchup",
+    in_progress: "Series",
+    complete: "Final"
+  };
+  const label = labelMap[status] || "Series";
+  return `<div class="series-score ${status === 'complete' ? 'is-final' : ''}">
     <span class="series-label">${label}</span>
     <span class="series-score-line">${a.abbr} ${aw} <span class="dash">–</span> ${bw} ${b.abbr}</span>
   </div>`;
@@ -447,16 +452,34 @@ let _slotSeq = 0;
 function slotCard(s, opts = {}) {
   const { maxShown = 5, label } = opts;
   const id = `slot-${_slotSeq++}`;
-  // When the matchup is locked in (series field present), show both teams
-  // regardless of win probability so a 0% loser stays visible.
-  const eligible = s.series
-    ? s.cands.slice()
-    : s.cands.filter(c => c.win > 0.0005);
-  const shown = eligible.slice(0, maxShown);
-  const rest = eligible.slice(maxShown);
+
+  const filtered = s.cands.filter(c => c.win > 0.0005);
+  const filteredTotal = filtered.reduce((sum, c) => sum + c.win, 0);
+
+  // Resolve effective series state. Prefer the upstream 'series' block
+  // when the sim feed provides it; otherwise synthesize a not_started
+  // block when the matchup is effectively locked (exactly two candidates
+  // with probability summing to ~100%, e.g. a 3-vs-6 or 4-vs-5 R1
+  // matchup that's determined by final standings before play-in).
+  let series = s.series;
+  let teams;
+  if (series) {
+    teams = s.cands.slice();              // preserve 0% loser from upstream
+  } else if (filtered.length === 2 && filteredTotal > 0.999) {
+    series = {
+      status: "not_started",
+      games_won: Object.fromEntries(filtered.map(c => [c.abbr, 0]))
+    };
+    teams = filtered;
+  } else {
+    teams = filtered;
+  }
+
+  const shown = teams.slice(0, maxShown);
+  const rest = teams.slice(maxShown);
   const restWin = rest.reduce((a,c)=>a+c.win, 0);
-  const collapsedRows = shown.map((c,i) => teamRow(c, i === 0, s.series)).join("");
-  const expandedRows = eligible.map((c,i) => teamRow(c, i === 0, s.series)).join("");
+  const collapsedRows = shown.map((c,i) => teamRow(c, i === 0, series)).join("");
+  const expandedRows = teams.map((c,i) => teamRow(c, i === 0, series)).join("");
   const toggleBtn = rest.length > 0 ? `
     <button class="expand-btn" data-target="${id}" aria-expanded="false">
       <span class="expand-closed">+ ${rest.length} more · ${fmtPct(restWin)}</span>
@@ -464,11 +487,11 @@ function slotCard(s, opts = {}) {
     </button>` : "";
   const header = `<div class="round-tag">${label || s.slot}</div>`;
   const cardCls = ["match"];
-  if (s.series) cardCls.push("has-series");
-  if (s.series && s.series.status === "complete") cardCls.push("series-complete");
+  if (series) cardCls.push("has-series");
+  if (series && series.status === "complete") cardCls.push("series-complete");
   return `<div class="${cardCls.join(" ")}" id="${id}">
     ${header}
-    ${seriesBanner(s)}
+    ${seriesBanner({ ...s, series, cands: teams })}
     <div class="rows-collapsed">${collapsedRows}</div>
     <div class="rows-expanded" hidden>${expandedRows}</div>
     ${toggleBtn}
