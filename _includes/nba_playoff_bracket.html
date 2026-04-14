@@ -437,13 +437,13 @@ function seriesBanner(s) {
   const aw = gw[a.abbr] ?? 0, bw = gw[b.abbr] ?? 0;
   const status = s.series.status;
   const labelMap = {
-    not_started: "Matchup",
+    not_started: "",
     in_progress: "Series",
     complete: "Final"
   };
-  const label = labelMap[status] || "Series";
+  const label = labelMap[status] ?? "Series";
   return `<div class="series-score ${status === 'complete' ? 'is-final' : ''}">
-    <span class="series-label">${label}</span>
+    ${label ? `<span class="series-label">${label}</span>` : ""}
     <span class="series-score-line">${a.abbr} ${aw} <span class="dash">–</span> ${bw} ${b.abbr}</span>
   </div>`;
 }
