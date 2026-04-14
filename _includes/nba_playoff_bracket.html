@@ -75,9 +75,14 @@
     padding: 20px 0;
   }
 
+  /* equal-height tracks + center-aligned cards so next-round games land
+     exactly at the midpoint of the two games that feed them, regardless
+     of individual card content height */
   .col-cards {
-    flex: 1; display: flex; flex-direction: column;
-    justify-content: space-around; gap: 16px;
+    flex: 1; display: grid;
+    grid-auto-rows: minmax(0, 1fr);
+    align-items: center;
+    gap: 16px;
   }
   .col-title {
     font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
@@ -193,7 +198,10 @@
       padding: 16px 0;
     }
     .conf-group.west { border-top: 1px solid var(--rule); }
-    .col-cards { justify-content: flex-start; }
+    .col-cards {
+      display: flex; flex-direction: column;
+      justify-content: flex-start; gap: 16px;
+    }
 
     /* round indicator bar above the scroll area */
     .round-nav {
