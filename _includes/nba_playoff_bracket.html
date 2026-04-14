@@ -1,5 +1,4 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://d3js.org/d3.v7.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   .bracket-scope {
@@ -19,46 +18,6 @@
     --s6: #88c0a8;
     --s7: #d0b880;
     background: var(--bg); color: var(--text);
-  }
-  .bracket-scope[data-theme="dark"] .t-light { display: none; }
-  .bracket-scope[data-theme="dark"] .t-dark { display: inline !important; }
-  @media (prefers-color-scheme: dark) {
-    .bracket-scope:not([data-theme="light"]) .t-light { display: none; }
-    .bracket-scope:not([data-theme="light"]) .t-dark { display: inline !important; }
-  }
-  .bracket-scope[data-theme="dark"] {
-    --bg: #15181e;
-    --panel: #1b1f27;
-    --ink: #e7ecf3;
-    --text: #c0c6d1;
-    --dim: #8a93a6;
-    --faint: #5a6172;
-    --rule: #2a2f3a;
-    --rule-strong: #3a4052;
-    --row-rule: #242832;
-    --bar-bg: #242832;
-    --s4: #5880b8;
-    --s5: #6fa2c0;
-    --s6: #6eae95;
-    --s7: #b89e66;
-  }
-  @media (prefers-color-scheme: dark) {
-    .bracket-scope:not([data-theme="light"]) {
-      --bg: #15181e;
-      --panel: #1b1f27;
-      --ink: #e7ecf3;
-      --text: #c0c6d1;
-      --dim: #8a93a6;
-      --faint: #5a6172;
-      --rule: #2a2f3a;
-      --rule-strong: #3a4052;
-      --row-rule: #242832;
-      --bar-bg: #242832;
-      --s4: #5880b8;
-      --s5: #6fa2c0;
-      --s6: #6eae95;
-      --s7: #b89e66;
-    }
   }
   * { box-sizing: border-box; }
   .bracket-scope {
@@ -185,14 +144,9 @@
 <div class="bracket-scope" id="bracket-scope">
 <div class="wrap">
 
-<header class="hero" style="display:flex; justify-content:space-between; align-items:baseline; gap:16px;">
-  <div>
-    <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; color:var(--ink);">Playoff Bracket <span id="year-label" style="color: var(--dim); font-weight: 400;"></span></h1>
-    <div class="meta" id="sim-meta" style="color:var(--dim); font-size:13px;">loading sims…</div>
-  </div>
-  <button id="theme-toggle" aria-label="toggle theme" style="background:none; border:1px solid var(--rule); color:var(--dim); font-family:inherit; font-size:12px; padding:5px 10px; cursor:pointer;">
-    <span class="t-light">☾ dark</span><span class="t-dark" style="display:none;">☀ light</span>
-  </button>
+<header class="hero">
+  <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; color:var(--ink);">Playoff Bracket <span id="year-label" style="color: var(--dim); font-weight: 400;"></span></h1>
+  <div class="meta" id="sim-meta" style="color:var(--dim); font-size:13px;">loading sims…</div>
 </header>
 
 <div class="legend">
@@ -216,7 +170,7 @@
 </div>
 
 <script>
-const CSV_URL = "https://raw.githubusercontent.com/xocelyk/nba/main/data/playoff_sim_results/playoff_sim_games.csv";
+const PROBS_URL = "/nba/playoff_slot_probs.json";
 
 // Team display info (colors + full names). Unknown teams fall back to a gray dot.
 const teams = {
@@ -238,70 +192,22 @@ const teams = {
 };
 const teamInfo = abbr => teams[abbr] || {name:"", color:"#555"};
 
-/* ---------- fetch + aggregate ---------- */
+/* ---------- fetch pre-aggregated probs ---------- */
 
 async function loadAndRender() {
-  const raw = await d3.csv(CSV_URL, (row, i) => {
-    // keep only game 1 of each series → collapses to series-level rows
-    if (row.game_num !== "1") return null;
-    return {
-      sim: +row.sim_id, year: +row.year, round: row.round,
-      conf: row.conference, slot: row.series_label,
-      highSeed: row.high_seed, lowSeed: row.low_seed,
-      highSeedNum: +row.high_seed_num, lowSeedNum: +row.low_seed_num,
-      winner: row.series_winner, loser: row.series_loser,
-      length: +row.series_length,
-    };
+  const res = await fetch(PROBS_URL);
+  if (!res.ok) throw new Error(`fetch ${PROBS_URL} → ${res.status}`);
+  const payload = await res.json();
+  const { year, n_sims: nSims, slots } = payload;
+
+  const slotList = slots.map(s => {
+    const cands = s.candidates.map(c => {
+      const dist = c.wins.map(w => w / nSims);
+      const win = dist.reduce((a, b) => a + b, 0);
+      return { abbr: c.team, seed: c.seed, dist, win };
+    }).sort((a, b) => b.win - a.win);
+    return { round: s.round, conf: s.conference, slot: s.slot, cands, nSims };
   });
-
-  const nSims = d3.max(raw, d => d.sim) + 1;
-  const year = raw[0]?.year;
-
-  // Index: slot key -> {round, conf, slotId, teams: {abbr -> {seedHint, counts[4..7]}}, nObserved}
-  const slots = new Map();
-  for (const r of raw) {
-    const key = `${r.round}|${r.conf}|${r.slot}`;
-    if (!slots.has(key)) {
-      slots.set(key, {
-        round: r.round, conf: r.conf, slot: r.slot,
-        teams: new Map(), nObserved: 0,
-      });
-    }
-    const s = slots.get(key);
-    s.nObserved++;
-
-    // track both teams that participated, plus which won
-    for (const abbr of [r.highSeed, r.lowSeed]) {
-      if (!s.teams.has(abbr)) s.teams.set(abbr, { appearances: 0, wins: [0,0,0,0], seedHint: null });
-    }
-    // seed hint: pick the seed matching the abbr in the row
-    s.teams.get(r.highSeed).seedHint = r.highSeedNum;
-    s.teams.get(r.lowSeed).seedHint = r.lowSeedNum;
-    s.teams.get(r.highSeed).appearances++;
-    s.teams.get(r.lowSeed).appearances++;
-
-    const w = s.teams.get(r.winner);
-    if (r.length >= 4 && r.length <= 7) w.wins[r.length - 4]++;
-  }
-
-  // convert to array of slot summaries
-  const slotList = [];
-  for (const [, s] of slots) {
-    const cands = [];
-    for (const [abbr, t] of s.teams) {
-      const winTotal = t.wins.reduce((a,b)=>a+b,0);
-      if (winTotal === 0 && t.appearances === 0) continue;
-      cands.push({
-        abbr,
-        seed: t.seedHint,
-        appear: t.appearances / nSims,       // P(team reaches this slot)
-        dist: t.wins.map(c => c / nSims),    // marginal P(win in N) — unconditional
-        win: winTotal / nSims,               // marginal P(win this round)
-      });
-    }
-    cands.sort((a,b) => b.win - a.win);
-    slotList.push({ round: s.round, conf: s.conf, slot: s.slot, cands, nSims });
-  }
 
   render(slotList, { nSims, year });
 }
@@ -452,18 +358,6 @@ function render(slotList, { nSims, year }) {
   </div>
   `;
   document.getElementById("content").innerHTML = html;
-
-  const scope = document.getElementById("bracket-scope");
-  const toggle = document.getElementById("theme-toggle");
-  const stored = localStorage.getItem("bracket-theme");
-  if (stored === "dark" || stored === "light") scope.dataset.theme = stored;
-  toggle.addEventListener("click", () => {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const current = scope.dataset.theme || (prefersDark ? "dark" : "light");
-    const next = current === "dark" ? "light" : "dark";
-    scope.dataset.theme = next;
-    localStorage.setItem("bracket-theme", next);
-  });
 
   document.querySelectorAll(".expand-btn").forEach(btn => {
     btn.addEventListener("click", () => {
