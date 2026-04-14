@@ -49,21 +49,32 @@
 
   .bracket {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 260px;
-    gap: 28px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) 260px;
+    grid-template-rows: auto 1px auto;
+    column-gap: 24px;
     align-items: stretch;
   }
-  .conf-stack { display: flex; flex-direction: column; gap: 0; }
-  .conf-row {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 24px; align-items: stretch;
+  .round { display: contents; }
+  .conf-sep {
+    grid-column: 1 / 4; grid-row: 2;
+    background: var(--rule); height: 1px;
+  }
+  .conf-group { display: flex; flex-direction: column; padding: 20px 0; min-width: 0; }
+  .round.r1 .conf-group    { grid-column: 1; }
+  .round.semis .conf-group { grid-column: 2; }
+  .round.cf .conf-group    { grid-column: 3; }
+  .round.r1 .conf-group.east,
+  .round.semis .conf-group.east,
+  .round.cf .conf-group.east { grid-row: 1; }
+  .round.r1 .conf-group.west,
+  .round.semis .conf-group.west,
+  .round.cf .conf-group.west { grid-row: 3; }
+  .round.finals {
+    display: flex; flex-direction: column; justify-content: center;
+    grid-column: 4; grid-row: 1 / 4;
     padding: 20px 0;
   }
-  .conf-row + .conf-row { border-top: 1px solid var(--rule); }
 
-  .finals-col { align-self: center; }
-
-  .col { display: flex; flex-direction: column; }
   .col-cards {
     flex: 1; display: flex; flex-direction: column;
     justify-content: space-around; gap: 16px;
@@ -72,6 +83,10 @@
     font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--dim); font-weight: 600; margin-bottom: 12px;
   }
+  .round.finals .col-title { text-align: left; }
+
+  /* round-nav shows only on mobile */
+  .round-nav { display: none; }
 
   .match, .finals-card {
     background: var(--panel); border: 1px solid var(--rule);
@@ -134,13 +149,68 @@
   }
   footer.foot a { color: var(--dim); }
 
-  @media (max-width: 900px) {
-    .bracket { grid-template-columns: 1fr; }
-    .finals-col { align-self: stretch; }
+  /* tablet: collapse Finals into its own row below the conferences */
+  @media (max-width: 900px) and (min-width: 701px) {
+    .bracket {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-rows: auto 1px auto auto;
+    }
+    .round.finals {
+      grid-column: 1 / 4; grid-row: 4;
+      padding-top: 20px;
+      border-top: 1px solid var(--rule);
+    }
+    .round.finals .col-cards { max-width: 320px; margin: 0 auto; width: 100%; }
   }
+
+  /* mobile: horizontal scroll with scroll-snap — one swipe per round */
   @media (max-width: 700px) {
-    .conf-row { grid-template-columns: 1fr; gap: 14px; }
+    .bracket {
+      display: flex; flex-direction: row;
+      overflow-x: auto; overflow-y: visible;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      column-gap: 14px;
+    }
+    .bracket::-webkit-scrollbar { height: 6px; }
+    .bracket::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+
+    .round {
+      display: flex; flex-direction: column;
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    .round.finals {
+      grid-column: auto; grid-row: auto;
+      padding: 0;
+      justify-content: flex-start;
+    }
+    .conf-sep { display: none; }
+    .conf-group {
+      grid-column: auto !important; grid-row: auto !important;
+      padding: 16px 0;
+    }
+    .conf-group.west { border-top: 1px solid var(--rule); }
     .col-cards { justify-content: flex-start; }
+
+    /* round indicator bar above the scroll area */
+    .round-nav {
+      display: flex; gap: 6px; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .round-nav button {
+      flex: 1; max-width: 80px;
+      background: none; border: 1px solid var(--rule);
+      color: var(--dim); font-family: inherit; font-size: 10px;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 6px 4px; cursor: pointer;
+    }
+    .round-nav button[aria-current="true"] {
+      color: var(--ink); border-color: var(--rule-strong);
+      font-weight: 600;
+    }
   }
 </style>
 <div class="bracket-scope" id="bracket-scope">
@@ -302,46 +372,43 @@ function render(slotList, { nSims, year }) {
   const r1Label = s => `1st Round · ${s.slot.replace("E_","").replace("W_","").replace("_","–")} seed`;
   const r2Label = s => `Conf Semis · ${s.slot.replace("E_","").replace("W_","").replace("_","–")} bracket`;
 
+  const roundSection = (roundKey, eastCards, westCards, eastLabel, westLabel) => `
+    <div class="round ${roundKey}" data-round="${roundKey}">
+      <div class="conf-group east">
+        <div class="col-title">${eastLabel}</div>
+        <div class="col-cards">${eastCards}</div>
+      </div>
+      <div class="conf-group west">
+        <div class="col-title">${westLabel}</div>
+        <div class="col-cards">${westCards}</div>
+      </div>
+    </div>`;
+
   const html = `
-  <div class="bracket">
-
-    <div class="conf-stack">
-      <div class="conf-row">
-        <div class="col east">
-          <div class="col-title">East · 1st Round</div>
-          <div class="col-cards">${e_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}</div>
-        </div>
-        <div class="col east">
-          <div class="col-title">East · Conf Semis</div>
-          <div class="col-cards">${e_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}</div>
-        </div>
-        <div class="col east">
-          <div class="col-title">East · Conf Finals</div>
-          <div class="col-cards">${e_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}</div>
-        </div>
-      </div>
-
-      <div class="conf-row">
-        <div class="col west">
-          <div class="col-title">West · 1st Round</div>
-          <div class="col-cards">${w_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}</div>
-        </div>
-        <div class="col west">
-          <div class="col-title">West · Conf Semis</div>
-          <div class="col-cards">${w_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}</div>
-        </div>
-        <div class="col west">
-          <div class="col-title">West · Conf Finals</div>
-          <div class="col-cards">${w_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="finals-col">
+  <nav class="round-nav" aria-label="Jump to round">
+    <button type="button" data-round="r1" aria-current="true">1st Round</button>
+    <button type="button" data-round="semis">Semis</button>
+    <button type="button" data-round="cf">Conf Finals</button>
+    <button type="button" data-round="finals">Finals</button>
+  </nav>
+  <div class="bracket" id="bracket">
+    <div class="conf-sep" aria-hidden="true"></div>
+    ${roundSection("r1",
+      e_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join(""),
+      w_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join(""),
+      "East · 1st Round", "West · 1st Round")}
+    ${roundSection("semis",
+      e_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join(""),
+      w_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join(""),
+      "East · Conf Semis", "West · Conf Semis")}
+    ${roundSection("cf",
+      e_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join(""),
+      w_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join(""),
+      "East · Conf Finals", "West · Conf Finals")}
+    <div class="round finals" data-round="finals">
       <div class="col-title">Finals</div>
-      ${fin.map(s => slotCard(s, { variant: "finals", maxShown: 10 })).join("")}
+      <div class="col-cards">${fin.map(s => slotCard(s, { variant: "finals", maxShown: 10 })).join("")}</div>
     </div>
-
   </div>
   `;
   document.getElementById("content").innerHTML = html;
@@ -355,6 +422,39 @@ function render(slotList, { nSims, year }) {
       card.querySelector(".rows-expanded").hidden = !expanded;
     });
   });
+
+  // Mobile round-nav: click jumps to round; scrolling updates active button.
+  const bracketEl = document.getElementById("bracket");
+  const navBtns = document.querySelectorAll(".round-nav button");
+  const roundEls = Array.from(document.querySelectorAll(".bracket .round"));
+
+  navBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = roundEls.find(r => r.dataset.round === btn.dataset.round);
+      if (!target) return;
+      const left = target.getBoundingClientRect().left
+                 - bracketEl.getBoundingClientRect().left
+                 + bracketEl.scrollLeft;
+      bracketEl.scrollTo({ left, behavior: "smooth" });
+    });
+  });
+
+  let scrollTimer;
+  bracketEl.addEventListener("scroll", () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(() => {
+      const bRect = bracketEl.getBoundingClientRect();
+      let best = null, bestDist = Infinity;
+      roundEls.forEach(r => {
+        const d = Math.abs(r.getBoundingClientRect().left - bRect.left);
+        if (d < bestDist) { bestDist = d; best = r; }
+      });
+      if (best) {
+        const key = best.dataset.round;
+        navBtns.forEach(b => b.setAttribute("aria-current", b.dataset.round === key ? "true" : "false"));
+      }
+    }, 60);
+  }, { passive: true });
 }
 
 loadAndRender().catch(err => {
