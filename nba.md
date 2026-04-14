@@ -48,7 +48,7 @@ html {
 
 </style>
 
-Updated daily. Projections from 1,000 simulations.
+Updated daily. Projections from 1,000 simulations. [Playoff bracket →](/nba/playoffs/)
 
 <div class="conference-toggle">
     <button class="toggle-btn active" data-conference="all">All</button>

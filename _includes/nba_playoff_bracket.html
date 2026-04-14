@@ -1,0 +1,484 @@
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  .bracket-scope {
+    --bg: #ffffff;
+    --panel: #ffffff;
+    --ink: #313131;
+    --text: #515151;
+    --dim: #666;
+    --faint: #aaa;
+    --rule: #cccccc;
+    --rule-strong: #333;
+    --row-rule: #eeeeee;
+    --bar-bg: #eeeeee;
+    --accent: #33CEFF;
+    --s4: #6b92c2;
+    --s5: #7fb5cc;
+    --s6: #88c0a8;
+    --s7: #d0b880;
+    background: var(--bg); color: var(--text);
+  }
+  .bracket-scope[data-theme="dark"] .t-light { display: none; }
+  .bracket-scope[data-theme="dark"] .t-dark { display: inline !important; }
+  @media (prefers-color-scheme: dark) {
+    .bracket-scope:not([data-theme="light"]) .t-light { display: none; }
+    .bracket-scope:not([data-theme="light"]) .t-dark { display: inline !important; }
+  }
+  .bracket-scope[data-theme="dark"] {
+    --bg: #15181e;
+    --panel: #1b1f27;
+    --ink: #e7ecf3;
+    --text: #c0c6d1;
+    --dim: #8a93a6;
+    --faint: #5a6172;
+    --rule: #2a2f3a;
+    --rule-strong: #3a4052;
+    --row-rule: #242832;
+    --bar-bg: #242832;
+    --s4: #5880b8;
+    --s5: #6fa2c0;
+    --s6: #6eae95;
+    --s7: #b89e66;
+  }
+  @media (prefers-color-scheme: dark) {
+    .bracket-scope:not([data-theme="light"]) {
+      --bg: #15181e;
+      --panel: #1b1f27;
+      --ink: #e7ecf3;
+      --text: #c0c6d1;
+      --dim: #8a93a6;
+      --faint: #5a6172;
+      --rule: #2a2f3a;
+      --rule-strong: #3a4052;
+      --row-rule: #242832;
+      --bar-bg: #242832;
+      --s4: #5880b8;
+      --s5: #6fa2c0;
+      --s6: #6eae95;
+      --s7: #b89e66;
+    }
+  }
+  * { box-sizing: border-box; }
+  .bracket-scope {
+    font-family: 'Google Sans Code', ui-monospace, monospace; font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  .bracket-scope .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 0 48px; }
+
+  header.hero { margin-bottom: 24px; }
+  header.hero h1 { margin: 0 0 4px; font-size: 22px; font-weight: 600; color: var(--ink); }
+  header.hero .meta { color: var(--dim); font-size: 13px; }
+
+  .legend {
+    display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 24px; font-size: 12px; color: var(--dim);
+    padding-bottom: 14px; border-bottom: 1px solid var(--rule);
+  }
+  .legend .swatch { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .bar-demo { display: inline-flex; height: 4px; width: 80px; }
+  .legend .bar-demo span { flex: 1; }
+
+  .loading { text-align: center; padding: 60px 20px; color: var(--dim); font-size: 13px; }
+  .loading .spinner {
+    display: inline-block; width: 12px; height: 12px; border: 2px solid var(--rule);
+    border-top-color: var(--accent); border-radius: 50%; animation: spin 0.9s linear infinite;
+    vertical-align: middle; margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .bracket {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 28px;
+    align-items: start;
+  }
+  .conf-stack { display: flex; flex-direction: column; gap: 0; }
+  .conf-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px; align-items: start;
+    padding: 20px 0;
+  }
+  .conf-row + .conf-row { border-top: 1px solid var(--rule); }
+
+  .finals-col { position: sticky; top: 20px; }
+
+  .col { display: flex; flex-direction: column; gap: 16px; }
+  .col-title {
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--dim); font-weight: 600; margin-bottom: 4px;
+  }
+
+  .match, .finals-card {
+    background: var(--panel); border: 1px solid var(--rule);
+    padding: 10px 12px; position: relative;
+  }
+  .match .round-tag, .finals-card .round-tag {
+    display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--dim); margin-bottom: 8px;
+  }
+  .finals-card { border: 2px solid var(--rule-strong); }
+
+  .team {
+    display: grid; grid-template-columns: 20px 1fr auto; align-items: center;
+    gap: 8px; padding: 5px 0 3px;
+  }
+  .team + .team { border-top: 1px solid var(--row-rule); margin-top: 2px; }
+  .seed { font-size: 11px; color: var(--dim); text-align: center; }
+  .team-name { display: flex; align-items: baseline; gap: 6px; font-size: 14px; color: var(--ink); }
+  .team-name .abbr { font-weight: 600; }
+  .team-name .full { color: var(--dim); font-size: 12px; }
+  .win-pct { font-size: 13px; font-weight: 600; color: var(--ink); min-width: 38px; text-align: right; }
+  .win-pct.dim { color: var(--dim); font-weight: 400; }
+
+  .dist { margin-top: 3px; padding-left: 28px; padding-right: 2px; position: relative; }
+  .dist:hover::after {
+    content: attr(data-tip);
+    position: absolute; top: calc(100% + 4px); left: 28px;
+    background: #313131; color: #fff;
+    font-size: 10.5px; padding: 5px 8px; border-radius: 3px;
+    white-space: nowrap; z-index: 10; pointer-events: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .dist .bar { display: flex; height: 5px; background: var(--bar-bg); }
+  .dist .labels { display: flex; font-size: 8.5px; color: var(--dim); margin-top: 2px; letter-spacing: -0.02em; }
+  .dist .labels span { text-align: center; min-width: 0; }
+  .dist .labels span.hi { color: var(--ink); font-weight: 600; }
+
+  /* Muted, still distinct — 4g darkest to 7g lightest, cool→warm */
+  .s4 { background: var(--s4, #6b92c2); }  /* soft blue — 4 games */
+  .s5 { background: var(--s5, #7fb5cc); }  /* soft cyan — 5 games */
+  .s6 { background: var(--s6, #88c0a8); }  /* soft mint — 6 games */
+  .s7 { background: var(--s7, #d0b880); }  /* soft gold — 7 games */
+
+  .team.dog .team-name .abbr { color: var(--dim); font-weight: 500; }
+
+  .expand-btn {
+    display: block; width: 100%; margin-top: 6px; padding: 5px 0;
+    background: none; border: none; border-top: 1px dashed var(--rule);
+    font-family: inherit; font-size: 11px; color: var(--dim); cursor: pointer;
+    text-align: center;
+  }
+  .expand-btn:hover { color: var(--ink); }
+  .expand-btn .expand-open { display: none; }
+  .match.expanded .expand-btn .expand-closed,
+  .finals-card.expanded .expand-btn .expand-closed { display: none; }
+  .match.expanded .expand-btn .expand-open,
+  .finals-card.expanded .expand-btn .expand-open { display: inline; }
+
+  footer.foot {
+    margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--rule);
+    color: var(--dim); font-size: 12px; display: flex; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+  }
+  footer.foot a { color: var(--dim); }
+
+  @media (max-width: 900px) {
+    .bracket { grid-template-columns: 1fr; }
+    .finals-col { position: static; }
+  }
+  @media (max-width: 700px) {
+    .conf-row { grid-template-columns: 1fr; gap: 14px; }
+  }
+</style>
+<div class="bracket-scope" id="bracket-scope">
+<div class="wrap">
+
+<header class="hero" style="display:flex; justify-content:space-between; align-items:baseline; gap:16px;">
+  <div>
+    <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; color:var(--ink);">Playoff Bracket <span id="year-label" style="color: var(--dim); font-weight: 400;"></span></h1>
+    <div class="meta" id="sim-meta" style="color:var(--dim); font-size:13px;">loading sims…</div>
+  </div>
+  <button id="theme-toggle" aria-label="toggle theme" style="background:none; border:1px solid var(--rule); color:var(--dim); font-family:inherit; font-size:12px; padding:5px 10px; cursor:pointer;">
+    <span class="t-light">☾ dark</span><span class="t-dark" style="display:none;">☀ light</span>
+  </button>
+</header>
+
+<div class="legend">
+  <span style="color: var(--ink); font-weight:600;">Series length:</span>
+  <span class="swatch"><i class="bar-demo"><span class="s4"></span></i> 4</span>
+  <span class="swatch"><i class="bar-demo"><span class="s5"></span></i> 5</span>
+  <span class="swatch"><i class="bar-demo"><span class="s6"></span></i> 6</span>
+  <span class="swatch"><i class="bar-demo"><span class="s7"></span></i> 7</span>
+  <span style="margin-left:auto;">bar width = P(win series in N games)</span>
+</div>
+
+<div id="content">
+  <div class="loading"><span class="spinner"></span>Fetching playoff simulation data…</div>
+</div>
+
+<footer class="foot">
+  <span id="foot-meta"></span>
+</footer>
+
+</div>
+</div>
+
+<script>
+const CSV_URL = "https://raw.githubusercontent.com/xocelyk/nba/main/data/playoff_sim_results/playoff_sim_games.csv";
+
+// Team display info (colors + full names). Unknown teams fall back to a gray dot.
+const teams = {
+  ATL:{name:"Hawks",color:"#E03A3E"}, BOS:{name:"Celtics",color:"#007A33"},
+  BRK:{name:"Nets",color:"#BBBBBB"},  CHO:{name:"Hornets",color:"#1D1160"},
+  CHI:{name:"Bulls",color:"#CE1141"}, CLE:{name:"Cavaliers",color:"#860038"},
+  DAL:{name:"Mavericks",color:"#00538C"}, DEN:{name:"Nuggets",color:"#0E2240"},
+  DET:{name:"Pistons",color:"#C8102E"}, GSW:{name:"Warriors",color:"#1D428A"},
+  HOU:{name:"Rockets",color:"#CE1141"}, IND:{name:"Pacers",color:"#FDBB30"},
+  LAC:{name:"Clippers",color:"#C8102E"}, LAL:{name:"Lakers",color:"#552583"},
+  MEM:{name:"Grizzlies",color:"#5D76A9"}, MIA:{name:"Heat",color:"#98002E"},
+  MIL:{name:"Bucks",color:"#00471B"}, MIN:{name:"Timberwolves",color:"#236192"},
+  NOP:{name:"Pelicans",color:"#0C2340"}, NYK:{name:"Knicks",color:"#F58426"},
+  OKC:{name:"Thunder",color:"#007AC1"}, ORL:{name:"Magic",color:"#0077C0"},
+  PHI:{name:"76ers",color:"#006BB6"}, PHX:{name:"Suns",color:"#E56020"},
+  POR:{name:"Blazers",color:"#E03A3E"}, SAC:{name:"Kings",color:"#5A2D81"},
+  SAS:{name:"Spurs",color:"#C4CED4"}, TOR:{name:"Raptors",color:"#CE1141"},
+  UTA:{name:"Jazz",color:"#002B5C"}, WAS:{name:"Wizards",color:"#002B5C"},
+};
+const teamInfo = abbr => teams[abbr] || {name:"", color:"#555"};
+
+/* ---------- fetch + aggregate ---------- */
+
+async function loadAndRender() {
+  const raw = await d3.csv(CSV_URL, (row, i) => {
+    // keep only game 1 of each series → collapses to series-level rows
+    if (row.game_num !== "1") return null;
+    return {
+      sim: +row.sim_id, year: +row.year, round: row.round,
+      conf: row.conference, slot: row.series_label,
+      highSeed: row.high_seed, lowSeed: row.low_seed,
+      highSeedNum: +row.high_seed_num, lowSeedNum: +row.low_seed_num,
+      winner: row.series_winner, loser: row.series_loser,
+      length: +row.series_length,
+    };
+  });
+
+  const nSims = d3.max(raw, d => d.sim) + 1;
+  const year = raw[0]?.year;
+
+  // Index: slot key -> {round, conf, slotId, teams: {abbr -> {seedHint, counts[4..7]}}, nObserved}
+  const slots = new Map();
+  for (const r of raw) {
+    const key = `${r.round}|${r.conf}|${r.slot}`;
+    if (!slots.has(key)) {
+      slots.set(key, {
+        round: r.round, conf: r.conf, slot: r.slot,
+        teams: new Map(), nObserved: 0,
+      });
+    }
+    const s = slots.get(key);
+    s.nObserved++;
+
+    // track both teams that participated, plus which won
+    for (const abbr of [r.highSeed, r.lowSeed]) {
+      if (!s.teams.has(abbr)) s.teams.set(abbr, { appearances: 0, wins: [0,0,0,0], seedHint: null });
+    }
+    // seed hint: pick the seed matching the abbr in the row
+    s.teams.get(r.highSeed).seedHint = r.highSeedNum;
+    s.teams.get(r.lowSeed).seedHint = r.lowSeedNum;
+    s.teams.get(r.highSeed).appearances++;
+    s.teams.get(r.lowSeed).appearances++;
+
+    const w = s.teams.get(r.winner);
+    if (r.length >= 4 && r.length <= 7) w.wins[r.length - 4]++;
+  }
+
+  // convert to array of slot summaries
+  const slotList = [];
+  for (const [, s] of slots) {
+    const cands = [];
+    for (const [abbr, t] of s.teams) {
+      const winTotal = t.wins.reduce((a,b)=>a+b,0);
+      if (winTotal === 0 && t.appearances === 0) continue;
+      cands.push({
+        abbr,
+        seed: t.seedHint,
+        appear: t.appearances / nSims,       // P(team reaches this slot)
+        dist: t.wins.map(c => c / nSims),    // marginal P(win in N) — unconditional
+        win: winTotal / nSims,               // marginal P(win this round)
+      });
+    }
+    cands.sort((a,b) => b.win - a.win);
+    slotList.push({ round: s.round, conf: s.conf, slot: s.slot, cands, nSims });
+  }
+
+  render(slotList, { nSims, year });
+}
+
+/* ---------- rendering ---------- */
+
+function fmtPct(p) {
+  if (p >= 0.995) return ">99%";
+  if (p < 0.005) return "<1%";
+  return Math.round(p * 100) + "%";
+}
+
+function distBar(dist, totalWin) {
+  const segs = dist.map((v, i) => `<span class="s${i+4}" style="flex:${v||0.0001}"></span>`).join("");
+  const empty = Math.max(0, 1 - totalWin);
+  const emptySeg = empty > 0 ? `<span style="flex:${empty}; background: transparent;"></span>` : "";
+  const max = Math.max(...dist);
+  const labels = dist.map(v => {
+    const n = Math.round(v*100);
+    const isMax = v === max && v > 0;
+    const cls = isMax ? "hi" : "";
+    const text = n > 3 ? n : "";
+    return `<span class="${cls}" style="flex:${v||0.0001}; overflow:hidden; white-space:nowrap;">${text}</span>`;
+  }).join("");
+  const emptyLabel = empty > 0 ? `<span style="flex:${empty}"></span>` : "";
+  const totalPct = (totalWin*100).toFixed(1);
+  const tip = dist.map((v, i) => `${i+4}g ${(v*100).toFixed(1)}%`).join(" · ") + ` · win ${totalPct}%`;
+  return `
+    <div class="dist" data-tip="${tip}">
+      <div class="bar">${segs}${emptySeg}</div>
+      <div class="labels">${labels}${emptyLabel}</div>
+    </div>`;
+}
+
+function teamRow(t, isFav) {
+  const info = teamInfo(t.abbr);
+  return `
+    <div class="team ${isFav ? 'fav' : 'dog'}">
+      <div class="seed">${t.seed ?? ""}</div>
+      <div class="team-name">
+        <span class="team-dot" style="width:8px;height:8px;border-radius:50%;background:${info.color};flex-shrink:0;"></span>
+        <span class="abbr">${t.abbr}</span><span class="full">${info.name}</span>
+      </div>
+      <div class="win-pct ${isFav ? '' : 'dim'}">${fmtPct(t.win)}</div>
+    </div>
+    ${distBar(t.dist, t.win)}
+  `;
+}
+
+let _slotSeq = 0;
+function slotCard(s, opts = {}) {
+  const { variant, maxShown = 5, label } = opts;
+  const cls = variant === "finals" ? "finals-card" : "match";
+  const id = `slot-${_slotSeq++}`;
+  const eligible = s.cands.filter(c => c.win > 0.0005 || c.appear > 0.001);
+  const shown = eligible.slice(0, maxShown);
+  const rest = eligible.slice(maxShown);
+  const restWin = rest.reduce((a,c)=>a+c.win, 0);
+  const collapsedRows = shown.map((c,i) => teamRow(c, i === 0)).join("");
+  const expandedRows = eligible.map((c,i) => teamRow(c, i === 0)).join("");
+  const toggleBtn = rest.length > 0 ? `
+    <button class="expand-btn" data-target="${id}" aria-expanded="false">
+      <span class="expand-closed">+ ${rest.length} more · ${fmtPct(restWin)}</span>
+      <span class="expand-open">collapse</span>
+    </button>` : "";
+  const header = `<div class="round-tag">${variant === "finals" ? "NBA Finals" : (label || s.slot)}</div>`;
+  return `<div class="${cls}" id="${id}">
+    ${header}
+    <div class="rows-collapsed">${collapsedRows}</div>
+    <div class="rows-expanded" hidden>${expandedRows}</div>
+    ${toggleBtn}
+  </div>`;
+}
+
+function render(slotList, { nSims, year }) {
+  document.getElementById("year-label").textContent = `— ${year} Forecast`;
+  document.getElementById("sim-meta").textContent = `${nSims.toLocaleString()} sims · updated ${new Date().toISOString().slice(0,10)}`;
+  document.getElementById("foot-meta").textContent = `${nSims.toLocaleString()} simulations`;
+
+  const bySlot = key => slotList.find(s => `${s.round}|${s.conf}|${s.slot}` === key);
+  const pickRound = (round, conf) =>
+    slotList.filter(s => s.round === round && s.conf === conf)
+            .sort((a,b) => a.slot.localeCompare(b.slot));
+
+  // East R1: E_1_8, E_4_5, E_2_7, E_3_6 — arrange so bracket reads top-to-bottom naturally
+  const r1Order = ["_1_8", "_4_5", "_2_7", "_3_6"];
+  const r2Order = ["_1_4", "_2_3"];
+
+  const sortByPattern = (arr, patterns) => {
+    return arr.slice().sort((a,b) => {
+      const ai = patterns.findIndex(p => a.slot.endsWith(p));
+      const bi = patterns.findIndex(p => b.slot.endsWith(p));
+      return ai - bi;
+    });
+  };
+
+  const e_r1 = sortByPattern(pickRound("R1", "East"), r1Order);
+  const w_r1 = sortByPattern(pickRound("R1", "West"), r1Order);
+  const e_r2 = sortByPattern(pickRound("CONF_SEMIS", "East"), r2Order);
+  const w_r2 = sortByPattern(pickRound("CONF_SEMIS", "West"), r2Order);
+  const e_cf = pickRound("CONF_FINALS", "East");
+  const w_cf = pickRound("CONF_FINALS", "West");
+  const fin = slotList.filter(s => s.round === "FINALS");
+
+  const r1Label = s => `1st Round · ${s.slot.replace("E_","").replace("W_","").replace("_","–")} seed`;
+  const r2Label = s => `Conf Semis · ${s.slot.replace("E_","").replace("W_","").replace("_","–")} bracket`;
+
+  const html = `
+  <div class="bracket">
+
+    <div class="conf-stack">
+      <div class="conf-row">
+        <div class="col east">
+          <div class="col-title">East · 1st Round</div>
+          ${e_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}
+        </div>
+        <div class="col east">
+          <div class="col-title">East · Conf Semis</div>
+          ${e_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}
+        </div>
+        <div class="col east">
+          <div class="col-title">East · Conf Finals</div>
+          ${e_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}
+        </div>
+      </div>
+
+      <div class="conf-row">
+        <div class="col west">
+          <div class="col-title">West · 1st Round</div>
+          ${w_r1.map(s => slotCard(s, { maxShown: 4, label: r1Label(s) })).join("")}
+        </div>
+        <div class="col west">
+          <div class="col-title">West · Conf Semis</div>
+          ${w_r2.map(s => slotCard(s, { maxShown: 4, label: r2Label(s) })).join("")}
+        </div>
+        <div class="col west">
+          <div class="col-title">West · Conf Finals</div>
+          ${w_cf.map(s => slotCard(s, { maxShown: 6, label: "Conf Finals" })).join("")}
+        </div>
+      </div>
+    </div>
+
+    <div class="finals-col">
+      <div class="col-title">Championship</div>
+      ${fin.map(s => slotCard(s, { variant: "finals", maxShown: 10 })).join("")}
+    </div>
+
+  </div>
+  `;
+  document.getElementById("content").innerHTML = html;
+
+  const scope = document.getElementById("bracket-scope");
+  const toggle = document.getElementById("theme-toggle");
+  const stored = localStorage.getItem("bracket-theme");
+  if (stored === "dark" || stored === "light") scope.dataset.theme = stored;
+  toggle.addEventListener("click", () => {
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const current = scope.dataset.theme || (prefersDark ? "dark" : "light");
+    const next = current === "dark" ? "light" : "dark";
+    scope.dataset.theme = next;
+    localStorage.setItem("bracket-theme", next);
+  });
+
+  document.querySelectorAll(".expand-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const card = document.getElementById(btn.dataset.target);
+      const expanded = card.classList.toggle("expanded");
+      btn.setAttribute("aria-expanded", expanded ? "true" : "false");
+      card.querySelector(".rows-collapsed").hidden = expanded;
+      card.querySelector(".rows-expanded").hidden = !expanded;
+    });
+  });
+}
+
+loadAndRender().catch(err => {
+  document.getElementById("content").innerHTML =
+    `<div class="loading" style="color:#ff6b4a">Failed to load: ${err.message}</div>`;
+  console.error(err);
+});
+</script>
