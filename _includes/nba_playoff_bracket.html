@@ -148,6 +148,29 @@
 
   .team.dog .team-name .abbr { color: var(--dim); font-weight: 500; }
 
+  /* series score banner, shown on cards whose matchup is locked in */
+  .series-score {
+    display: flex; align-items: baseline; gap: 8px;
+    margin: 0 0 8px;
+    font-size: 11px; color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .series-score .series-label {
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--dim); font-weight: 600;
+  }
+  .series-score.is-final .series-label { color: var(--ink); }
+  .series-score .series-score-line { font-weight: 600; }
+  .series-score .dash { color: var(--dim); font-weight: 400; margin: 0 2px; }
+
+  /* eliminated team row on a completed series */
+  .team.eliminated .team-name .abbr { text-decoration: line-through; }
+  .team.eliminated .team-name .abbr,
+  .team.eliminated .team-name .full,
+  .team.eliminated .seed,
+  .team.eliminated .win-pct,
+  .team.eliminated .team-dot { opacity: 0.5; }
+
   .expand-btn {
     display: block; width: 100%; margin-top: 6px; padding: 5px 0;
     background: none; border: none; border-top: 1px dashed var(--rule);
@@ -350,7 +373,11 @@ async function loadAndRender() {
       const win = dist.reduce((a, b) => a + b, 0);
       return { abbr: c.team, seed: c.seed, dist, win };
     }).sort((a, b) => b.win - a.win);
-    return { round: s.round, conf: s.conference, slot: s.slot, cands, nSims };
+    return {
+      round: s.round, conf: s.conference, slot: s.slot,
+      cands, nSims,
+      series: s.series || null  // { status: "in_progress"|"complete", games_won: { ABBR: n } }
+    };
   });
 
   render(slotList, { nSims, year });
@@ -359,6 +386,9 @@ async function loadAndRender() {
 /* ---------- rendering ---------- */
 
 function fmtPct(p) {
+  // Exact 0 and 1 only come from a decided series (loser/winner).
+  if (p === 0) return "0%";
+  if (p === 1) return "100%";
   if (p >= 0.995) return ">99%";
   if (p < 0.005) return "<1%";
   return Math.round(p * 100) + "%";
@@ -376,10 +406,15 @@ function distBar(dist, totalWin) {
     </div>`;
 }
 
-function teamRow(t, isFav) {
+function teamRow(t, isFav, series) {
   const info = teamInfo(t.abbr);
+  const isComplete = series && series.status === "complete";
+  const isEliminated = isComplete && t.win === 0;
+  // Hide the per-team distribution bar for decided series — the winner's
+  // is a single degenerate spike and the loser's is empty.
+  const showDist = !isComplete;
   return `
-    <div class="team ${isFav ? 'fav' : 'dog'}">
+    <div class="team ${isFav ? 'fav' : 'dog'} ${isEliminated ? 'eliminated' : ''}">
       <div class="seed">${t.seed ?? ""}</div>
       <div class="team-name">
         <span class="team-dot" style="width:8px;height:8px;border-radius:50%;background:${info.color};flex-shrink:0;"></span>
@@ -387,28 +422,53 @@ function teamRow(t, isFav) {
       </div>
       <div class="win-pct ${isFav ? '' : 'dim'}">${fmtPct(t.win)}</div>
     </div>
-    ${distBar(t.dist, t.win)}
+    ${showDist ? distBar(t.dist, t.win) : ""}
   `;
+}
+
+function seriesBanner(s) {
+  if (!s.series) return "";
+  // Prefer higher-seed team first on the score line. Falls back to candidates
+  // order when seeds are missing.
+  const pair = [...s.cands].sort((a, b) => (a.seed ?? 99) - (b.seed ?? 99)).slice(0, 2);
+  if (pair.length < 2) return "";
+  const [a, b] = pair;
+  const gw = s.series.games_won || {};
+  const aw = gw[a.abbr] ?? 0, bw = gw[b.abbr] ?? 0;
+  const isComplete = s.series.status === "complete";
+  const label = isComplete ? "Final" : "Series";
+  return `<div class="series-score ${isComplete ? 'is-final' : ''}">
+    <span class="series-label">${label}</span>
+    <span class="series-score-line">${a.abbr} ${aw} <span class="dash">–</span> ${bw} ${b.abbr}</span>
+  </div>`;
 }
 
 let _slotSeq = 0;
 function slotCard(s, opts = {}) {
   const { maxShown = 5, label } = opts;
   const id = `slot-${_slotSeq++}`;
-  const eligible = s.cands.filter(c => c.win > 0.0005 || c.appear > 0.001);
+  // When the matchup is locked in (series field present), show both teams
+  // regardless of win probability so a 0% loser stays visible.
+  const eligible = s.series
+    ? s.cands.slice()
+    : s.cands.filter(c => c.win > 0.0005);
   const shown = eligible.slice(0, maxShown);
   const rest = eligible.slice(maxShown);
   const restWin = rest.reduce((a,c)=>a+c.win, 0);
-  const collapsedRows = shown.map((c,i) => teamRow(c, i === 0)).join("");
-  const expandedRows = eligible.map((c,i) => teamRow(c, i === 0)).join("");
+  const collapsedRows = shown.map((c,i) => teamRow(c, i === 0, s.series)).join("");
+  const expandedRows = eligible.map((c,i) => teamRow(c, i === 0, s.series)).join("");
   const toggleBtn = rest.length > 0 ? `
     <button class="expand-btn" data-target="${id}" aria-expanded="false">
       <span class="expand-closed">+ ${rest.length} more · ${fmtPct(restWin)}</span>
       <span class="expand-open">collapse</span>
     </button>` : "";
   const header = `<div class="round-tag">${label || s.slot}</div>`;
-  return `<div class="match" id="${id}">
+  const cardCls = ["match"];
+  if (s.series) cardCls.push("has-series");
+  if (s.series && s.series.status === "complete") cardCls.push("series-complete");
+  return `<div class="${cardCls.join(" ")}" id="${id}">
     ${header}
+    ${seriesBanner(s)}
     <div class="rows-collapsed">${collapsedRows}</div>
     <div class="rows-expanded" hidden>${expandedRows}</div>
     ${toggleBtn}
