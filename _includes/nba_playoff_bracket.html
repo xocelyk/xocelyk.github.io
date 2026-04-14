@@ -69,6 +69,8 @@
   }
   .bracket-lines path { stroke: var(--rule); stroke-width: 1; fill: none; }
   .match { z-index: 1; }
+  /* raise the hovered card (and its tooltip) above neighbouring cards */
+  .match:hover { z-index: 20; }
   @media (max-width: 900px) { .bracket-lines { display: none; } }
   .conf-group { display: flex; flex-direction: column; padding: 20px 0; min-width: 0; }
   .round.r1 .conf-group    { grid-column: 1; }
@@ -183,17 +185,26 @@
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: thin;
-      column-gap: 14px;
+      column-gap: 0;
+      /* break out of container's horizontal padding / 90% max-width so
+         each round can span the full viewport */
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+      padding: 0 16px;
+      scroll-padding: 0 16px;
     }
     .bracket::-webkit-scrollbar { height: 6px; }
     .bracket::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
 
     .round {
       display: flex; flex-direction: column;
-      flex: 0 0 100%;
-      scroll-snap-align: start;
+      flex: 0 0 calc(100vw - 32px);
+      scroll-snap-align: center;
       scroll-snap-stop: always;
+      gap: 20px;
     }
+    .round + .round { margin-left: 16px; }
     .round.finals {
       grid-column: auto; grid-row: auto;
       padding: 0;
@@ -202,12 +213,17 @@
     .conf-sep { display: none; }
     .conf-group {
       grid-column: auto !important; grid-row: auto !important;
-      padding: 16px 0;
+      padding: 0;
     }
-    .conf-group.west { border-top: 1px solid var(--rule); }
+    /* subtle conference heading instead of a hard divider line */
+    .conf-group .col-title {
+      color: var(--ink); font-weight: 600; font-size: 11px;
+      padding-bottom: 8px;
+    }
     .col-cards {
       display: flex; flex-direction: column;
-      justify-content: flex-start; gap: 16px;
+      align-items: stretch;
+      justify-content: flex-start; gap: 12px;
     }
 
     /* round indicator bar above the scroll area */
