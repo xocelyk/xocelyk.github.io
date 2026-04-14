@@ -101,9 +101,6 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
   .dist .bar { display: flex; height: 5px; background: var(--bar-bg); }
-  .dist .labels { display: flex; font-size: 8.5px; color: var(--dim); margin-top: 2px; letter-spacing: -0.02em; }
-  .dist .labels span { text-align: center; min-width: 0; }
-  .dist .labels span.hi { color: var(--ink); font-weight: 600; }
 
   /* Muted, still distinct — 4g darkest to 7g lightest, cool→warm */
   .s4 { background: var(--s4, #6b92c2); }  /* soft blue — 4 games */
@@ -224,21 +221,11 @@ function distBar(dist, totalWin) {
   const segs = dist.map((v, i) => `<span class="s${i+4}" style="flex:${v||0.0001}"></span>`).join("");
   const empty = Math.max(0, 1 - totalWin);
   const emptySeg = empty > 0 ? `<span style="flex:${empty}; background: transparent;"></span>` : "";
-  const max = Math.max(...dist);
-  const labels = dist.map(v => {
-    const n = Math.round(v*100);
-    const isMax = v === max && v > 0;
-    const cls = isMax ? "hi" : "";
-    const text = n > 3 ? n : "";
-    return `<span class="${cls}" style="flex:${v||0.0001}; overflow:hidden; white-space:nowrap;">${text}</span>`;
-  }).join("");
-  const emptyLabel = empty > 0 ? `<span style="flex:${empty}"></span>` : "";
   const totalPct = (totalWin*100).toFixed(1);
   const tip = dist.map((v, i) => `${i+4}g ${(v*100).toFixed(1)}%`).join(" · ") + ` · win ${totalPct}%`;
   return `
     <div class="dist" data-tip="${tip}">
       <div class="bar">${segs}${emptySeg}</div>
-      <div class="labels">${labels}${emptyLabel}</div>
     </div>`;
 }
 
