@@ -501,7 +501,7 @@ function slotCard(s, opts = {}) {
   const toggleBtn = rest.length > 0 ? `
     <button class="expand-btn" data-target="${id}" aria-expanded="false">
       <span class="expand-closed">${rest.length} more · ${fmtPct(restWin)}</span>
-      <span class="expand-open">show less</span>
+      <span class="expand-open">show fewer</span>
       <span class="expand-caret" aria-hidden="true">&#9662;</span>
     </button>` : "";
   const header = `<div class="round-tag">${label || s.slot}</div>`;
