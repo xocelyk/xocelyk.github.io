@@ -232,7 +232,7 @@
     .bracket {
       display: flex; flex-direction: row;
       overflow-x: auto; overflow-y: visible;
-      scroll-snap-type: x proximity;
+      scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: thin;
       column-gap: 0;
@@ -247,22 +247,18 @@
     .bracket::-webkit-scrollbar { height: 6px; }
     .bracket::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
 
-    /* Every round uses the same 11-row grid so card spans position
-       each card at a bracket-correct midpoint within its own panel
-       (Semis cards between R1 pairs, CF mid-conference, Finals at
-       the E/W boundary). 140px is roughly half the R1 card height:
-       enough breathing room around Semis/CF cards that the bracket
-       "Y" shape reads, without reserving the ~160px of blank space
-       per slot that made earlier rounds feel empty. */
+    /* Every round uses the same 11-row grid so card centres line up
+       vertically across panels — swipe from R1 to Semis and the Semis
+       card sits exactly at the midpoint of the R1 pair that feeds it. */
     .round {
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows:
         minmax(24px, auto)                  /*  1  east title     */
-        repeat(4, minmax(140px, auto))      /*  2–5  east slots   */
+        repeat(4, minmax(160px, auto))      /*  2–5  east slots   */
         28px                                /*  6  east/west gap  */
         minmax(24px, auto)                  /*  7  west title     */
-        repeat(4, minmax(140px, auto));     /*  8–11 west slots   */
+        repeat(4, minmax(160px, auto));     /*  8–11 west slots   */
       row-gap: 12px;
       flex: 0 0 calc(100vw - 32px);
       scroll-snap-align: center;
@@ -309,10 +305,10 @@
       grid-template-columns: 1fr;
       grid-template-rows:
         minmax(24px, auto)
-        repeat(4, minmax(140px, auto))
+        repeat(4, minmax(160px, auto))
         28px
         minmax(24px, auto)
-        repeat(4, minmax(140px, auto));
+        repeat(4, minmax(160px, auto));
       row-gap: 12px;
       grid-column: auto;
       grid-row: auto;
