@@ -247,18 +247,22 @@
     .bracket::-webkit-scrollbar { height: 6px; }
     .bracket::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
 
-    /* Every round uses the same 11-row grid so card centres line up
-       vertically across panels — swipe from R1 to Semis and the Semis
-       card sits exactly at the midpoint of the R1 pair that feeds it. */
+    /* Every round uses the same 11-row grid so card spans position
+       each card at the bracket-correct midpoint within its own panel
+       (Semis cards between R1 pairs, CF between semis pairs, Finals
+       at the E/W boundary). The slot rows use a 0 minimum so empty
+       slots collapse — card spans still determine where each card
+       sits, but rows don't reserve 160px of blank space when no card
+       claims them directly. */
     .round {
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows:
         minmax(24px, auto)                  /*  1  east title     */
-        repeat(4, minmax(160px, auto))      /*  2–5  east slots   */
+        repeat(4, minmax(0, auto))          /*  2–5  east slots   */
         28px                                /*  6  east/west gap  */
         minmax(24px, auto)                  /*  7  west title     */
-        repeat(4, minmax(160px, auto));     /*  8–11 west slots   */
+        repeat(4, minmax(0, auto));         /*  8–11 west slots   */
       row-gap: 12px;
       flex: 0 0 calc(100vw - 32px);
       scroll-snap-align: center;
@@ -305,10 +309,10 @@
       grid-template-columns: 1fr;
       grid-template-rows:
         minmax(24px, auto)
-        repeat(4, minmax(160px, auto))
+        repeat(4, minmax(0, auto))
         28px
         minmax(24px, auto)
-        repeat(4, minmax(160px, auto));
+        repeat(4, minmax(0, auto));
       row-gap: 12px;
       grid-column: auto;
       grid-row: auto;
