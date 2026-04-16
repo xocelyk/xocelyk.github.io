@@ -3,16 +3,16 @@
 <style>
   .bracket-scope {
     --bg: #ffffff;
-    --panel: #fafafa;
+    --panel: #fbf6eb;
     --ink: #313131;
     --text: #515151;
-    --dim: #666;
-    --faint: #aaa;
-    --rule: #cccccc;
-    --rule-strong: #333;
-    --card-rule: #b0b0b0;
-    --row-rule: #eeeeee;
-    --bar-bg: #eeeeee;
+    --dim: #706a5c;
+    --faint: #a8a08d;
+    --rule: #d4cab4;
+    --rule-strong: #3a3528;
+    --card-rule: #a89879;
+    --row-rule: #eae0ca;
+    --bar-bg: #eae0ca;
     --accent: #33CEFF;
     --s4: #6b92c2;
     --s5: #7fb5cc;
@@ -30,6 +30,12 @@
   header.hero { margin-bottom: 24px; }
   header.hero h1 { margin: 0 0 4px; font-size: 22px; font-weight: 600; color: var(--ink); }
   header.hero .meta { color: var(--dim); font-size: 13px; }
+  header.hero .back-link {
+    display: inline-block; margin-bottom: 10px;
+    font-size: 11px; letter-spacing: 0.02em;
+    color: var(--dim) !important; text-decoration: none;
+  }
+  header.hero .back-link:hover { color: var(--ink) !important; }
 
   .legend {
     display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
@@ -334,8 +340,9 @@
 <div class="wrap">
 
 <header class="hero">
-  <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; color:var(--ink);">Playoff Bracket <span id="year-label" style="color: var(--dim); font-weight: 400;"></span></h1>
-  <div class="meta" id="sim-meta" style="color:var(--dim); font-size:13px;">loading sims…</div>
+  <a class="back-link" href="/nba/">← NBA Forecast</a>
+  <h1>Playoff Bracket</h1>
+  <div class="meta" id="sim-meta">loading sims…</div>
 </header>
 
 <div class="legend">
@@ -518,7 +525,6 @@ function slotCard(s, opts = {}) {
 }
 
 function render(slotList, { nSims, year }) {
-  document.getElementById("year-label").textContent = `— ${year} Forecast`;
   document.getElementById("sim-meta").textContent = `${nSims.toLocaleString()} sims · updated ${new Date().toISOString().slice(0,10)}`;
 
   const bySlot = key => slotList.find(s => `${s.round}|${s.conf}|${s.slot}` === key);

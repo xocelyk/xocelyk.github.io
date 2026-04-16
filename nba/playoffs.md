@@ -23,8 +23,7 @@ html { font-size: 16px !important; }
   html { font-size: 20px !important; }
 }
 .masthead { display: none !important; }
+.page-title { display: none !important; }
 </style>
-
-<p><a href="/nba/">← NBA Forecast</a></p>
 
 {% include nba_playoff_bracket.html %}
