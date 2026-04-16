@@ -8,16 +8,16 @@
     --text: #515151;
     --dim: #9a9a9a;
     --faint: #c2c2c2;
-    --rule: #efefef;
+    --rule: #e4e4e4;
     --rule-strong: #313131;
-    --card-rule: #ebebeb;
-    --row-rule: #f2f2f2;
+    --card-rule: #d8d8d8;
+    --row-rule: #f0f0f0;
     --bar-bg: #eaeaea;
     --accent: #33CEFF;
-    --s4: #6b92c2;
-    --s5: #7fb5cc;
-    --s6: #88c0a8;
-    --s7: #d0b880;
+    --s4: #cfe0ef;
+    --s5: #9cc1dd;
+    --s6: #5f98c4;
+    --s7: #2f6ea6;
     background: var(--bg); color: var(--text);
   }
   * { box-sizing: border-box; }
@@ -148,11 +148,11 @@
   }
   .dist .bar { display: flex; height: 5px; background: var(--bar-bg); }
 
-  /* Muted, still distinct — 4g darkest to 7g lightest, cool→warm */
-  .s4 { background: var(--s4, #6b92c2); }  /* soft blue — 4 games */
-  .s5 { background: var(--s5, #7fb5cc); }  /* soft cyan — 5 games */
-  .s6 { background: var(--s6, #88c0a8); }  /* soft mint — 6 games */
-  .s7 { background: var(--s7, #d0b880); }  /* soft gold — 7 games */
+  /* Single-hue sequential blue ramp — 4g palest to 7g deepest */
+  .s4 { background: var(--s4, #cfe0ef); }  /* palest blue — 4 games */
+  .s5 { background: var(--s5, #9cc1dd); }  /* light blue  — 5 games */
+  .s6 { background: var(--s6, #5f98c4); }  /* mid blue    — 6 games */
+  .s7 { background: var(--s7, #2f6ea6); }  /* deep blue   — 7 games */
 
   .team.dog .team-name .abbr { color: var(--dim); font-weight: 500; }
 
