@@ -30,6 +30,12 @@
   header.hero { margin-bottom: 24px; }
   header.hero h1 { margin: 0 0 4px; font-size: 22px; font-weight: 600; color: var(--ink); }
   header.hero .meta { color: var(--dim); font-size: 13px; }
+  header.hero .back-link {
+    display: inline-block; margin-bottom: 10px;
+    font-size: 11px; letter-spacing: 0.02em;
+    color: var(--dim) !important; text-decoration: none;
+  }
+  header.hero .back-link:hover { color: var(--ink) !important; }
 
   .legend {
     display: flex; gap: 18px; flex-wrap: wrap; align-items: center;
@@ -110,7 +116,8 @@
   .round-nav { display: none; }
 
   .match {
-    background: var(--panel); border: 1px solid var(--rule);
+    background: var(--panel); border: 1px solid var(--card-rule);
+    border-radius: 3px;
     padding: 10px 12px; position: relative;
   }
   .match .round-tag {
@@ -173,15 +180,31 @@
   .team.eliminated .team-dot { opacity: 0.5; }
 
   .expand-btn {
-    display: block; width: 100%; margin-top: 6px; padding: 5px 0;
-    background: none; border: none; border-top: 1px dashed var(--rule);
-    font-family: inherit; font-size: 11px; color: var(--dim); cursor: pointer;
-    text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: calc(100% + 24px);
+    margin: 10px -12px -10px;
+    padding: 7px 10px;
+    background: rgba(0, 0, 0, 0.025);
+    border: none;
+    border-top: 1px solid var(--card-rule);
+    border-radius: 0 0 2px 2px;
+    font-family: inherit; font-size: 11px; color: var(--text); cursor: pointer;
+    transition: background 0.15s, color 0.15s;
   }
-  .expand-btn:hover { color: var(--ink); }
+  .expand-btn:hover,
+  .expand-btn:focus-visible {
+    background: rgba(0, 0, 0, 0.055);
+    color: var(--ink);
+    outline: none;
+  }
   .expand-btn .expand-open { display: none; }
   .match.expanded .expand-btn .expand-closed { display: none; }
   .match.expanded .expand-btn .expand-open { display: inline; }
+  .expand-btn .expand-caret {
+    display: inline-block; font-size: 9px; line-height: 1;
+    transition: transform 0.15s ease;
+  }
+  .match.expanded .expand-btn .expand-caret { transform: rotate(180deg); }
 
   footer.foot {
     margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--rule);
@@ -209,7 +232,7 @@
     .bracket {
       display: flex; flex-direction: row;
       overflow-x: auto; overflow-y: visible;
-      scroll-snap-type: x mandatory;
+      scroll-snap-type: x proximity;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: thin;
       column-gap: 0;
@@ -224,18 +247,22 @@
     .bracket::-webkit-scrollbar { height: 6px; }
     .bracket::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
 
-    /* Every round uses the same 11-row grid so card centres line up
-       vertically across panels — swipe from R1 to Semis and the Semis
-       card sits exactly at the midpoint of the R1 pair that feeds it. */
+    /* Every round uses the same 11-row grid so card spans position
+       each card at a bracket-correct midpoint within its own panel
+       (Semis cards between R1 pairs, CF mid-conference, Finals at
+       the E/W boundary). 140px is roughly half the R1 card height:
+       enough breathing room around Semis/CF cards that the bracket
+       "Y" shape reads, without reserving the ~160px of blank space
+       per slot that made earlier rounds feel empty. */
     .round {
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows:
         minmax(24px, auto)                  /*  1  east title     */
-        repeat(4, minmax(160px, auto))      /*  2–5  east slots   */
+        repeat(4, minmax(140px, auto))      /*  2–5  east slots   */
         28px                                /*  6  east/west gap  */
         minmax(24px, auto)                  /*  7  west title     */
-        repeat(4, minmax(160px, auto));     /*  8–11 west slots   */
+        repeat(4, minmax(140px, auto));     /*  8–11 west slots   */
       row-gap: 12px;
       flex: 0 0 calc(100vw - 32px);
       scroll-snap-align: center;
@@ -282,10 +309,10 @@
       grid-template-columns: 1fr;
       grid-template-rows:
         minmax(24px, auto)
-        repeat(4, minmax(160px, auto))
+        repeat(4, minmax(140px, auto))
         28px
         minmax(24px, auto)
-        repeat(4, minmax(160px, auto));
+        repeat(4, minmax(140px, auto));
       row-gap: 12px;
       grid-column: auto;
       grid-row: auto;
@@ -298,7 +325,7 @@
     /* round indicator bar above the scroll area */
     .round-nav {
       display: flex; gap: 6px; justify-content: center;
-      margin-bottom: 10px;
+      margin-bottom: 24px;
     }
     .round-nav button {
       flex: 1; max-width: 80px;
@@ -317,8 +344,9 @@
 <div class="wrap">
 
 <header class="hero">
-  <h1 style="margin:0 0 4px; font-size:22px; font-weight:600; color:var(--ink);">Playoff Bracket <span id="year-label" style="color: var(--dim); font-weight: 400;"></span></h1>
-  <div class="meta" id="sim-meta" style="color:var(--dim); font-size:13px;">loading sims…</div>
+  <a class="back-link" href="/nba/">← NBA Forecast</a>
+  <h1>Playoff Bracket</h1>
+  <div class="meta" id="sim-meta">loading sims…</div>
 </header>
 
 <div class="legend">
@@ -483,8 +511,9 @@ function slotCard(s, opts = {}) {
   const expandedRows = teams.map((c,i) => teamRow(c, i === 0, series)).join("");
   const toggleBtn = rest.length > 0 ? `
     <button class="expand-btn" data-target="${id}" aria-expanded="false">
-      <span class="expand-closed">+ ${rest.length} more · ${fmtPct(restWin)}</span>
-      <span class="expand-open">collapse</span>
+      <span class="expand-closed">${rest.length} more · ${fmtPct(restWin)}</span>
+      <span class="expand-open">show fewer</span>
+      <span class="expand-caret" aria-hidden="true">&#9662;</span>
     </button>` : "";
   const header = `<div class="round-tag">${label || s.slot}</div>`;
   const cardCls = ["match"];
@@ -500,7 +529,6 @@ function slotCard(s, opts = {}) {
 }
 
 function render(slotList, { nSims, year }) {
-  document.getElementById("year-label").textContent = `— ${year} Forecast`;
   document.getElementById("sim-meta").textContent = `${nSims.toLocaleString()} sims · updated ${new Date().toISOString().slice(0,10)}`;
 
   const bySlot = key => slotList.find(s => `${s.round}|${s.conf}|${s.slot}` === key);
