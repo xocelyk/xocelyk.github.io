@@ -14,10 +14,10 @@
     --row-rule: #f0f0f0;
     --bar-bg: #eaeaea;
     --accent: #33CEFF;
-    --s4: #d5e3ea;
-    --s5: #9ebfc8;
-    --s6: #5d9497;
-    --s7: #2e6668;
+    --s4: #6b92c2;
+    --s5: #7fb5cc;
+    --s6: #88c0a8;
+    --s7: #d0b880;
     background: var(--bg); color: var(--text);
   }
   * { box-sizing: border-box; }
@@ -148,11 +148,11 @@
   }
   .dist .bar { display: flex; height: 5px; background: var(--bar-bg); }
 
-  /* Blue-to-teal sequential ramp — 4g pale cool blue to 7g deep teal */
-  .s4 { background: var(--s4, #d5e3ea); }  /* pale blue  — 4 games */
-  .s5 { background: var(--s5, #9ebfc8); }  /* cyan       — 5 games */
-  .s6 { background: var(--s6, #5d9497); }  /* teal       — 6 games */
-  .s7 { background: var(--s7, #2e6668); }  /* deep teal  — 7 games */
+  /* Muted, still distinct — 4g darkest to 7g lightest, cool→warm */
+  .s4 { background: var(--s4, #6b92c2); }  /* soft blue — 4 games */
+  .s5 { background: var(--s5, #7fb5cc); }  /* soft cyan — 5 games */
+  .s6 { background: var(--s6, #88c0a8); }  /* soft mint — 6 games */
+  .s7 { background: var(--s7, #d0b880); }  /* soft gold — 7 games */
 
   .team.dog .team-name .abbr { color: var(--dim); font-weight: 500; }
 
