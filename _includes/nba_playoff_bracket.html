@@ -132,10 +132,9 @@
   .team + .team { border-top: 1px solid var(--row-rule); margin-top: 2px; }
   .seed { font-size: 11px; color: var(--dim); text-align: center; }
   .team-name { display: flex; align-items: baseline; gap: 6px; font-size: 14px; color: var(--ink); }
-  .team-name .abbr { font-weight: 600; }
+  .team-name .abbr { font-weight: 500; }
   .team-name .full { color: var(--dim); font-size: 12px; }
-  .win-pct { font-size: 13px; font-weight: 600; color: var(--ink); min-width: 38px; text-align: right; }
-  .win-pct.dim { font-weight: 400; }
+  .win-pct { font-size: 13px; font-weight: 500; color: var(--ink); min-width: 38px; text-align: right; }
 
   .dist { margin-top: 3px; padding-left: 28px; padding-right: 2px; position: relative; }
   .dist:hover::after {
@@ -154,8 +153,6 @@
   .s6 { background: var(--s6, #88c0a8); }  /* soft mint — 6 games */
   .s7 { background: var(--s7, #d0b880); }  /* soft gold — 7 games */
 
-  .team.dog .team-name .abbr { font-weight: 500; }
-
   /* series score banner, shown on cards whose matchup is locked in */
   .series-score {
     display: flex; align-items: baseline; gap: 8px;
@@ -171,7 +168,9 @@
   .series-score .series-score-line { font-weight: 600; }
   .series-score .dash { color: var(--dim); font-weight: 400; margin: 0 2px; }
 
-  /* eliminated team row on a completed series */
+  /* winner + eliminated flags for completed series */
+  .team.winner .team-name .abbr,
+  .team.winner .win-pct { font-weight: 700; }
   .team.eliminated .team-name .abbr { text-decoration: line-through; color: var(--dim); }
   .team.eliminated .team-name .full,
   .team.eliminated .seed,
@@ -430,21 +429,23 @@ function distBar(dist, totalWin) {
     </div>`;
 }
 
-function teamRow(t, isFav, series) {
+function teamRow(t, series) {
   const info = teamInfo(t.abbr);
   const isComplete = series && series.status === "complete";
+  const isWinner = isComplete && t.win === 1;
   const isEliminated = isComplete && t.win === 0;
   // Hide the per-team distribution bar for decided series — the winner's
   // is a single degenerate spike and the loser's is empty.
   const showDist = !isComplete;
+  const outcomeCls = isWinner ? " winner" : isEliminated ? " eliminated" : "";
   return `
-    <div class="team ${isFav ? 'fav' : 'dog'} ${isEliminated ? 'eliminated' : ''}">
+    <div class="team${outcomeCls}">
       <div class="seed">${t.seed ?? ""}</div>
       <div class="team-name">
         <span class="team-dot" style="width:8px;height:8px;border-radius:50%;background:${info.color};flex-shrink:0;"></span>
         <span class="abbr">${t.abbr}</span><span class="full">${info.name}</span>
       </div>
-      <div class="win-pct ${isFav ? '' : 'dim'}">${fmtPct(t.win)}</div>
+      <div class="win-pct">${fmtPct(t.win)}</div>
     </div>
     ${showDist ? distBar(t.dist, t.win) : ""}
   `;
@@ -502,8 +503,8 @@ function slotCard(s, opts = {}) {
   const shown = teams.slice(0, maxShown);
   const rest = teams.slice(maxShown);
   const restWin = rest.reduce((a,c)=>a+c.win, 0);
-  const collapsedRows = shown.map((c,i) => teamRow(c, i === 0, series)).join("");
-  const expandedRows = teams.map((c,i) => teamRow(c, i === 0, series)).join("");
+  const collapsedRows = shown.map(c => teamRow(c, series)).join("");
+  const expandedRows = teams.map(c => teamRow(c, series)).join("");
   const toggleBtn = rest.length > 0 ? `
     <button class="expand-btn" data-target="${id}" aria-expanded="false">
       <span class="expand-closed">${rest.length} more · ${fmtPct(restWin)}</span>
