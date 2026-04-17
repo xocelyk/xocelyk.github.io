@@ -239,11 +239,11 @@
       width: 100vw;
       margin-left: calc(50% - 50vw);
       margin-right: calc(50% - 50vw);
-      /* Extra right padding = round-width-reduction (140px) so the
+      /* Extra right padding = round-width-reduction (110px) so the
          final round can scroll to the same start-snap x as every
          other round; otherwise scrollMax clamps it and the finals
-         card sits ~100px further right than the earlier rounds. */
-      padding: 0 140px 0 16px;
+         card sits further right than the earlier rounds. */
+      padding: 0 110px 0 16px;
       scroll-padding: 0 16px;
     }
     .bracket::-webkit-scrollbar { height: 6px; }
@@ -262,7 +262,7 @@
         minmax(24px, auto)                  /*  7  west title     */
         repeat(4, minmax(160px, auto));     /*  8–11 west slots   */
       row-gap: 12px;
-      flex: 0 0 calc(100vw - 140px);
+      flex: 0 0 calc(100vw - 110px);
       scroll-snap-align: start;
       scroll-snap-stop: always;
       align-content: start;
