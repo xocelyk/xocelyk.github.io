@@ -277,7 +277,10 @@
       padding-bottom: 8px; margin-bottom: 0;
     }
 
-    /* R1: one card per slot */
+    /* R1: one card per slot; centre cards in their 160px-min rows so
+       shorter (2-team) cards don't stretch and pick up phantom bottom
+       padding. Matches the align-self behaviour used by later rounds. */
+    .round.r1 .match { align-self: center; }
     .round.r1 .conf-group.east > .col-cards > :nth-child(1) { grid-row: 2; }
     .round.r1 .conf-group.east > .col-cards > :nth-child(2) { grid-row: 3; }
     .round.r1 .conf-group.east > .col-cards > :nth-child(3) { grid-row: 4; }
