@@ -10,7 +10,7 @@ permalink: /nba/playoffs/
 html, body {
   overflow-x: clip !important; /* allow position:sticky to work */
 }
-.container { font-size: 14px; }
+.container { font-size: 14px; max-width: 1000px !important; }
 html { font-size: 14px !important; }
 @media (min-width: 38em) {
   html { font-size: 17px !important; }
