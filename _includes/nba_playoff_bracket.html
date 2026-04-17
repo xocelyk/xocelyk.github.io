@@ -121,9 +121,15 @@
     padding: 10px 12px; position: relative;
   }
   .match .round-tag {
-    display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+    font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--dim); margin-bottom: 8px;
   }
+  .match .round-tag .round-record {
+    color: var(--ink); text-transform: none; letter-spacing: 0;
+    font-size: 11px; font-variant-numeric: tabular-nums;
+  }
+  .match .round-tag .round-record .dash { color: var(--dim); }
 
   .team {
     display: grid; grid-template-columns: 20px 1fr auto; align-items: center;
@@ -152,21 +158,6 @@
   .s5 { background: var(--s5, #7fb5cc); }  /* soft cyan — 5 games */
   .s6 { background: var(--s6, #88c0a8); }  /* soft mint — 6 games */
   .s7 { background: var(--s7, #d0b880); }  /* soft gold — 7 games */
-
-  /* series score banner, shown on cards whose matchup is locked in */
-  .series-score {
-    display: flex; align-items: baseline; gap: 8px;
-    margin: 0 0 8px;
-    font-size: 11px; color: var(--ink);
-    font-variant-numeric: tabular-nums;
-  }
-  .series-score .series-label {
-    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--dim); font-weight: 600;
-  }
-  .series-score.is-final .series-label { color: var(--ink); }
-  .series-score .series-score-line { font-weight: 600; }
-  .series-score .dash { color: var(--dim); font-weight: 400; margin: 0 2px; }
 
   /* winner + eliminated flags for completed series */
   .team.winner .team-name .abbr,
@@ -451,26 +442,16 @@ function teamRow(t, series) {
   `;
 }
 
-function seriesBanner(s) {
-  if (!s.series) return "";
-  // Prefer higher-seed team first on the score line. Falls back to candidates
-  // order when seeds are missing.
-  const pair = [...s.cands].sort((a, b) => (a.seed ?? 99) - (b.seed ?? 99)).slice(0, 2);
+function seriesRecord(series, cands) {
+  if (!series) return "";
+  // Higher-seed team first on the record line; fall back to candidate order
+  // when seeds are missing.
+  const pair = [...cands].sort((a, b) => (a.seed ?? 99) - (b.seed ?? 99)).slice(0, 2);
   if (pair.length < 2) return "";
   const [a, b] = pair;
-  const gw = s.series.games_won || {};
+  const gw = series.games_won || {};
   const aw = gw[a.abbr] ?? 0, bw = gw[b.abbr] ?? 0;
-  const status = s.series.status;
-  const labelMap = {
-    not_started: "",
-    in_progress: "Series",
-    complete: "Final"
-  };
-  const label = labelMap[status] ?? "Series";
-  return `<div class="series-score ${status === 'complete' ? 'is-final' : ''}">
-    ${label ? `<span class="series-label">${label}</span>` : ""}
-    <span class="series-score-line">${a.abbr} ${aw} <span class="dash">–</span> ${bw} ${b.abbr}</span>
-  </div>`;
+  return `${a.abbr} ${aw} <span class="dash">–</span> ${bw} ${b.abbr}`;
 }
 
 let _slotSeq = 0;
@@ -511,13 +492,16 @@ function slotCard(s, opts = {}) {
       <span class="expand-open">show fewer</span>
       <span class="expand-caret" aria-hidden="true">&#9662;</span>
     </button>` : "";
-  const header = `<div class="round-tag">${label || s.slot}</div>`;
+  const record = seriesRecord(series, teams);
+  const header = `<div class="round-tag">
+    <span class="round-name">${label || s.slot}</span>
+    ${record ? `<span class="round-record">${record}</span>` : ""}
+  </div>`;
   const cardCls = ["match"];
   if (series) cardCls.push("has-series");
   if (series && series.status === "complete") cardCls.push("series-complete");
   return `<div class="${cardCls.join(" ")}" id="${id}">
     ${header}
-    ${seriesBanner({ ...s, series, cands: teams })}
     <div class="rows-collapsed">${collapsedRows}</div>
     <div class="rows-expanded" hidden>${expandedRows}</div>
     ${toggleBtn}
@@ -552,8 +536,8 @@ function render(slotList, { nSims, year }) {
   const w_cf = pickRound("CONF_FINALS", "West");
   const fin = slotList.filter(s => s.round === "FINALS");
 
-  const r1Label = s => `1st Round · ${s.slot.replace("E_","").replace("W_","").replace("_","–")} seed`;
-  const r2Label = s => `Conf Semis · ${s.slot.replace("E_","").replace("W_","").replace("_","–")} bracket`;
+  const r1Label = () => "1st Round";
+  const r2Label = () => "Conf Semis";
 
   const roundSection = (roundKey, eastCards, westCards, eastLabel, westLabel) => `
     <div class="round ${roundKey}" data-round="${roundKey}">
