@@ -1,7 +1,47 @@
 d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").then(data => {
     const colorScale = d3.scaleLinear()
         .domain([0, 1])
-        .range(["#ffffff", "#33CEFF"]);
+        .range(["#ffffff", "#479ca3"]);
+
+    const teamShortName = {
+        "Atlanta Hawks": "ATL Hawks",
+        "Boston Celtics": "BOS Celtics",
+        "Brooklyn Nets": "BKN Nets",
+        "Charlotte Hornets": "CHA Hornets",
+        "Chicago Bulls": "CHI Bulls",
+        "Cleveland Cavaliers": "CLE Cavaliers",
+        "Dallas Mavericks": "DAL Mavericks",
+        "Denver Nuggets": "DEN Nuggets",
+        "Detroit Pistons": "DET Pistons",
+        "Golden State Warriors": "GSW Warriors",
+        "Houston Rockets": "HOU Rockets",
+        "Indiana Pacers": "IND Pacers",
+        "Los Angeles Clippers": "LAC Clippers",
+        "Los Angeles Lakers": "LAL Lakers",
+        "Memphis Grizzlies": "MEM Grizzlies",
+        "Miami Heat": "MIA Heat",
+        "Milwaukee Bucks": "MIL Bucks",
+        "Minnesota Timberwolves": "MIN Timberwolves",
+        "New Orleans Pelicans": "NOP Pelicans",
+        "New York Knicks": "NYK Knicks",
+        "Oklahoma City Thunder": "OKC Thunder",
+        "Orlando Magic": "ORL Magic",
+        "Philadelphia 76ers": "PHI 76ers",
+        "Phoenix Suns": "PHX Suns",
+        "Portland Trail Blazers": "POR Trail Blazers",
+        "Sacramento Kings": "SAC Kings",
+        "San Antonio Spurs": "SAS Spurs",
+        "Toronto Raptors": "TOR Raptors",
+        "Utah Jazz": "UTA Jazz",
+        "Washington Wizards": "WAS Wizards"
+    };
+    const formatTeamName = name => teamShortName[name] || name;
+    const formatTeamCell = name => {
+        const short = teamShortName[name] || name;
+        const idx = short.indexOf(' ');
+        if (idx === -1) return `<span class="abbr">${short}</span>`;
+        return `<span class="abbr">${short.slice(0, idx)}</span><span class="full">${short.slice(idx + 1)}</span>`;
+    };
 
     const conferenceMap = {
         "Boston Celtics": "east",
@@ -100,6 +140,12 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
         return column;
     }).filter(column => column !== "Rank"); // Exclude the 'Rank' column
 
+    const headerDisplayName = {
+        "Conference Semis": "Conf Semis",
+        "Conference Finals": "Conf Finals"
+    };
+    const displayHeader = name => headerDisplayName[name] || name;
+
     // Create header row
     thead.append("tr")
         .selectAll("th")
@@ -117,7 +163,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
             };
             return tooltips[d] || null;
         })
-        .text(d => d)
+        .text(d => displayHeader(d))
         .on("click", function(event, d) { sortByColumn(d); })
 
     // Create rows
@@ -155,7 +201,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
             const pct = '<span class="pct">%</span>';
             if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
                 const value = parseFloat(d.value);
-                if (value == 1) return `100${pct}`;
+                if (value == 1) return `<span class="clinch" aria-label="clinched"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.25 8.5 L6.75 12 L12.75 5"/></svg></span>`;
                 if (value == 0) return `0${pct}`;
                 if (value > 0.999) return `&gt;99.9${pct}`;
                 if (value < 0.001) return `&lt;0.1${pct}`;
@@ -165,10 +211,13 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
             if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
                 return formatValue(d.value, d.column);
             }
+            if (d.column === 'Team') {
+                return formatTeamCell(d.value);
+            }
             return d.value;
         })
         .style("width", d => {
-            if (d.column === "Team") return "18%";
+            if (d.column === "Team") return "14%";
             if (d.column === "Record") return "8%";
             if (d.column === "Season Rating") return "6%";
             if (d.column === "Predictive Rating") return "6%";
@@ -241,7 +290,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
                     const pct = '<span class="pct">%</span>';
                     if (['Playoffs', 'Conference Finals', 'Conference Semis', 'Finals', 'Champion'].includes(d.column)) {
                         const value = parseFloat(d.value);
-                        if (value == 1) return `100${pct}`;
+                        if (value == 1) return `<span class="clinch" aria-label="clinched"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.25 8.5 L6.75 12 L12.75 5"/></svg></span>`;
                         if (value == 0) return `0${pct}`;
                         if (value > 0.999) return `&gt;99.9${pct}`;
                         if (value < 0.001) return `&lt;0.1${pct}`;
@@ -254,7 +303,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
                     return d.value;
                 })
                 .style("width", d => {
-                    if (d.column === "Team") return "18%";
+                    if (d.column === "Team") return "14%";
                     if (d.column === "Record") return "8%";
                     if (d.column === "Season Rating") return "6%";
                     if (d.column === "Predictive Rating") return "6%";

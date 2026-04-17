@@ -8,20 +8,6 @@ permalink: /nba/
 <link rel="stylesheet" href="{{ '/nba/styles.css' | relative_url }}">
 
 <style>
-/* Override sepia theme for NBA page only */
-body {
-  color: #333333 !important;
-  background-color: #fff !important;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  color: #313131 !important;
-}
-
-a {
-  color: #268bd2 !important;
-}
-
 .container {
   font-size: 16px;
 }
@@ -45,7 +31,6 @@ html {
 .page-title {
   margin-top: 2rem !important;
 }
-
 </style>
 
 Updated daily. Projections from 1,000 simulations. [Playoff bracket →](/nba/playoffs/)

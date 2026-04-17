@@ -35,7 +35,21 @@
  * Update the foundational and global aspects of the page.
  */
 
- * {
+:root {
+  --color-bg: #fefdfc;
+  --color-text: #111111;
+  --color-heading: #111111;
+  --color-muted: #6b6b6b;
+  --color-faint: #9a9a9a;
+  --color-rule: #e5e5e5;
+  --color-accent: #479ca3;
+  --color-accent-dark: #31818a;
+  --color-code-bg: #f2f2ef;
+  --font-sans: "Lato", -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  --font-mono: "Google Sans Code", ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+* {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
@@ -48,7 +62,7 @@ body {
 }
 
 html {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font-sans);
   font-size: 16px;
   line-height: 1.5;
 }
@@ -59,15 +73,15 @@ html {
 }
 
 body {
-  color: #5d4e37;
-  background-color: #fdfcfa;
+  color: var(--color-text);
+  background-color: var(--color-bg);
   -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
 }
 
 /* No `:visited` state is required by default (browsers will use `a`) */
 a {
-  color: #8b4513;
+  color: var(--color-accent);
   text-decoration: none;
 }
 a strong {
@@ -76,15 +90,16 @@ a strong {
 /* `:focus` is linked to `:hover` for basic accessibility */
 a:hover,
 a:focus {
+  color: var(--color-accent-dark);
   text-decoration: underline;
 }
 
 /* Headings */
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: .5rem;
-  font-weight: bold;
-  line-height: 1;
-  color: #3d2914;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--color-heading);
   text-rendering: optimizeLegibility;
   font-size: 1.2rem;
 }
@@ -106,7 +121,7 @@ p {
 }
 
 strong {
-  color: #303030;
+  color: var(--color-text);
 }
 
 
@@ -128,31 +143,34 @@ hr {
   position: relative;
   margin: 1.5rem 0;
   border: 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #fff;
+  border-top: 1px solid var(--color-rule);
+  border-bottom: 0;
 }
 
 abbr {
   font-size: 85%;
   font-weight: bold;
-  color: #555;
+  color: var(--color-muted);
   text-transform: uppercase;
 }
 abbr[title] {
   cursor: help;
-  border-bottom: 1px dotted #e5e5e5;
+  border-bottom: 1px dotted var(--color-rule);
 }
 
 /* Code */
 code,
-pre {
-  font-family: Menlo, Monaco, "Courier New", monospace;
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
 }
 code {
-  padding: .25em .5em;
+  padding: .15em .4em;
   font-size: 85%;
-  color: #bf616a;
-  background-color: #f9f9f9;
+  color: var(--color-text);
+  background-color: var(--color-code-bg);
   border-radius: 3px;
 }
 pre {
@@ -161,19 +179,19 @@ pre {
   margin-bottom: 1rem;
   padding: 1rem;
   font-size: .8rem;
-  line-height: 1.4;
+  line-height: 1.5;
   white-space: pre;
   white-space: pre-wrap;
   word-break: break-all;
   word-wrap: break-word;
-  background-color: #f9f9f9;
+  color: var(--color-text);
+  background-color: var(--color-code-bg);
+  border-radius: 4px;
 }
 pre code {
   padding: 0;
-  /* font-size: 90%; */
-  /* font-family: "Computer Modern Sans", sans-serif; */
-  font-family: "Computer Modern Typewriter", monospace;
-  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
   color: inherit;
   background-color: transparent;
 }
@@ -213,8 +231,8 @@ pre code {
 blockquote {
   padding: .5rem 1rem;
   margin: .8rem 0;
-  color: #7a7a7a;
-  border-left: .25rem solid #e5e5e5;
+  color: var(--color-muted);
+  border-left: .25rem solid var(--color-accent);
 }
 blockquote p:last-child {
   margin-bottom: 0;
@@ -237,15 +255,15 @@ img {
 table {
   margin-bottom: 1rem;
   width: 100%;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-rule);
   border-collapse: collapse;
-  background-color: #fafafa;
+  background-color: transparent;
   font-size: 0.9em;
 }
 td,
 th {
   padding: .25rem .5rem;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--color-rule);
 }
 
 
@@ -271,8 +289,8 @@ th {
 .message {
   margin-bottom: 1rem;
   padding: 1rem;
-  color: #717171;
-  background-color: #f9f9f9;
+  color: var(--color-muted);
+  background-color: var(--color-code-bg);
 }
 
 
@@ -305,15 +323,15 @@ th {
 .masthead-title {
   margin-top: 0;
   margin-bottom: 0;
-  color: #505050;
+  color: var(--color-heading);
 }
 .masthead-title a {
-  color: #505050;
+  color: var(--color-heading);
 }
 .masthead-title small {
   font-size: 75%;
   font-weight: 400;
-  color: #c0c0c0;
+  color: var(--color-faint);
   letter-spacing: 0;
 }
 
@@ -334,7 +352,7 @@ th {
 .page-title,
 .post-title,
 .post-title a {
-  color: #303030;
+  color: var(--color-heading);
 }
 .page-title,
 .post-title {
@@ -347,14 +365,14 @@ th {
   display: block;
   margin-top: -.5rem;
   margin-bottom: 1rem;
-  color: #9a9a9a;
+  color: var(--color-faint);
 }
 
 /* Related posts */
 .related {
   padding-top: 2rem;
   padding-bottom: 2rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-rule);
 }
 .related-posts {
   padding-left: 0;
@@ -365,10 +383,10 @@ th {
 }
 .related-posts li small {
   font-size: 75%;
-  color: #999;
+  color: var(--color-faint);
 }
 .related-posts li a:hover {
-  color: #5a3210;
+  color: var(--color-accent-dark);
   text-decoration: underline;
 }
 .related-posts li a:hover small {
@@ -387,8 +405,8 @@ th {
   overflow: hidden; /* clearfix */
   margin-left: -1rem;
   margin-right: -1rem;
-  font-family: "PT Sans", Helvetica, Arial, sans-serif;
-  color: #ccc;
+  font-family: var(--font-sans);
+  color: var(--color-faint);
   text-align: center;
 }
 
@@ -396,7 +414,7 @@ th {
 .pagination-item {
   display: block;
   padding: 1rem;
-  border: 1px solid #eee;
+  border: 1px solid var(--color-rule);
 }
 .pagination-item:first-child {
   margin-bottom: -1px;
@@ -404,7 +422,7 @@ th {
 
 /* Only provide a hover state for linked pagination items */
 a.pagination-item:hover {
-  background-color: #f5f5f5;
+  background-color: var(--color-code-bg);
 }
 
 @media (min-width: 30em) {

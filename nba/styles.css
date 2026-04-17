@@ -11,11 +11,11 @@ th {
 }
 
 .table td.right-border {
-    border-right: 3px solid #333;
+    border-right: 2px solid var(--color-text, #111);
 }
 
 .table td.left-border {
-    border-left: 3px solid #333;
+    border-left: 2px solid var(--color-text, #111);
 }
 
 .table {
@@ -23,15 +23,17 @@ th {
     overflow-y: auto;
     margin: 0 auto;
     border-collapse: collapse;
-    font-family: 'Cabin', sans-serif;
+    font-family: 'Google Sans Code', ui-monospace, Menlo, monospace;
     font-variant-numeric: tabular-nums;
-
 }
 .table th {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
-    border-bottom: 3px solid #333;
-    background-color: #fff;
+    border-bottom: 2px solid var(--color-text, #111);
+    background-color: transparent;
+    color: var(--color-text, #111);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .table th, .table td {
@@ -45,8 +47,9 @@ th {
 
 .table td {
     font-size: 14px;
-    border-bottom: 1px solid #cccccc;
-    background-color: #fff;
+    border-bottom: 1px solid var(--color-rule, #e5e5e5);
+    background-color: transparent;
+    color: var(--color-text, #111);
 }
 
 /* Add a media query for small screens */
@@ -75,14 +78,37 @@ th {
     min-width: 60px;
 }
 
+.table .clinch {
+    color: var(--color-text, #111);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.table .clinch svg {
+    width: 0.95em;
+    height: 0.95em;
+    display: block;
+}
+
 .table .team-cell {
     text-align: left;
+    font-family: "Lato", -apple-system, Helvetica, Arial, sans-serif;
+}
+.table .team-cell .abbr {
+    font-weight: 700;
+    color: var(--color-text, #111);
+    margin-right: 6px;
+}
+.table .team-cell .full {
+    color: var(--color-muted, #6b6b6b);
+    font-weight: 400;
 }
 
 /* Optional: Add hover to header */
 .table th:hover {
-    background-color: #e9e6e6;
-    color: #333;
+    background-color: var(--color-code-bg, #f2f2ef);
+    color: var(--color-text, #111);
 }
 
 .container {
@@ -111,24 +137,27 @@ th {
 }
 
 .toggle-btn {
-    font-family: 'Cabin', sans-serif;
+    font-family: "Lato", -apple-system, Helvetica, Arial, sans-serif;
     font-size: 13px;
     padding: 4px 14px;
-    border: 1px solid #333;
-    background: #fff;
-    color: #333;
+    border: 1px solid var(--color-rule, #e5e5e5);
+    background: transparent;
+    color: var(--color-text, #111);
     cursor: pointer;
     margin-right: 4px;
     border-radius: 3px;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .toggle-btn.active {
-    background: #333;
+    background: var(--color-accent, #28a99e);
     color: #fff;
+    border-color: var(--color-accent, #28a99e);
 }
 
 .toggle-btn:hover:not(.active) {
-    background: #e9e6e6;
+    background: var(--color-code-bg, #f2f2ef);
+    border-color: var(--color-text, #111);
 }
 
 .predictions-table td {
@@ -139,4 +168,3 @@ th {
 .predictions-table th {
     padding: 4px 10px;
 }
-

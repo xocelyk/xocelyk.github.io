@@ -2,7 +2,41 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
     const columns = ["Date", "Home", "Away", "Favorite", "Margin", "Win"];
     const colorScale = d3.scaleLinear()
         .domain([0, 1])
-        .range(["#ffffff", "#33CEFF"]);
+        .range(["#ffffff", "#479ca3"]);
+
+    const teamShortName = {
+        "Atlanta Hawks": "ATL Hawks",
+        "Boston Celtics": "BOS Celtics",
+        "Brooklyn Nets": "BKN Nets",
+        "Charlotte Hornets": "CHA Hornets",
+        "Chicago Bulls": "CHI Bulls",
+        "Cleveland Cavaliers": "CLE Cavaliers",
+        "Dallas Mavericks": "DAL Mavericks",
+        "Denver Nuggets": "DEN Nuggets",
+        "Detroit Pistons": "DET Pistons",
+        "Golden State Warriors": "GSW Warriors",
+        "Houston Rockets": "HOU Rockets",
+        "Indiana Pacers": "IND Pacers",
+        "Los Angeles Clippers": "LAC Clippers",
+        "Los Angeles Lakers": "LAL Lakers",
+        "Memphis Grizzlies": "MEM Grizzlies",
+        "Miami Heat": "MIA Heat",
+        "Milwaukee Bucks": "MIL Bucks",
+        "Minnesota Timberwolves": "MIN Timberwolves",
+        "New Orleans Pelicans": "NOP Pelicans",
+        "New York Knicks": "NYK Knicks",
+        "Oklahoma City Thunder": "OKC Thunder",
+        "Orlando Magic": "ORL Magic",
+        "Philadelphia 76ers": "PHI 76ers",
+        "Phoenix Suns": "PHX Suns",
+        "Portland Trail Blazers": "POR Trail Blazers",
+        "Sacramento Kings": "SAC Kings",
+        "San Antonio Spurs": "SAS Spurs",
+        "Toronto Raptors": "TOR Raptors",
+        "Utah Jazz": "UTA Jazz",
+        "Washington Wizards": "WAS Wizards"
+    };
+    const formatTeamName = name => teamShortName[name] || name;
 
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
                     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -33,13 +67,16 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
     });
 
     const container = d3.select("#table-container-2");
-    const table = container.append("table").attr("class", "table predictions-table").attr("id", "2").style("width", "38%").style("min-width", "500px");
+    const table = container.append("table").attr("class", "table predictions-table").attr("id", "2").style("width", "auto");
     const thead = table.append("thead");
     const tbody = table.append("tbody");
 
     function formatValue(value, column) {
         if (column === "Win") {
             return (Number(value) * 100).toFixed(0) + "%";
+        }
+        if (column === "Home" || column === "Away" || column === "Favorite") {
+            return formatTeamName(value);
         }
         return value;
     }
@@ -52,14 +89,9 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
         return null;
     }
 
-    const columnPadding = {
-        "Date": "4px 8px",
-        "Home": "4px 8px",
-        "Away": "4px 8px",
-        "Favorite": "4px 8px 4px 25px",
-        "Margin": "4px 8px",
-        "Win": "4px 8px"
-    };
+    const cellPadding = "4px 14px";
+    const headerDisplayName = { "Favorite": "Fav" };
+    const displayHeader = name => headerDisplayName[name] || name;
 
     // Add header row
     thead.append("tr")
@@ -67,8 +99,8 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
         .data(columns)
         .enter()
         .append("th")
-        .text(d => d)
-        .style("padding", d => columnPadding[d])
+        .text(d => displayHeader(d))
+        .style("padding", cellPadding)
         .on("click", function(event, d) { sortByColumn(d); });
 
     // Add rows
@@ -87,7 +119,7 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/predictions/pred
         .append("td")
         .text(d => formatValue(d.value, d.column))
         .style("background-color", shadeColor)
-        .style("padding", d => columnPadding[d.column]);
+        .style("padding", cellPadding);
 
     let sortAscending = true;
 
