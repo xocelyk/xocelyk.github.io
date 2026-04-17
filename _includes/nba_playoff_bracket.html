@@ -319,6 +319,19 @@
     /* NBA Finals: single card spans entire grid, lands at East/West midpoint */
     .round.finals > .col-cards > * { grid-row: 2 / 12; align-self: center; }
 
+    /* Active (primary in-view) round: collapse the 160px-min slot rows so
+       cards pack tight. Peeking/out-of-view rounds keep the spread grid
+       so next-round previews still land at feeder midpoints. */
+    .round.is-active,
+    .round.finals.is-active {
+      grid-template-rows:
+        minmax(24px, auto)
+        repeat(4, auto)
+        12px
+        minmax(24px, auto)
+        repeat(4, auto);
+    }
+
     /* round indicator bar above the scroll area */
     .round-nav {
       display: flex; gap: 6px; justify-content: center;
@@ -558,8 +571,10 @@ function render(slotList, { nSims, year }) {
   const r1Label = () => "1st Round";
   const r2Label = () => "Conf Semis";
 
+  // R1 starts as the active (dense) round; others keep the spread grid
+  // so their peek previews line up with feeder midpoints until scrolled to.
   const roundSection = (roundKey, eastCards, westCards, eastLabel, westLabel) => `
-    <div class="round ${roundKey}" data-round="${roundKey}">
+    <div class="round ${roundKey}${roundKey === "r1" ? " is-active" : ""}" data-round="${roundKey}">
       <div class="conf-group east">
         <div class="col-title">${eastLabel}</div>
         <div class="col-cards">${eastCards}</div>
@@ -639,6 +654,7 @@ function render(slotList, { nSims, year }) {
       if (best) {
         const key = best.dataset.round;
         navBtns.forEach(b => b.setAttribute("aria-current", b.dataset.round === key ? "true" : "false"));
+        roundEls.forEach(r => r.classList.toggle("is-active", r === best));
       }
     }, 60);
   }, { passive: true });
