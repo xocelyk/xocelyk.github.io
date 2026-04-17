@@ -93,13 +93,13 @@
     padding: 20px 0;
   }
 
-  /* equal-height tracks + center-aligned cards so next-round games land
-     exactly at the midpoint of the two games that feed them, regardless
-     of individual card content height */
+  /* Cards distribute evenly along the column's height. Combined with the
+     JS-side equalizeConfRows pass this keeps East and West columns visually
+     in sync even when their intrinsic content heights differ. */
   .col-cards {
-    flex: 1; display: grid;
-    grid-auto-rows: minmax(0, 1fr);
-    align-items: center;
+    flex: 1; display: flex;
+    flex-direction: column;
+    justify-content: space-around;
     gap: 16px;
   }
   .col-title {
