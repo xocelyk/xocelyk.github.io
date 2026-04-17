@@ -9,16 +9,16 @@ permalink: /nba/
 
 <style>
 .container {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 html {
-  font-size: 16px !important;
+  font-size: 15px !important;
 }
 
 @media (min-width: 38em) {
   html {
-    font-size: 20px !important;
+    font-size: 18px !important;
   }
 }
 
