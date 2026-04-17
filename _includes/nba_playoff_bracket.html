@@ -117,6 +117,7 @@
     background: var(--panel); border: 1px solid var(--card-rule);
     border-radius: 3px;
     padding: 10px 12px; position: relative;
+    width: 100%; box-sizing: border-box;
   }
   .match .round-tag {
     display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
@@ -646,19 +647,31 @@ function render(slotList, { nSims, year }) {
   }, { passive: true });
 
   // Draw bracket connector lines (desktop only)
-  requestAnimationFrame(drawBracketLines);
+  const layout = () => { equalizeConfRows(); drawBracketLines(); };
+  requestAnimationFrame(layout);
   if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(drawBracketLines);
+    document.fonts.ready.then(layout);
   }
   let resizeTimer;
   window.addEventListener("resize", () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(drawBracketLines, 80);
+    resizeTimer = setTimeout(layout, 80);
   });
   // Redraw after a card is expanded/collapsed since heights shift.
   document.querySelectorAll(".expand-btn").forEach(btn => {
-    btn.addEventListener("click", () => setTimeout(drawBracketLines, 0));
+    btn.addEventListener("click", () => setTimeout(layout, 0));
   });
+}
+
+function equalizeConfRows() {
+  const bracket = document.getElementById("bracket");
+  if (!bracket) return;
+  const groups = Array.from(bracket.querySelectorAll(".conf-group"));
+  groups.forEach(el => { el.style.minHeight = ""; });
+  if (window.innerWidth <= 900) return;
+  const maxH = Math.max(0, ...groups.map(el => el.offsetHeight));
+  if (!maxH) return;
+  groups.forEach(el => { el.style.minHeight = maxH + "px"; });
 }
 
 function drawBracketLines() {
