@@ -142,7 +142,8 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
 
     const headerDisplayName = {
         "Conference Semis": "Conf Semis",
-        "Conference Finals": "Conf Finals"
+        "Conference Finals": "Conf Finals",
+        "Predictive Rating": "Pred Rating"
     };
     const displayHeader = name => headerDisplayName[name] || name;
 
