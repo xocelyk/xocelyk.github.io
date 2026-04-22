@@ -487,15 +487,18 @@ function slotCard(s, opts = {}) {
   const filtered = s.cands.filter(c => c.win > 0.0005);
   const filteredTotal = filtered.reduce((sum, c) => sum + c.win, 0);
 
-  // Resolve effective series state. Prefer the upstream 'series' block
-  // when the sim feed provides it; otherwise synthesize a not_started
-  // block when the matchup is effectively locked (exactly two candidates
-  // with probability summing to ~100%, e.g. a 3-vs-6 or 4-vs-5 R1
-  // matchup that's determined by final standings before play-in).
-  // The feed emits a not_started block on every future slot regardless
-  // of whether the matchup is set, so ignore it and let the synthesis
-  // branch decide — it only fires when exactly two candidates remain.
-  let series = s.series && s.series.status !== "not_started" ? s.series : null;
+  // Resolve effective series state. Trust the upstream 'series' block
+  // only when the matchup is actually locked in — the feed occasionally
+  // attaches R1 play-in progress to later-round slots, so not_started
+  // and in_progress blocks can show up on slots with 4+ live candidates.
+  // A 'complete' series is inherently locked (one team has prob 1), so
+  // trust those unconditionally. Otherwise require exactly two viable
+  // candidates summing to ~100% before using the upstream block, and
+  // fall through to synthesis when upstream is missing.
+  const matchupLocked = filtered.length === 2 && filteredTotal > 0.999;
+  let series = s.series && (s.series.status === "complete" || matchupLocked)
+    ? s.series
+    : null;
   let teams;
   if (series) {
     teams = s.cands.slice();              // preserve 0% loser from upstream
