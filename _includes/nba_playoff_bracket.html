@@ -492,7 +492,10 @@ function slotCard(s, opts = {}) {
   // block when the matchup is effectively locked (exactly two candidates
   // with probability summing to ~100%, e.g. a 3-vs-6 or 4-vs-5 R1
   // matchup that's determined by final standings before play-in).
-  let series = s.series;
+  // The feed emits a not_started block on every future slot regardless
+  // of whether the matchup is set, so ignore it and let the synthesis
+  // branch decide — it only fires when exactly two candidates remain.
+  let series = s.series && s.series.status !== "not_started" ? s.series : null;
   let teams;
   if (series) {
     teams = s.cands.slice();              // preserve 0% loser from upstream
