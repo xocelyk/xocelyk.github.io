@@ -301,6 +301,9 @@ d3.csv("https://raw.githubusercontent.com/xocelyk/nba/main/data/main_2026.csv").
                     if (['Season Rating', 'Predictive Rating', 'AdjO', 'AdjD', 'RSOS', 'Pace'].includes(d.column)) {
                         return formatValue(d.value, d.column);
                     }
+                    if (d.column === 'Team') {
+                        return formatTeamCell(d.value);
+                    }
                     return d.value;
                 })
                 .style("width", d => {
