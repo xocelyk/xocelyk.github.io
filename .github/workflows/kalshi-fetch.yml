@@ -1,0 +1,58 @@
+name: Fetch Kalshi NBA probs
+
+on:
+  schedule:
+    # Every 30 min during the NBA playoffs window. Adjust as desired.
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch from Kalshi
+        run: python nba/scripts/fetch_kalshi.py
+
+      - name: Push JSON to data branch
+        run: |
+          set -euo pipefail
+
+          # Stash the freshly written file outside the worktree so the branch
+          # switch doesn't clobber it.
+          tmp=$(mktemp)
+          cp nba/data/kalshi_probs.json "$tmp"
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git ls-remote --exit-code --heads origin data >/dev/null 2>&1; then
+            git fetch origin data --depth=1
+            git checkout data
+            git rm -rf . >/dev/null 2>&1 || true
+          else
+            echo "Creating orphan 'data' branch."
+            git checkout --orphan data
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          mkdir -p nba/data
+          mv "$tmp" nba/data/kalshi_probs.json
+
+          git add nba/data/kalshi_probs.json
+          if git diff --cached --quiet; then
+            echo "No change."
+            exit 0
+          fi
+          git commit -m "Update Kalshi probs ($(date -u +%FT%TZ))"
+          git push origin data

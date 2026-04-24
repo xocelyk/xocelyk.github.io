@@ -41,3 +41,6 @@ validation-report.json
 # Folders to ignore
 node_modules
 bower_components
+
+# Kalshi fetch output — generated locally for testing, lives on `data` branch in prod
+nba/data/kalshi_probs.json

@@ -366,7 +366,20 @@
 </div>
 
 <script>
-const PROBS_URL = "https://raw.githubusercontent.com/xocelyk/nba/main/data/playoff_sim_results/playoff_slot_probs.json";
+// Config can be overridden by a page that sets `window.NBA_BRACKET_CONFIG`
+// before this include runs (and re-set + reloaded later via the exposed
+// window.nbaBracketReload). Defaults preserve the original sim-data view.
+const DEFAULT_PROBS_URL = "https://raw.githubusercontent.com/xocelyk/nba/main/data/playoff_sim_results/playoff_slot_probs.json";
+let CFG = {};
+let PROBS_URL = DEFAULT_PROBS_URL;
+
+// Cached so a tab switch back to defaults can restore the title verbatim.
+let _origTitle = null;
+
+function applyConfig() {
+  CFG = window.NBA_BRACKET_CONFIG || {};
+  PROBS_URL = CFG.probsUrl || DEFAULT_PROBS_URL;
+}
 
 // Team display info (colors + full names). Unknown teams fall back to a gray dot.
 const teams = {
@@ -391,9 +404,32 @@ const teamInfo = abbr => teams[abbr] || {name:"", color:"#555"};
 /* ---------- fetch pre-aggregated probs ---------- */
 
 async function loadAndRender() {
-  const res = await fetch(PROBS_URL);
-  if (!res.ok) throw new Error(`fetch ${PROBS_URL} → ${res.status}`);
-  const payload = await res.json();
+  applyConfig();
+  document.getElementById("content").innerHTML =
+    `<div class="loading"><span class="spinner"></span>Fetching playoff data…</div>`;
+
+  // Optionally fetch a second JSON in parallel and graft its `series` blocks
+  // onto matching slots in the primary payload. The Kalshi view uses this
+  // to inherit live games_won counts from the upstream sim feed (Kalshi's
+  // markets API doesn't expose game-by-game series state).
+  const probsP = fetch(PROBS_URL).then(r => {
+    if (!r.ok) throw new Error(`fetch ${PROBS_URL} → ${r.status}`);
+    return r.json();
+  });
+  const seriesP = CFG.seriesUrl
+    ? fetch(CFG.seriesUrl).then(r => r.ok ? r.json() : null).catch(() => null)
+    : Promise.resolve(null);
+
+  const [payload, seriesPayload] = await Promise.all([probsP, seriesP]);
+
+  let seriesMap = null;
+  if (seriesPayload && Array.isArray(seriesPayload.slots)) {
+    seriesMap = new Map();
+    for (const s of seriesPayload.slots) {
+      if (s.series) seriesMap.set(`${s.round}|${s.conference}|${s.slot}`, s.series);
+    }
+  }
+
   const { year, n_sims: nSims, slots } = payload;
 
   const slotList = slots.map(s => {
@@ -402,14 +438,16 @@ async function loadAndRender() {
       const win = dist.reduce((a, b) => a + b, 0);
       return { abbr: c.team, seed: c.seed, dist, win };
     }).sort((a, b) => b.win - a.win);
+    const grafted = seriesMap && seriesMap.get(`${s.round}|${s.conference}|${s.slot}`);
     return {
       round: s.round, conf: s.conference, slot: s.slot,
       cands, nSims,
-      series: s.series || null  // { status: "in_progress"|"complete", games_won: { ABBR: n } }
+      // { status: "in_progress"|"complete", games_won: { ABBR: n } }
+      series: s.series || grafted || null
     };
   });
 
-  render(slotList, { nSims, year });
+  render(slotList, { nSims, year, fetchedAt: payload.fetched_at });
 }
 
 /* ---------- rendering ---------- */
@@ -424,10 +462,19 @@ function fmtPct(p) {
 }
 
 function distBar(dist, totalWin) {
-  const segs = dist.map((v, i) => `<span class="s${i+4}" style="flex:${v||0.0001}"></span>`).join("");
-  const empty = Math.max(0, 1 - totalWin);
-  const emptySeg = empty > 0 ? `<span style="flex:${empty}; background: transparent;"></span>` : "";
   const totalPct = (totalWin*100).toFixed(1);
+  const empty = Math.max(0, 1 - totalWin);
+  // If exactly one bucket has weight, the upstream feed only knows the
+  // marginal win prob (e.g. Kalshi conf-finals/finals). Render a plain bar.
+  const nonZero = dist.filter(v => v > 0).length;
+  if (nonZero <= 1) {
+    return `
+      <div class="dist" data-tip="win ${totalPct}%">
+        <div class="bar"><span class="s5" style="flex:${totalWin||0.0001}"></span><span style="flex:${empty}; background: transparent;"></span></div>
+      </div>`;
+  }
+  const segs = dist.map((v, i) => `<span class="s${i+4}" style="flex:${v||0.0001}"></span>`).join("");
+  const emptySeg = empty > 0 ? `<span style="flex:${empty}; background: transparent;"></span>` : "";
   const tip = dist.map((v, i) => `${i+4}g ${(v*100).toFixed(1)}%`).join(" · ") + ` · win ${totalPct}%`;
   return `
     <div class="dist" data-tip="${tip}">
@@ -536,8 +583,15 @@ function slotCard(s, opts = {}) {
   </div>`;
 }
 
-function render(slotList, { nSims, year }) {
-  document.getElementById("sim-meta").textContent = `${nSims.toLocaleString()} sims · updated ${new Date().toISOString().slice(0,10)}`;
+function render(slotList, { nSims, year, fetchedAt }) {
+  const h = document.querySelector(".bracket-scope header.hero h1");
+  if (h) {
+    if (_origTitle === null) _origTitle = h.textContent;
+    h.textContent = CFG.title || _origTitle;
+  }
+  const stamp = (fetchedAt ? new Date(fetchedAt) : new Date()).toISOString().slice(0,10);
+  const metaLeft = CFG.metaLabel || `${nSims.toLocaleString()} sims`;
+  document.getElementById("sim-meta").textContent = `${metaLeft} · updated ${stamp}`;
 
   const bySlot = key => slotList.find(s => `${s.round}|${s.conf}|${s.slot}` === key);
   const pickRound = (round, conf) =>
@@ -747,9 +801,13 @@ function drawBracketLines() {
   }
 }
 
-loadAndRender().catch(err => {
-  document.getElementById("content").innerHTML =
-    `<div class="loading" style="color:#ff6b4a">Failed to load: ${err.message}</div>`;
-  console.error(err);
-});
+function reload() {
+  return loadAndRender().catch(err => {
+    document.getElementById("content").innerHTML =
+      `<div class="loading" style="color:#ff6b4a">Failed to load: ${err.message}</div>`;
+    console.error(err);
+  });
+}
+window.nbaBracketReload = reload;
+reload();
 </script>
