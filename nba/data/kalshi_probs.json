@@ -1,0 +1,576 @@
+{
+  "year": 2026,
+  "source": "kalshi",
+  "fetched_at": "2026-04-24T23:18:41+00:00",
+  "n_sims": 1000,
+  "slots": [
+    {
+      "round": "FINALS",
+      "conference": null,
+      "slot": "FINALS",
+      "candidates": [
+        {
+          "team": "OKC",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            498
+          ]
+        },
+        {
+          "team": "BOS",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            126
+          ]
+        },
+        {
+          "team": "SAS",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            116
+          ]
+        },
+        {
+          "team": "DEN",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            42
+          ]
+        },
+        {
+          "team": "CLE",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            42
+          ]
+        },
+        {
+          "team": "LAL",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            33
+          ]
+        },
+        {
+          "team": "DET",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            33
+          ]
+        },
+        {
+          "team": "NYK",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            23
+          ]
+        },
+        {
+          "team": "MIN",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            23
+          ]
+        },
+        {
+          "team": "PHX",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            9
+          ]
+        },
+        {
+          "team": "POR",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            9
+          ]
+        },
+        {
+          "team": "ATL",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            9
+          ]
+        },
+        {
+          "team": "HOU",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            9
+          ]
+        },
+        {
+          "team": "PHI",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            9
+          ]
+        },
+        {
+          "team": "ORL",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            9
+          ]
+        },
+        {
+          "team": "TOR",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            9
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "CONF_FINALS",
+      "conference": "East",
+      "slot": "E_CF",
+      "candidates": [
+        {
+          "team": "BOS",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            419
+          ]
+        },
+        {
+          "team": "CLE",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            241
+          ]
+        },
+        {
+          "team": "DET",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            163
+          ]
+        },
+        {
+          "team": "NYK",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            84
+          ]
+        },
+        {
+          "team": "ATL",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            44
+          ]
+        },
+        {
+          "team": "PHI",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            25
+          ]
+        },
+        {
+          "team": "ORL",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            15
+          ]
+        },
+        {
+          "team": "TOR",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            10
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "CONF_FINALS",
+      "conference": "West",
+      "slot": "W_CF",
+      "candidates": [
+        {
+          "team": "OKC",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            624
+          ]
+        },
+        {
+          "team": "SAS",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            176
+          ]
+        },
+        {
+          "team": "DEN",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            71
+          ]
+        },
+        {
+          "team": "LAL",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            52
+          ]
+        },
+        {
+          "team": "MIN",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            43
+          ]
+        },
+        {
+          "team": "HOU",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            14
+          ]
+        },
+        {
+          "team": "POR",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            10
+          ]
+        },
+        {
+          "team": "PHX",
+          "seed": null,
+          "wins": [
+            0,
+            0,
+            0,
+            10
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "West",
+      "slot": "W_2_7",
+      "candidates": [
+        {
+          "team": "SAS",
+          "seed": 2,
+          "wins": [
+            0,
+            336,
+            265,
+            215
+          ]
+        },
+        {
+          "team": "POR",
+          "seed": 7,
+          "wins": [
+            0,
+            36,
+            90,
+            58
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "West",
+      "slot": "W_1_8",
+      "candidates": [
+        {
+          "team": "OKC",
+          "seed": 1,
+          "wins": [
+            634,
+            273,
+            63,
+            10
+          ]
+        },
+        {
+          "team": "PHX",
+          "seed": 8,
+          "wins": [
+            0,
+            0,
+            10,
+            10
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "East",
+      "slot": "E_2_7",
+      "candidates": [
+        {
+          "team": "BOS",
+          "seed": 2,
+          "wins": [
+            0,
+            437,
+            291,
+            146
+          ]
+        },
+        {
+          "team": "PHI",
+          "seed": 7,
+          "wins": [
+            0,
+            19,
+            56,
+            52
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "East",
+      "slot": "E_4_5",
+      "candidates": [
+        {
+          "team": "CLE",
+          "seed": 4,
+          "wins": [
+            0,
+            448,
+            264,
+            189
+          ]
+        },
+        {
+          "team": "TOR",
+          "seed": 5,
+          "wins": [
+            0,
+            0,
+            45,
+            55
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "East",
+      "slot": "E_1_8",
+      "candidates": [
+        {
+          "team": "DET",
+          "seed": 1,
+          "wins": [
+            0,
+            251,
+            242,
+            251
+          ]
+        },
+        {
+          "team": "ORL",
+          "seed": 8,
+          "wins": [
+            0,
+            34,
+            126,
+            97
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "West",
+      "slot": "W_3_6",
+      "candidates": [
+        {
+          "team": "MIN",
+          "seed": 6,
+          "wins": [
+            0,
+            147,
+            265,
+            128
+          ]
+        },
+        {
+          "team": "DEN",
+          "seed": 3,
+          "wins": [
+            0,
+            0,
+            166,
+            294
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "West",
+      "slot": "W_4_5",
+      "candidates": [
+        {
+          "team": "LAL",
+          "seed": 4,
+          "wins": [
+            163,
+            247,
+            126,
+            177
+          ]
+        },
+        {
+          "team": "HOU",
+          "seed": 5,
+          "wins": [
+            0,
+            0,
+            135,
+            153
+          ]
+        }
+      ],
+      "series": null
+    },
+    {
+      "round": "R1",
+      "conference": "East",
+      "slot": "E_3_6",
+      "candidates": [
+        {
+          "team": "ATL",
+          "seed": 6,
+          "wins": [
+            0,
+            163,
+            242,
+            153
+          ]
+        },
+        {
+          "team": "NYK",
+          "seed": 3,
+          "wins": [
+            0,
+            0,
+            177,
+            265
+          ]
+        }
+      ],
+      "series": null
+    }
+  ]
+}
