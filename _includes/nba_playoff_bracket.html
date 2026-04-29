@@ -423,31 +423,87 @@ async function loadAndRender() {
   const [payload, seriesPayload] = await Promise.all([probsP, seriesP]);
 
   let seriesMap = null;
+  let secondarySlotMap = null;
   if (seriesPayload && Array.isArray(seriesPayload.slots)) {
     seriesMap = new Map();
+    secondarySlotMap = new Map();
     for (const s of seriesPayload.slots) {
-      if (s.series) seriesMap.set(`${s.round}|${s.conference}|${s.slot}`, s.series);
+      const key = `${s.round}|${s.conference}|${s.slot}`;
+      if (s.series) seriesMap.set(key, s.series);
+      secondarySlotMap.set(key, s);
     }
   }
 
   const { year, n_sims: nSims, slots } = payload;
 
   const slotList = slots.map(s => {
-    const cands = s.candidates.map(c => {
+    const grafted = seriesMap && seriesMap.get(`${s.round}|${s.conference}|${s.slot}`);
+    return buildSlot(s, nSims, s.series || grafted || null);
+  });
+
+  // Kalshi (and other markets-based feeds) drop their listings once a series
+  // settles. Backfill any completed series from the secondary feed so the
+  // bracket still shows the matchup, the final score, and the winner.
+  if (secondarySlotMap) {
+    const have = new Set(slotList.map(s => `${s.round}|${s.conf}|${s.slot}`));
+    const secNSims = seriesPayload.n_sims || nSims;
+    for (const [key, s] of secondarySlotMap) {
+      if (have.has(key)) continue;
+      if (!s.series || s.series.status !== "complete") continue;
+      slotList.push(buildSlot(s, secNSims, s.series));
+    }
+  }
+
+  render(slotList, { nSims, year, fetchedAt: payload.fetched_at });
+}
+
+// R1 slot keys ("E_1_8", "W_4_5", …) encode both seeds, so we can recover
+// the loser's seed by elimination. CONF_SEMIS keys ("_1_4") encode bracket
+// sides rather than team seeds, and CONF_FINALS / FINALS keys carry no
+// seed info — return undefined for those.
+function inferLoserSeed(round, slotKey, cands) {
+  if (round !== "R1") return undefined;
+  const m = /^[EW]_(\d)_(\d)$/.exec(slotKey);
+  if (!m) return undefined;
+  const seeds = [Number(m[1]), Number(m[2])];
+  const present = new Set(cands.map(c => c.seed));
+  return seeds.find(s => !present.has(s));
+}
+
+function buildSlot(s, nSims, series) {
+  // Upstream sometimes lists the winner twice for completed series and
+  // omits the loser entirely (the loser only appears in series.games_won).
+  // Dedupe candidates, then re-add the loser at 0% so the card shows both
+  // teams and the score banner has a pair to render.
+  const seen = new Set();
+  const cands = s.candidates
+    .filter(c => { if (seen.has(c.team)) return false; seen.add(c.team); return true; })
+    .map(c => {
       const dist = c.wins.map(w => w / nSims);
       const win = dist.reduce((a, b) => a + b, 0);
       return { abbr: c.team, seed: c.seed, dist, win };
-    }).sort((a, b) => b.win - a.win);
-    const grafted = seriesMap && seriesMap.get(`${s.round}|${s.conference}|${s.slot}`);
-    return {
-      round: s.round, conf: s.conference, slot: s.slot,
-      cands, nSims,
-      // { status: "in_progress"|"complete", games_won: { ABBR: n } }
-      series: s.series || grafted || null
-    };
-  });
+    })
+    .sort((a, b) => b.win - a.win);
 
-  render(slotList, { nSims, year, fetchedAt: payload.fetched_at });
+  if (series && series.status === "complete" && series.games_won) {
+    const present = new Set(cands.map(c => c.abbr));
+    for (const team of Object.keys(series.games_won)) {
+      if (present.has(team)) continue;
+      cands.push({
+        abbr: team,
+        seed: inferLoserSeed(s.round, s.slot, cands),
+        dist: [0, 0, 0, 0],
+        win: 0
+      });
+    }
+  }
+
+  return {
+    round: s.round, conf: s.conference, slot: s.slot,
+    cands, nSims,
+    // { status: "in_progress"|"complete", games_won: { ABBR: n } }
+    series: series || null
+  };
 }
 
 /* ---------- rendering ---------- */
